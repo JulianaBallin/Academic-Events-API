@@ -5,7 +5,7 @@
 <p align="center">
   API REST para <strong>gerenciamento de eventos acadêmicos</strong>, com inscrições, comentários e reações,<br>
   construída com ASP.NET Core, PostgreSQL, Entity Framework Core e autenticação JWT.<br>
-  <em>Trabalho Final | UEA · Módulo Desenvolvimento em C#</em>
+  <em>Trabalho Final | Módulo Desenvolvimento em C#</em>
 </p>
 
 ---
@@ -371,4 +371,4 @@ Sempre usar a branch `develop` para enviar as alterações.
 
 ---
 
-<h3 align="center">UEA · Módulo Desenvolvimento em C# · Trabalho Final · Grupo 6</h3>
+<h3 align="center">Módulo Desenvolvimento em C# · Trabalho Final · Grupo 6</h3>
