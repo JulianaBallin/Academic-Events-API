@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AcademicEvents.Infrastructure.Repositories;
 
 /// <summary>
-/// Repository de usuarios. Usa o DbContext para acessar o PostgreSQL.
+/// Repository de usuários. Usa o DbContext para acessar o PostgreSQL.
 /// </summary>
 public class UserRepository : IUserRepository
 {

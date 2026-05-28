@@ -19,7 +19,7 @@ builder.Services.AddApplication();
 
 // configura JWT Bearer Token
 string jwtKey = builder.Configuration["Jwt:Key"]
-    ?? throw new InvalidOperationException("Jwt:Key nao configurada.");
+    ?? throw new InvalidOperationException("Jwt:Key não configurada.");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -36,7 +36,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// configura o Swagger para aceitar o token Bearer no botao Authorize
+// configura o Swagger para aceitar o token Bearer no botão Authorize
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Academic Events API", Version = "v1" });
@@ -65,7 +65,7 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// cria o banco se nao existir (util no desenvolvimento)
+// cria o banco se não existir (útil no desenvolvimento)
 using (IServiceScope scope = app.Services.CreateScope())
 {
     AcademicEventsDbContext context = scope.ServiceProvider

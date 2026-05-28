@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AcademicEvents.Infrastructure.Repositories;
 
 /// <summary>
-/// Repository de comentarios. Usa o DbContext para acessar o PostgreSQL.
+/// Repository de comentários. Usa o DbContext para acessar o PostgreSQL.
 /// </summary>
 public class CommentRepository : ICommentRepository
 {

@@ -3,7 +3,7 @@ using AcademicEvents.Application.DTOs.Reaction;
 namespace AcademicEvents.Application.Interfaces;
 
 /// <summary>
-/// Contrato do service de reacoes a eventos.
+/// Contrato do service de reações a eventos.
 /// </summary>
 public interface IReactionService
 {

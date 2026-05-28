@@ -1,7 +1,7 @@
 namespace AcademicEvents.Application.DTOs.Comment;
 
 /// <summary>
-/// Dados do comentario retornados nos endpoints de leitura.
+/// Dados do comentário retornados nos endpoints de leitura.
 /// </summary>
 public class CommentResponse
 {

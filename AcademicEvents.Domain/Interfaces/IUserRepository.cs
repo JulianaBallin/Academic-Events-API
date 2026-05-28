@@ -3,8 +3,8 @@ using AcademicEvents.Domain.Entities;
 namespace AcademicEvents.Domain.Interfaces;
 
 /// <summary>
-/// Contrato do repository de usuarios.
-/// A implementacao fica na Infrastructure.
+/// Contrato do repository de usuários.
+/// A implementação fica na Infrastructure.
 /// </summary>
 public interface IUserRepository
 {

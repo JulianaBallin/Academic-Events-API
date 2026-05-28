@@ -27,7 +27,7 @@ public class EventRepository : IEventRepository
 
     public async Task<Event?> GetByIdAsync(int id)
     {
-        // ja inclui o organizador pra nao precisar de outra query na hora de montar o response
+        // já inclui o organizador pra não precisar de outra query na hora de montar o response
         return await _context.Events
             .Include(e => e.Organizador)
             .FirstOrDefaultAsync(e => e.Id == id);
@@ -43,7 +43,7 @@ public class EventRepository : IEventRepository
 
     public async Task<List<Event>> GetByStatusAsync(StatusEvento status)
     {
-        // filtra pelo status e ja inclui o organizador pra nao precisar de outra query
+        // filtra pelo status e já inclui o organizador pra não precisar de outra query
         return await _context.Events
             .Include(e => e.Organizador)
             .Where(e => e.Status == status)

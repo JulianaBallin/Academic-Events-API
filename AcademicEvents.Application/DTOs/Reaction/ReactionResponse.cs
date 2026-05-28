@@ -1,7 +1,7 @@
 namespace AcademicEvents.Application.DTOs.Reaction;
 
 /// <summary>
-/// Dados da reacao retornados nos endpoints de leitura.
+/// Dados da reação retornados nos endpoints de leitura.
 /// </summary>
 public class ReactionResponse
 {

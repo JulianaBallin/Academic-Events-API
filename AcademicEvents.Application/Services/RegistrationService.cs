@@ -7,8 +7,8 @@ using AcademicEvents.Exceptions;
 namespace AcademicEvents.Application.Services;
 
 /// <summary>
-/// Service de inscricoes em eventos.
-/// Valida duplicata antes de inserir mesmo com o indice unico no banco.
+/// Service de inscrições em eventos.
+/// Valida duplicata antes de inserir mesmo com o índice único no banco.
 /// </summary>
 public class RegistrationService : IRegistrationService
 {
@@ -21,10 +21,10 @@ public class RegistrationService : IRegistrationService
 
     public async Task<RegistrationResponse> CreateAsync(CreateRegistrationRequest request, int usuarioId)
     {
-        // verifica na camada de servico antes de chegar no banco
+        // verifica na camada de serviço antes de chegar no banco
         Registration? existente = await _repository.GetByUsuarioEEventoAsync(usuarioId, request.EventoId);
         if (existente is not null)
-            throw new InscricaoDuplicadaException("Voce ja esta inscrito neste evento.");
+            throw new InscricaoDuplicadaException("Você já está inscrito neste evento.");
 
         Registration inscricao = new Registration
         {
@@ -45,11 +45,11 @@ public class RegistrationService : IRegistrationService
     public async Task DeleteAsync(int id, int usuarioId)
     {
         Registration? inscricao = await _repository.GetByIdAsync(id);
-        if (inscricao is null) throw new NotFoundException("Inscricao nao encontrada.");
+        if (inscricao is null) throw new NotFoundException("Inscrição não encontrada.");
 
-        // so o proprio usuario pode cancelar a propria inscricao
+        // só o próprio usuário pode cancelar a própria inscrição
         if (inscricao.UsuarioId != usuarioId)
-            throw new UnauthorizedException("Voce so pode cancelar suas proprias inscricoes.");
+            throw new UnauthorizedException("Você só pode cancelar suas próprias inscrições.");
 
         await _repository.DeleteAsync(id);
     }

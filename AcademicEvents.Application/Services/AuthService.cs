@@ -12,7 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace AcademicEvents.Application.Services;
 
 /// <summary>
-/// Implementacao do service de autenticacao.
+/// Implementação do service de autenticação.
 /// Usa BCrypt para hash de senha e gera JWT Bearer Token.
 /// </summary>
 public class AuthService : IAuthService
@@ -28,11 +28,11 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
-        // nao pode ter dois usuarios com o mesmo email
+        // não pode ter dois usuários com o mesmo email
         if (await _repository.GetByEmailAsync(request.Email) is not null)
-            throw new DuplicateEmailException("Esse email ja esta em uso.");
+            throw new DuplicateEmailException("Esse email já está em uso.");
 
-        // BCrypt cuida do salt automaticamente, nao precisa passar nada extra
+        // BCrypt cuida do salt automaticamente, não precisa passar nada extra
         string senhaHash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
 
         User usuario = new User
@@ -50,9 +50,9 @@ public class AuthService : IAuthService
     {
         User? usuario = await _repository.GetByEmailAsync(request.Email);
 
-        // retorna o mesmo erro independente se email ou senha estao errados (seguranca)
+        // retorna o mesmo erro independente se email ou senha estão errados (segurança)
         if (usuario is null || !BCrypt.Net.BCrypt.Verify(request.Senha, usuario.SenhaHash))
-            throw new InvalidCredentialsException("Email ou senha invalidos.");
+            throw new InvalidCredentialsException("Email ou senha inválidos.");
 
         return GerarTokenResponse(usuario);
     }
@@ -61,7 +61,7 @@ public class AuthService : IAuthService
     {
         // pega as configs do appsettings pra assinar o token
         string key = _configuration["Jwt:Key"]
-            ?? throw new InvalidOperationException("Jwt:Key nao configurada.");
+            ?? throw new InvalidOperationException("Jwt:Key não configurada.");
         string issuer = _configuration["Jwt:Issuer"]!;
         string audience = _configuration["Jwt:Audience"]!;
         int expiresIn = int.Parse(_configuration["Jwt:ExpiresInHours"] ?? "8");

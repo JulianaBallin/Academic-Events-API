@@ -4,7 +4,7 @@ namespace AcademicEvents.Application.DTOs.Event;
 
 /// <summary>
 /// Dados do evento retornados nos endpoints de leitura.
-/// Nao expoe detalhes internos da entidade.
+/// Não expõe detalhes internos da entidade.
 /// </summary>
 public class EventResponse
 {

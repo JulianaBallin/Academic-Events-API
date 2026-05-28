@@ -1,8 +1,8 @@
 namespace AcademicEvents.Application.DTOs.Auth;
 
 /// <summary>
-/// Resposta dos endpoints de autenticacao.
-/// Contem o token JWT e dados basicos do usuario.
+/// Resposta dos endpoints de autenticação.
+/// Contém o token JWT e dados básicos do usuário.
 /// </summary>
 public class AuthResponse
 {

@@ -7,7 +7,7 @@ using AcademicEvents.Exceptions;
 namespace AcademicEvents.Application.Services;
 
 /// <summary>
-/// Service de comentarios em eventos.
+/// Service de comentários em eventos.
 /// </summary>
 public class CommentService : ICommentService
 {
@@ -40,11 +40,11 @@ public class CommentService : ICommentService
     public async Task DeleteAsync(int id, int usuarioId)
     {
         Comment? comentario = await _repository.GetByIdAsync(id);
-        if (comentario is null) throw new NotFoundException("Comentario nao encontrado.");
+        if (comentario is null) throw new NotFoundException("Comentário não encontrado.");
 
-        // so o autor pode deletar o proprio comentario
+        // só o autor pode deletar o próprio comentário
         if (comentario.UsuarioId != usuarioId)
-            throw new UnauthorizedException("Apenas o autor pode remover este comentario.");
+            throw new UnauthorizedException("Apenas o autor pode remover este comentário.");
 
         await _repository.DeleteAsync(id);
     }

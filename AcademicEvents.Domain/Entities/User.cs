@@ -1,7 +1,7 @@
 namespace AcademicEvents.Domain.Entities;
 
 /// <summary>
-/// Representa um usuario cadastrado na plataforma.
+/// Representa um usuário cadastrado na plataforma.
 /// Pode organizar eventos, se inscrever, comentar e reagir.
 /// </summary>
 public class User

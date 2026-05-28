@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de comentarios em eventos.
+/// Controller de comentários em eventos.
 /// </summary>
 [ApiController]
 [Route("api/comments")]

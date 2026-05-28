@@ -3,8 +3,8 @@ using AcademicEvents.Domain.Enums;
 namespace AcademicEvents.Domain.Entities;
 
 /// <summary>
-/// Reacao de um usuario a um evento.
-/// Cada usuario pode reagir uma vez por evento com um tipo diferente.
+/// Reação de um usuário a um evento.
+/// Cada usuário pode reagir uma vez por evento com um tipo diferente.
 /// </summary>
 public class Reaction
 {

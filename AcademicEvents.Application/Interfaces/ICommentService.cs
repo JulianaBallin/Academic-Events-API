@@ -3,7 +3,7 @@ using AcademicEvents.Application.DTOs.Comment;
 namespace AcademicEvents.Application.Interfaces;
 
 /// <summary>
-/// Contrato do service de comentarios.
+/// Contrato do service de comentários.
 /// </summary>
 public interface ICommentService
 {

@@ -1,7 +1,7 @@
 namespace AcademicEvents.Application.DTOs.Auth;
 
 /// <summary>
-/// Dados recebidos no endpoint de cadastro de usuario.
+/// Dados recebidos no endpoint de cadastro de usuário.
 /// </summary>
 public class RegisterRequest
 {

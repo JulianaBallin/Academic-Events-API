@@ -3,8 +3,8 @@ using AcademicEvents.Domain.Enums;
 namespace AcademicEvents.Domain.Entities;
 
 /// <summary>
-/// Inscricao de um usuario em um evento.
-/// O indice unico no banco impede duplicatas para o mesmo par usuario-evento.
+/// Inscrição de um usuário em um evento.
+/// O índice único no banco impede duplicatas para o mesmo par usuário-evento.
 /// </summary>
 public class Registration
 {

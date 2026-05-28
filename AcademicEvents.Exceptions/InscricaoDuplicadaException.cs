@@ -1,7 +1,7 @@
 namespace AcademicEvents.Exceptions;
 
 /// <summary>
-/// Lancada quando o usuario tenta se inscrever num evento em que ja esta inscrito.
+/// Lançada quando o usuário tenta se inscrever num evento em que já está inscrito.
 /// O controller deve capturar e retornar 400.
 /// </summary>
 public class InscricaoDuplicadaException : Exception

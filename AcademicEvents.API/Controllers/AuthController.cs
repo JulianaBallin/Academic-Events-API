@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de autenticacao. Todos os endpoints aqui sao publicos.
+/// Controller de autenticação. Todos os endpoints aqui são públicos.
 /// </summary>
 [ApiController]
 [Route("api/auth")]

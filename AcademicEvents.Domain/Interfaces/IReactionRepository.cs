@@ -3,8 +3,8 @@ using AcademicEvents.Domain.Entities;
 namespace AcademicEvents.Domain.Interfaces;
 
 /// <summary>
-/// Contrato do repository de reacoes.
-/// A implementacao fica na Infrastructure.
+/// Contrato do repository de reações.
+/// A implementação fica na Infrastructure.
 /// </summary>
 public interface IReactionRepository
 {

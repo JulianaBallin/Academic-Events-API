@@ -1,7 +1,7 @@
 namespace AcademicEvents.Application.DTOs.Registration;
 
 /// <summary>
-/// Dados da inscricao retornados nos endpoints de leitura.
+/// Dados da inscrição retornados nos endpoints de leitura.
 /// </summary>
 public class RegistrationResponse
 {

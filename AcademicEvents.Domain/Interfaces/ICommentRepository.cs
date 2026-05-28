@@ -3,8 +3,8 @@ using AcademicEvents.Domain.Entities;
 namespace AcademicEvents.Domain.Interfaces;
 
 /// <summary>
-/// Contrato do repository de comentarios.
-/// A implementacao fica na Infrastructure.
+/// Contrato do repository de comentários.
+/// A implementação fica na Infrastructure.
 /// </summary>
 public interface ICommentRepository
 {

@@ -16,12 +16,12 @@ public static class InfrastructureDependencyInjectionExtension
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         string connectionString = configuration.GetConnectionString("DefaultConnection")
-            ?? throw new InvalidOperationException("Connection string nao encontrada.");
+            ?? throw new InvalidOperationException("Connection string não encontrada.");
 
         services.AddDbContext<AcademicEventsDbContext>(options =>
             options.UseNpgsql(connectionString));
 
-        // registra cada repository como Scoped (uma instancia por request)
+        // registra cada repository como Scoped (uma instância por request)
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IRegistrationRepository, RegistrationRepository>();

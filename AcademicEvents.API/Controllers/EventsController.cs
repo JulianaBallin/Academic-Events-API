@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de eventos academicos.
-/// Rotas GET sao publicas. POST, PUT e DELETE exigem autenticacao.
+/// Controller de eventos acadêmicos.
+/// Rotas GET são públicas. POST, PUT e DELETE exigem autenticação.
 /// </summary>
 [ApiController]
 [Route("api/events")]
@@ -49,7 +49,7 @@ public class EventsController : ControllerBase
     {
         try
         {
-            // pega o id do usuario logado do token JWT
+            // pega o id do usuário logado do token JWT
             int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             EventResponse response = await _service.CreateAsync(request, usuarioId);
             return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);

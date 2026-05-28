@@ -7,8 +7,8 @@ using AcademicEvents.Exceptions;
 namespace AcademicEvents.Application.Services;
 
 /// <summary>
-/// Service de reacoes a eventos.
-/// Um usuario pode ter apenas uma reacao por evento.
+/// Service de reações a eventos.
+/// Um usuário pode ter apenas uma reação por evento.
 /// </summary>
 public class ReactionService : IReactionService
 {
@@ -21,10 +21,10 @@ public class ReactionService : IReactionService
 
     public async Task<ReactionResponse> CreateAsync(CreateReactionRequest request, int usuarioId)
     {
-        // verifica se o usuario ja reagiu a este evento
+        // verifica se o usuário já reagiu a este evento
         Reaction? existente = await _repository.GetByUsuarioEEventoAsync(usuarioId, request.EventoId);
         if (existente is not null)
-            throw new InvalidOperationException("Voce ja reagiu a este evento. Delete a reacao anterior para mudar.");
+            throw new InvalidOperationException("Você já reagiu a este evento. Delete a reação anterior para mudar.");
 
         Reaction reacao = new Reaction
         {
@@ -46,10 +46,10 @@ public class ReactionService : IReactionService
     public async Task DeleteAsync(int id, int usuarioId)
     {
         Reaction? reacao = await _repository.GetByIdAsync(id);
-        if (reacao is null) throw new NotFoundException("Reacao nao encontrada.");
+        if (reacao is null) throw new NotFoundException("Reação não encontrada.");
 
         if (reacao.UsuarioId != usuarioId)
-            throw new UnauthorizedException("Apenas o autor pode remover esta reacao.");
+            throw new UnauthorizedException("Apenas o autor pode remover esta reação.");
 
         await _repository.DeleteAsync(id);
     }

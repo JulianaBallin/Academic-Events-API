@@ -3,7 +3,7 @@ using AcademicEvents.Application.DTOs.Event;
 namespace AcademicEvents.Application.Interfaces;
 
 /// <summary>
-/// Contrato do service de eventos academicos.
+/// Contrato do service de eventos acadêmicos.
 /// </summary>
 public interface IEventService
 {

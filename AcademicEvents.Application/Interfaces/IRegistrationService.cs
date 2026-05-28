@@ -3,7 +3,7 @@ using AcademicEvents.Application.DTOs.Registration;
 namespace AcademicEvents.Application.Interfaces;
 
 /// <summary>
-/// Contrato do service de inscricoes em eventos.
+/// Contrato do service de inscrições em eventos.
 /// </summary>
 public interface IRegistrationService
 {

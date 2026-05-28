@@ -3,8 +3,8 @@ using AcademicEvents.Domain.Enums;
 namespace AcademicEvents.Domain.Entities;
 
 /// <summary>
-/// Evento academico criado por um usuario organizador.
-/// Pode ser publicado, cancelado ou concluido.
+/// Evento acadêmico criado por um usuário organizador.
+/// Pode ser publicado, cancelado ou concluído.
 /// </summary>
 public class Event
 {

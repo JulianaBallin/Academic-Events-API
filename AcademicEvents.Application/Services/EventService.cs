@@ -8,7 +8,7 @@ using AcademicEvents.Exceptions;
 namespace AcademicEvents.Application.Services;
 
 /// <summary>
-/// Service de eventos academicos.
+/// Service de eventos acadêmicos.
 /// Cuida de criar, buscar, atualizar e remover eventos.
 /// </summary>
 public class EventService : IEventService
@@ -23,7 +23,7 @@ public class EventService : IEventService
     public async Task<EventResponse> CreateAsync(CreateEventRequest request, int organizadorId)
     {
         if (request.DataFim <= request.DataInicio)
-            throw new InvalidOperationException("A data de fim deve ser posterior a data de inicio.");
+            throw new InvalidOperationException("A data de fim deve ser posterior à data de início.");
 
         Event evento = new Event
         {
@@ -57,7 +57,7 @@ public class EventService : IEventService
 
         // tenta converter o status recebido como string para o enum
         if (!Enum.TryParse<StatusEvento>(status, ignoreCase: true, out StatusEvento statusEnum))
-            throw new InvalidOperationException($"Status '{status}' invalido.");
+            throw new InvalidOperationException($"Status '{status}' inválido.");
 
         List<Event> filtrados = await _repository.GetByStatusAsync(statusEnum);
         return filtrados.Select(MapearParaResponse).ToList();
@@ -66,9 +66,9 @@ public class EventService : IEventService
     public async Task<EventResponse?> UpdateAsync(int id, UpdateEventRequest request, int usuarioId)
     {
         Event? evento = await _repository.GetByIdAsync(id);
-        if (evento is null) throw new NotFoundException("Evento nao encontrado.");
+        if (evento is null) throw new NotFoundException("Evento não encontrado.");
 
-        // so o organizador pode editar o proprio evento
+        // só o organizador pode editar o próprio evento
         if (evento.OrganizadorId != usuarioId)
             throw new UnauthorizedException("Apenas o organizador pode editar este evento.");
 
@@ -86,7 +86,7 @@ public class EventService : IEventService
     public async Task DeleteAsync(int id, int usuarioId)
     {
         Event? evento = await _repository.GetByIdAsync(id);
-        if (evento is null) throw new NotFoundException("Evento nao encontrado.");
+        if (evento is null) throw new NotFoundException("Evento não encontrado.");
 
         if (evento.OrganizadorId != usuarioId)
             throw new UnauthorizedException("Apenas o organizador pode remover este evento.");

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de inscricoes em eventos.
+/// Controller de inscrições em eventos.
 /// </summary>
 [ApiController]
 [Route("api/registrations")]

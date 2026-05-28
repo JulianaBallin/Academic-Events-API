@@ -5,7 +5,7 @@ namespace AcademicEvents.Infrastructure.Data;
 
 /// <summary>
 /// DbContext principal do projeto.
-/// Mapeia as entidades do dominio para o PostgreSQL via EF Core.
+/// Mapeia as entidades do domínio para o PostgreSQL via EF Core.
 /// </summary>
 public class AcademicEventsDbContext : DbContext
 {
@@ -22,10 +22,10 @@ public class AcademicEventsDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // email unico por usuario
+        // email único por usuário
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
 
-        // um usuario nao pode se inscrever duas vezes no mesmo evento
+        // um usuário não pode se inscrever duas vezes no mesmo evento
         modelBuilder.Entity<Registration>()
             .HasIndex(r => new { r.UsuarioId, r.EventoId })
             .IsUnique();

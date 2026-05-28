@@ -1,7 +1,7 @@
 namespace AcademicEvents.Domain.Entities;
 
 /// <summary>
-/// Comentario feito por um usuario em um evento.
+/// Comentário feito por um usuário em um evento.
 /// </summary>
 public class Comment
 {

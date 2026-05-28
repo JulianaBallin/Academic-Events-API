@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AcademicEvents.Infrastructure.Repositories;
 
 /// <summary>
-/// Repository de reacoes. Usa o DbContext para acessar o PostgreSQL.
+/// Repository de reações. Usa o DbContext para acessar o PostgreSQL.
 /// </summary>
 public class ReactionRepository : IReactionRepository
 {

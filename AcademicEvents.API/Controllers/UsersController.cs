@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de dados do usuario autenticado.
+/// Controller de dados do usuário autenticado.
 /// </summary>
 [ApiController]
 [Route("api")]
@@ -15,7 +15,7 @@ public class UsersController : ControllerBase
     [Authorize]
     public IActionResult Me()
     {
-        // as claims do JWT ficam disponiveis no User do ControllerBase
+        // as claims do JWT ficam disponíveis no User do ControllerBase
         string id = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         string email = User.FindFirst(ClaimTypes.Email)!.Value;
         string nome = User.FindFirst(ClaimTypes.Name)!.Value;

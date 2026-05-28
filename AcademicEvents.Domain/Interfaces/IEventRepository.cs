@@ -5,7 +5,7 @@ namespace AcademicEvents.Domain.Interfaces;
 
 /// <summary>
 /// Contrato do repository de eventos.
-/// A implementacao fica na Infrastructure.
+/// A implementação fica na Infrastructure.
 /// </summary>
 public interface IEventRepository
 {

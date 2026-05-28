@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AcademicEvents.Infrastructure.Repositories;
 
 /// <summary>
-/// Repository de inscricoes. Usa o DbContext para acessar o PostgreSQL.
+/// Repository de inscrições. Usa o DbContext para acessar o PostgreSQL.
 /// </summary>
 public class RegistrationRepository : IRegistrationRepository
 {
