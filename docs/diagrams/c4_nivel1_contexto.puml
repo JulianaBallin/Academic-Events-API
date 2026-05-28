@@ -5,26 +5,26 @@
 
 LAYOUT_WITH_LEGEND()
 
-title [Nivel 1] Contexto do Sistema - Academic Events API
+title [Nível 1] Contexto do Sistema - Academic Events API
 
 ' atores externos que interagem com o sistema
-Person(usuario, "Usuario", "Participante da plataforma.\nPode se inscrever em eventos,\ncommentar e reagir.")
+Person(usuario, "Usuário", "Participante da plataforma.\nPode se inscrever em eventos,\ncomentar e reagir.")
 
-Person(organizador, "Organizador", "Usuario que cria e gerencia\nEventos academicos na plataforma.")
+Person(organizador, "Organizador", "Usuário que cria e gerencia\neventos acadêmicos na plataforma.")
 
 ' sistema principal que estamos documentando
-System(api, "Academic Events API", "API REST em ASP.NET Core para\ngerenciar eventos academicos,\ninscricoes, comentarios e reacoes.\nAutenticacao via JWT Bearer Token.")
+System(api, "Academic Events API", "API REST em ASP.NET Core para\ngerenciar eventos acadêmicos,\ninscrições, comentários e reações.\nAutenticação via JWT Bearer Token.")
 
-' sistema externo de persistencia
-System_Ext(postgres, "PostgreSQL", "Banco de dados relacional.\nArmazena usuarios, eventos,\ninscricoes, comentarios e reacoes.")
+' sistema externo de persistência
+System_Ext(postgres, "PostgreSQL", "Banco de dados relacional.\nArmazena usuários, eventos,\ninscrições, comentários e reações.")
 
-' sistema externo de documentacao (gerado automaticamente)
-System_Ext(swagger, "Swagger / OpenAPI", "Interface de documentacao e teste\ndos endpoints da API. Gerada\nautomaticamente pelo ASP.NET Core.")
+' sistema externo de documentação (gerado automaticamente)
+System_Ext(swagger, "Swagger / OpenAPI", "Interface de documentação e teste\ndos endpoints da API. Gerada\nautomaticamente pelo ASP.NET Core.")
 
 ' relacionamentos
 Rel(usuario, api, "Busca eventos, se inscreve,\ncomenta e reage", "HTTPS / JSON")
 Rel(organizador, api, "Cria, edita e cancela eventos", "HTTPS / JSON")
-Rel(api, postgres, "Le e grava todos os dados\nda plataforma", "EF Core / Npgsql / SQL")
+Rel(api, postgres, "Lê e grava todos os dados\nda plataforma", "EF Core / Npgsql / SQL")
 Rel(usuario, swagger, "Testa endpoints durante\no desenvolvimento", "HTTP")
 Rel(organizador, swagger, "Testa endpoints durante\no desenvolvimento", "HTTP")
 

@@ -1,9 +1,9 @@
 @startuml c4_nivel4_codigo
 
-' nivel 4 do C4: diagrama de classes do dominio
+' nível 4 do C4: diagrama de classes do domínio
 ' mostra as entidades, enums e relacionamentos do AcademicEvents.Domain
 
-title [Nivel 4] Classes do Dominio - AcademicEvents.Domain
+title [Nível 4] Classes do Domínio - AcademicEvents.Domain
 
 skinparam classAttributeIconSize 0
 skinparam class {
@@ -20,7 +20,7 @@ skinparam enum {
   HeaderFontColor #FFFFFF
 }
 
-' entidades do dominio
+' entidades do domínio
 class User {
   + Id : Guid
   + Nome : string
@@ -83,7 +83,7 @@ class Reaction {
   + Evento : Event
 }
 
-' enums do dominio
+' enums do domínio
 enum StatusEvento {
   Rascunho
   Publicado

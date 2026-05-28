@@ -193,7 +193,7 @@ Abra `AcademicEvents.API/appsettings.json` e ajuste as chaves conforme o seu amb
     "DefaultConnection": "Host=localhost;Port=5432;Database=academic_events_db;Username=academic_user;Password=academic_password"
   },
   "Jwt": {
-    "Key": "sua-chave-secreta-aqui-minimo-32-caracteres",
+    "Key": "sua-chave-secreta-aqui-mínimo-32-caracteres",
     "Issuer": "AcademicEventsAPI",
     "Audience": "AcademicEventsClientes",
     "ExpiresInHours": 8
@@ -334,7 +334,7 @@ Commits convencionais em português, sem indicação de IA:
 ```
 feat(Event): adiciona entidade Event com enum StatusEvento
 feat(AuthService): implementa registro e login com JWT
-fix(RegistrationService): corrige validacao de inscricao duplicada
+fix(RegistrationService): corrige validação de inscrição duplicada
 docs(readme): atualiza secao de endpoints
 ```
 
@@ -363,7 +363,7 @@ Sempre usar a branch `develop` para enviar as alterações.
 |------|-----------------|
 | Thailsson Clementino de Andrade | Solution, estrutura inicial, .gitignore e organização do repositório |
 | Stevão Whinter Marques de Andrade | Domain: entidades, enums e interfaces de repository |
-| Marcio Franklin de Oliveira Lima | Infrastructure: DbContext, EF Core, migrations e repositories |
+| Márcio Franklin de Oliveira Lima | Infrastructure: DbContext, EF Core, migrations e repositories |
 | Allef Oliveira Ramos | API: controllers CRUD, Swagger e Program.cs base |
 | Juliana Ballin Lima | Application layer: DTOs, services, JWT, exceções e testes |
 

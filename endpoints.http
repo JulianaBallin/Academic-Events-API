@@ -1,4 +1,4 @@
-### 1. Cadastrar usuario
+### 1. Cadastrar usuário
 POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
@@ -17,7 +17,7 @@ Content-Type: application/json
   "senha": "Senha123!"
 }
 
-### 3. Ver dados do usuario logado (substituir TOKEN pelo valor retornado no login)
+### 3. Ver dados do usuário logado (substituir TOKEN pelo valor retornado no login)
 GET http://localhost:5000/api/me
 Authorization: Bearer TOKEN
 
@@ -28,7 +28,7 @@ Authorization: Bearer TOKEN
 
 {
   "titulo": "Workshop de C# em Manaus",
-  "descricao": "Workshop pratico sobre ASP.NET Core",
+  "descricao": "Workshop prático sobre ASP.NET Core",
   "dataInicio": "2026-06-10T09:00:00",
   "dataFim": "2026-06-10T18:00:00",
   "local": "Bloco A - Sala 201"
@@ -50,10 +50,10 @@ Authorization: Bearer TOKEN
 
 {
   "titulo": "Workshop de C# em Manaus - Atualizado",
-  "descricao": "Workshop pratico sobre ASP.NET Core com novidades",
+  "descricao": "Workshop prático sobre ASP.NET Core com novidades",
   "dataInicio": "2026-06-10T09:00:00",
   "dataFim": "2026-06-10T18:00:00",
-  "local": "Bloco B - Auditorio",
+  "local": "Bloco B - Auditório",
   "status": "Publicado"
 }
 
@@ -66,11 +66,11 @@ Authorization: Bearer TOKEN
   "eventoId": 1
 }
 
-### 10. Ver minhas inscricoes
+### 10. Ver minhas inscrições
 GET http://localhost:5000/api/registrations/me
 Authorization: Bearer TOKEN
 
-### 11. Cancelar inscricao (substituir TOKEN e id)
+### 11. Cancelar inscrição (substituir TOKEN e id)
 DELETE http://localhost:5000/api/registrations/1
 Authorization: Bearer TOKEN
 
@@ -81,13 +81,13 @@ Authorization: Bearer TOKEN
 
 {
   "eventoId": 1,
-  "conteudo": "Otimo evento, vai aprender muito!"
+  "conteudo": "Ótimo evento, vai aprender muito!"
 }
 
-### 13. Listar comentarios de um evento
+### 13. Listar comentários de um evento
 GET http://localhost:5000/api/comments?eventoId=1
 
-### 14. Deletar comentario
+### 14. Deletar comentário
 DELETE http://localhost:5000/api/comments/1
 Authorization: Bearer TOKEN
 
@@ -101,10 +101,10 @@ Authorization: Bearer TOKEN
   "tipo": "VouParticipar"
 }
 
-### 16. Listar reacoes de um evento
+### 16. Listar reações de um evento
 GET http://localhost:5000/api/reactions?eventoId=1
 
-### 17. Deletar reacao
+### 17. Deletar reação
 DELETE http://localhost:5000/api/reactions/1
 Authorization: Bearer TOKEN
 

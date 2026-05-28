@@ -1,43 +1,43 @@
 @startuml c4_nivel2_container
 
-' lib C4 para nivel de container (projetos da solution)
+' lib C4 para nível de container (projetos da solution)
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
 LAYOUT_WITH_LEGEND()
 
-title [Nivel 2] Containers - AcademicEvents Solution
+title [Nível 2] Containers - AcademicEvents Solution
 
-Person(usuario, "Usuario / Organizador", "Acessa a API via Swagger,\nPostman ou aplicacao cliente.")
+Person(usuario, "Usuário / Organizador", "Acessa a API via Swagger,\nPostman ou aplicação cliente.")
 
 ' agrupamento da nossa solution .NET
 System_Boundary(solution, "AcademicEvents Solution (.NET 8)") {
 
   Container(apiProj, "AcademicEvents.API", "ASP.NET Core Web API",
-    "Camada de entrada da aplicacao.\nControllers, configuracao de autenticacao,\nSwagger, middlewares e Program.cs.")
+    "Camada de entrada da aplicação.\nControllers, configuração de autenticação,\nSwagger, middlewares e Program.cs.")
 
   Container(appProj, "AcademicEvents.Application", "Class Library C#",
-    "Camada de aplicacao.\nDTOs, services, interfaces de servico,\nvalidacoes de entrada e casos de uso.")
+    "Camada de aplicação.\nDTOs, services, interfaces de serviço,\nvalidações de entrada e casos de uso.")
 
   Container(domainProj, "AcademicEvents.Domain", "Class Library C#",
-    "Camada de dominio.\nEntidades, enums e regras essenciais\ndo problema, sem dependencia de framework.")
+    "Camada de domínio.\nEntidades, enums e regras essenciais\ndo problema, sem dependência de framework.")
 
   Container(infraProj, "AcademicEvents.Infrastructure", "Class Library C#",
-    "Camada de infraestrutura.\nDbContext, repositories, migrations\ne configuracoes do EF Core.")
+    "Camada de infraestrutura.\nDbContext, repositories, migrations\ne configurações do EF Core.")
 
   Container(excProj, "AcademicEvents.Exceptions", "Class Library C#",
-    "Excecoes customizadas e modelos\nde erro padronizados para a API.")
+    "Exceções customizadas e modelos\nde erro padronizados para a API.")
 }
 
 ' banco de dados fora da solution
 ContainerDb(db, "PostgreSQL 15", "Banco de Dados Relacional",
   "Armazena todos os dados da plataforma.\nRoda em container Docker (docker-compose).")
 
-' fluxo de dependencias entre os projetos
-Rel(usuario, apiProj, "Requisicoes HTTP/HTTPS", "JSON / Bearer Token")
-Rel(apiProj, appProj, "Chama services para executar\nregras de negocio", ".NET / DI")
-Rel(apiProj, excProj, "Captura e trata excecoes\ncustomizadas", ".NET")
-Rel(appProj, domainProj, "Usa entidades e enums\ndo dominio", ".NET")
+' fluxo de dependências entre os projetos
+Rel(usuario, apiProj, "Requisições HTTP/HTTPS", "JSON / Bearer Token")
+Rel(apiProj, appProj, "Chama services para executar\nregras de negócio", ".NET / DI")
+Rel(apiProj, excProj, "Captura e trata exceções\ncustomizadas", ".NET")
+Rel(appProj, domainProj, "Usa entidades e enums\ndo domínio", ".NET")
 Rel(appProj, infraProj, "Usa interfaces dos repositories\npara acessar dados", ".NET / DI")
-Rel(infraProj, db, "Le e grava dados via\nEntity Framework Core", "EF Core / Npgsql")
+Rel(infraProj, db, "Lê e grava dados via\nEntity Framework Core", "EF Core / Npgsql")
 
 @enduml
