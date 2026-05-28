@@ -1,0 +1,22 @@
+services:
+  academic-events-postgres:
+    image: postgres:15
+    container_name: academic-events-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: academic_events_db
+      POSTGRES_USER: academic_user
+      POSTGRES_PASSWORD: academic_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - academic_events_postgres_data:/var/lib/postgresql/data
+    networks:
+      - academic-events-network
+
+volumes:
+  academic_events_postgres_data:
+
+networks:
+  academic-events-network:
+    driver: bridge

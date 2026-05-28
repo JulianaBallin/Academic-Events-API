@@ -1,0 +1,113 @@
+### 1. Cadastrar usuário
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "nome": "Maria Silva",
+  "email": "maria@teste.com",
+  "senha": "Senha123!"
+}
+
+### 2. Fazer login e copiar o token retornado
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "maria@teste.com",
+  "senha": "Senha123!"
+}
+
+### 3. Ver dados do usuário logado (substituir TOKEN pelo valor retornado no login)
+GET http://localhost:5000/api/me
+Authorization: Bearer TOKEN
+
+### 4. Criar evento (substituir TOKEN)
+POST http://localhost:5000/api/events
+Content-Type: application/json
+Authorization: Bearer TOKEN
+
+{
+  "titulo": "Workshop de C# em Manaus",
+  "descricao": "Workshop prático sobre ASP.NET Core",
+  "dataInicio": "2026-06-10T09:00:00",
+  "dataFim": "2026-06-10T18:00:00",
+  "local": "Bloco A - Sala 201"
+}
+
+### 5. Listar todos os eventos
+GET http://localhost:5000/api/events
+
+### 6. Filtrar por status
+GET http://localhost:5000/api/events?status=Publicado
+
+### 7. Buscar evento por id
+GET http://localhost:5000/api/events/1
+
+### 8. Atualizar evento (substituir TOKEN e id)
+PUT http://localhost:5000/api/events/1
+Content-Type: application/json
+Authorization: Bearer TOKEN
+
+{
+  "titulo": "Workshop de C# em Manaus - Atualizado",
+  "descricao": "Workshop prático sobre ASP.NET Core com novidades",
+  "dataInicio": "2026-06-10T09:00:00",
+  "dataFim": "2026-06-10T18:00:00",
+  "local": "Bloco B - Auditório",
+  "status": "Publicado"
+}
+
+### 9. Se inscrever em um evento (substituir TOKEN)
+POST http://localhost:5000/api/registrations
+Content-Type: application/json
+Authorization: Bearer TOKEN
+
+{
+  "eventoId": 1
+}
+
+### 10. Ver minhas inscrições
+GET http://localhost:5000/api/registrations/me
+Authorization: Bearer TOKEN
+
+### 11. Cancelar inscrição (substituir TOKEN e id)
+DELETE http://localhost:5000/api/registrations/1
+Authorization: Bearer TOKEN
+
+### 12. Comentar em um evento
+POST http://localhost:5000/api/comments
+Content-Type: application/json
+Authorization: Bearer TOKEN
+
+{
+  "eventoId": 1,
+  "conteudo": "Ótimo evento, vai aprender muito!"
+}
+
+### 13. Listar comentários de um evento
+GET http://localhost:5000/api/comments?eventoId=1
+
+### 14. Deletar comentário
+DELETE http://localhost:5000/api/comments/1
+Authorization: Bearer TOKEN
+
+### 15. Reagir a um evento
+POST http://localhost:5000/api/reactions
+Content-Type: application/json
+Authorization: Bearer TOKEN
+
+{
+  "eventoId": 1,
+  "tipo": "VouParticipar"
+}
+
+### 16. Listar reações de um evento
+GET http://localhost:5000/api/reactions?eventoId=1
+
+### 17. Deletar reação
+DELETE http://localhost:5000/api/reactions/1
+Authorization: Bearer TOKEN
+
+### 18. Deletar evento (substituir TOKEN e id)
+DELETE http://localhost:5000/api/events/1
+Authorization: Bearer TOKEN

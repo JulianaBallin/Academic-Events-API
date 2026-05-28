@@ -1,0 +1,92 @@
+@startuml c4_nivel3_componente
+
+' lib C4 para nível de componente (classes internas dos projetos)
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_LEFT_RIGHT()
+
+title [Nível 3] Componentes - API e Application
+
+' componentes internos do projeto AcademicEvents.API
+Container_Boundary(api, "AcademicEvents.API") {
+
+  Component(program, "Program.cs", "ASP.NET Core",
+    "Configura DI, EF Core, JWT Bearer,\nSwagger e middlewares globais.")
+
+  Component(jwtMid, "JWT Middleware", "ASP.NET Core Middleware",
+    "Valida o Bearer Token antes de\nliberar acesso às rotas protegidas.")
+
+  Component(authCtrl, "AuthController", "ASP.NET Core Controller",
+    "POST /api/auth/register\nPOST /api/auth/login\nEndpoints públicos de autenticação.")
+
+  Component(userCtrl, "UsersController", "ASP.NET Core Controller",
+    "GET /api/me\nRetorna dados do usuário autenticado.")
+
+  Component(eventCtrl, "EventsController", "ASP.NET Core Controller",
+    "CRUD completo de eventos acadêmicos.\nFiltros por status e organizador.")
+
+  Component(commentCtrl, "CommentsController", "ASP.NET Core Controller",
+    "Gerencia comentários em eventos.")
+
+  Component(reactionCtrl, "ReactionsController", "ASP.NET Core Controller",
+    "Gerencia reações (curtidas) em eventos.")
+
+  Component(registrationCtrl, "RegistrationsController", "ASP.NET Core Controller",
+    "Inscrição de usuários em eventos.\nImpede inscrição duplicada.")
+}
+
+' componentes internos do projeto AcademicEvents.Application
+Container_Boundary(app, "AcademicEvents.Application") {
+
+  Component(authSvc, "AuthService", "C# Service",
+    "Registro de usuário com hash BCrypt,\nlogin e geração do token JWT.")
+
+  Component(eventSvc, "EventService", "C# Service",
+    "Regras de negócio de eventos:\ncriar, editar, cancelar, listar com filtros.")
+
+  Component(commentSvc, "CommentService", "C# Service",
+    "Regras para adicionar e remover\ncomentários em eventos.")
+
+  Component(reactionSvc, "ReactionService", "C# Service",
+    "Regras para adicionar reações.\nUm usuário só pode reagir uma vez.")
+
+  Component(regSvc, "RegistrationService", "C# Service",
+    "Processa inscrições, valida duplicatas\ne gerencia status da inscrição.")
+
+  Component(dtos, "DTOs (Request / Response)", "C# Classes",
+    "Modelos de entrada e saída dos\nendpoints. Desacopla entidades do HTTP.")
+
+  Component(interfaces, "Interfaces dos Services", "C# Interfaces",
+    "IAuthService, IEventService,\nICommentService, IReactionService,\nIRegistrationService.")
+}
+
+' controllers chamam os services correspondentes
+Rel(authCtrl, authSvc, "Usa")
+Rel(userCtrl, authSvc, "Usa para buscar usuário logado")
+Rel(eventCtrl, eventSvc, "Usa")
+Rel(commentCtrl, commentSvc, "Usa")
+Rel(reactionCtrl, reactionSvc, "Usa")
+Rel(registrationCtrl, regSvc, "Usa")
+
+' services implementam as interfaces (inversão de dependência)
+Rel(authSvc, interfaces, "Implementa IAuthService")
+Rel(eventSvc, interfaces, "Implementa IEventService")
+Rel(commentSvc, interfaces, "Implementa ICommentService")
+Rel(reactionSvc, interfaces, "Implementa IReactionService")
+Rel(regSvc, interfaces, "Implementa IRegistrationService")
+
+' controllers usam os DTOs para entrada e saída
+Rel(authCtrl, dtos, "Recebe e retorna")
+Rel(eventCtrl, dtos, "Recebe e retorna")
+Rel(commentCtrl, dtos, "Recebe e retorna")
+Rel(reactionCtrl, dtos, "Recebe e retorna")
+Rel(registrationCtrl, dtos, "Recebe e retorna")
+
+' middleware atua antes dos controllers
+Rel(jwtMid, userCtrl, "Protege a rota")
+Rel(jwtMid, eventCtrl, "Protege rotas de escrita")
+Rel(jwtMid, commentCtrl, "Protege todas as rotas")
+Rel(jwtMid, reactionCtrl, "Protege todas as rotas")
+Rel(jwtMid, registrationCtrl, "Protege todas as rotas")
+
+@enduml
