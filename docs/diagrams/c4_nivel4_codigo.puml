@@ -1,0 +1,122 @@
+@startuml c4_nivel4_codigo
+
+' nivel 4 do C4: diagrama de classes do dominio
+' mostra as entidades, enums e relacionamentos do AcademicEvents.Domain
+
+title [Nivel 4] Classes do Dominio - AcademicEvents.Domain
+
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #EEF4FF
+  BorderColor #3B5CA8
+  HeaderBackgroundColor #3B5CA8
+  HeaderFontColor #FFFFFF
+  ArrowColor #2C3E7A
+}
+skinparam enum {
+  BackgroundColor #FFF8EE
+  BorderColor #D4943A
+  HeaderBackgroundColor #F5A623
+  HeaderFontColor #FFFFFF
+}
+
+' entidades do dominio
+class User {
+  + Id : Guid
+  + Nome : string
+  + Email : string
+  + SenhaHash : string
+  + CriadoEm : DateTime
+  --
+  + Eventos : ICollection<Event>
+  + Inscricoes : ICollection<Registration>
+  + Comentarios : ICollection<Comment>
+  + Reacoes : ICollection<Reaction>
+}
+
+class Event {
+  + Id : Guid
+  + Titulo : string
+  + Descricao : string
+  + DataInicio : DateTime
+  + DataFim : DateTime
+  + Local : string
+  + Status : StatusEvento
+  + OrganizadorId : Guid
+  --
+  + Organizador : User
+  + Inscricoes : ICollection<Registration>
+  + Comentarios : ICollection<Comment>
+  + Reacoes : ICollection<Reaction>
+}
+
+class Registration {
+  + Id : Guid
+  + DataInscricao : DateTime
+  + Status : StatusInscricao
+  + UsuarioId : Guid
+  + EventoId : Guid
+  --
+  + Usuario : User
+  + Evento : Event
+}
+
+class Comment {
+  + Id : Guid
+  + Conteudo : string
+  + CriadoEm : DateTime
+  + UsuarioId : Guid
+  + EventoId : Guid
+  --
+  + Usuario : User
+  + Evento : Event
+}
+
+class Reaction {
+  + Id : Guid
+  + Tipo : TipoReacao
+  + CriadoEm : DateTime
+  + UsuarioId : Guid
+  + EventoId : Guid
+  --
+  + Usuario : User
+  + Evento : Event
+}
+
+' enums do dominio
+enum StatusEvento {
+  Rascunho
+  Publicado
+  Cancelado
+  Concluido
+}
+
+enum StatusInscricao {
+  Pendente
+  Confirmada
+  Cancelada
+}
+
+enum TipoReacao {
+  Curtir
+  Adorei
+  Interessante
+  VouParticipar
+}
+
+' relacionamentos entre as entidades
+User "1" --> "0..*" Event : organiza
+User "1" --> "0..*" Registration : realiza
+User "1" --> "0..*" Comment : escreve
+User "1" --> "0..*" Reaction : faz
+
+Event "1" --> "0..*" Registration : recebe
+Event "1" --> "0..*" Comment : tem
+Event "1" --> "0..*" Reaction : recebe
+
+' entidades que usam os enums
+Event ..> StatusEvento
+Registration ..> StatusInscricao
+Reaction ..> TipoReacao
+
+@enduml

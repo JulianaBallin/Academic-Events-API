@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 140" width="500" height="140">
+
+  <!-- fundo branco limpo -->
+  <rect width="500" height="140" fill="#FFFFFF"/>
+
+  <!-- barra de acento lateral esquerda -->
+  <rect x="0" y="0" width="5" height="140" fill="#3B5CA8"/>
+
+  <!-- chapeu de formatura -->
+  <!-- losango (topo do chapeu) -->
+  <polygon points="78,22 122,46 78,70 34,46" fill="#3B5CA8"/>
+  <!-- base (borda horizontal) -->
+  <rect x="50" y="70" width="56" height="14" rx="2" fill="#2C3E7A"/>
+  <!-- haste central embaixo do losango -->
+  <rect x="74" y="70" width="8" height="26" fill="#1A2A5E"/>
+  <!-- botao no topo -->
+  <circle cx="78" cy="22" r="4" fill="#F5A623"/>
+  <!-- pendao: linha -->
+  <line x1="122" y1="46" x2="131" y2="82" stroke="#F5A623" stroke-width="2.5"/>
+  <!-- pendao: bolacha -->
+  <circle cx="131" cy="86" r="6" fill="#F5A623"/>
+  <!-- pendao: fios no final -->
+  <line x1="131" y1="86" x2="126" y2="99" stroke="#F5A623" stroke-width="1.5"/>
+  <line x1="131" y1="86" x2="131" y2="101" stroke="#F5A623" stroke-width="1.5"/>
+  <line x1="131" y1="86" x2="136" y2="99" stroke="#F5A623" stroke-width="1.5"/>
+
+  <!-- divisor vertical entre icone e texto -->
+  <line x1="158" y1="15" x2="158" y2="125" stroke="#DDE8FA" stroke-width="1.5"/>
+
+  <!-- texto: titulo em duas linhas -->
+  <text x="178" y="58"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="24"
+        font-weight="700"
+        fill="#1A2A6C">Academic Events</text>
+
+  <text x="178" y="90"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="24"
+        font-weight="700"
+        fill="#4A90D9">API</text>
+
+  <!-- linha fina sob o titulo -->
+  <line x1="178" y1="99" x2="468" y2="99" stroke="#EBF0FA" stroke-width="1"/>
+
+  <!-- subtitulo com curso e grupo -->
+  <text x="178" y="118"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="12"
+        fill="#888888">Grupo 6   |   Módulo Desenvolvimento em C#</text>
+
+</svg>
