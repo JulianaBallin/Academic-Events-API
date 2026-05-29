@@ -335,7 +335,7 @@ Commits convencionais em português, sem indicação de IA:
 feat(Event): adiciona entidade Event com enum StatusEvento
 feat(AuthService): implementa registro e login com JWT
 fix(RegistrationService): corrige validação de inscrição duplicada
-docs(readme): atualiza secao de endpoints
+docs(readme): atualiza seção de endpoints
 ```
 
 Sempre usar a branch `develop` para enviar as alterações.
