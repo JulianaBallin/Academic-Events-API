@@ -35,9 +35,10 @@ ContainerDb(db, "PostgreSQL 15", "Banco de Dados Relacional",
 ' fluxo de dependências entre os projetos
 Rel(usuario, apiProj, "Requisições HTTP/HTTPS", "JSON / Bearer Token")
 Rel(apiProj, appProj, "Chama services para executar\nregras de negócio", ".NET / DI")
+Rel(apiProj, infraProj, "Registra repositories no DI\ncontainer via extension method", ".NET / DI")
 Rel(apiProj, excProj, "Captura e trata exceções\ncustomizadas", ".NET")
-Rel(appProj, domainProj, "Usa entidades e enums\ndo domínio", ".NET")
-Rel(appProj, infraProj, "Usa interfaces dos repositories\npara acessar dados", ".NET / DI")
+Rel(appProj, domainProj, "Usa entidades, enums e\ninterfaces de repository", ".NET")
+Rel(infraProj, domainProj, "Implementa interfaces\nde repository do Domain", ".NET")
 Rel(infraProj, db, "Lê e grava dados via\nEntity Framework Core", "EF Core / Npgsql")
 
 @enduml

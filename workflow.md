@@ -13,7 +13,7 @@ O professor deixou o repositório `minisocial-project` como referência. Sigam o
 - Commits convencionais em português, sem mencionar IA: `feat(NomeArquivo): descrição`
 - Comentários XML no topo das classes (ver exemplos abaixo)
 - Comentários inline em português, naturais, só onde o código não fala por si mesmo
-- Nunca usar travessão (--) em comentários ou docs, usar hífen (-) mesmo
+- Nunca usar travessão em comentários ou docs, usar hífen simples (-)
 - Todas as propriedades das entidades iniciadas com letra maiúscula (padrão C#)
 
 ### Exemplo de documentação XML (obrigatório em todo arquivo)
@@ -69,7 +69,7 @@ Um par Request/Response para cada entidade: Auth, Event, Comment, Reaction, Regi
 ### 1.5 - Services (já feitos - AcademicEvents.Application/Services/)
 
 - `AuthService`: hash com BCrypt, valida credenciais e gera token JWT
-- `EventService`: CRUD de eventos com validação de organizador
+- `EventService`: CRUD de eventos com validação de organizador, filtro por status e por organizador
 - `CommentService`: criação e remoção de comentários
 - `ReactionService`: uma reação por usuário por evento
 - `RegistrationService`: inscrição com verificação de duplicata antes de chegar no banco
@@ -119,7 +119,7 @@ O `AcademicEventsDbContext` e os repositories já têm a estrutura base em `Acad
 
 Verifique em `AcademicEvents.Infrastructure/Data/AcademicEventsDbContext.cs` se os relacionamentos e índices únicos estão corretos.
 
-Depois que o banco estiver de pe via Docker, rode as migrations:
+Depois que o banco estiver de pé via Docker, rode as migrations:
 
 ```bash
 dotnet ef migrations add CriacaoInicial --project AcademicEvents.Infrastructure --startup-project AcademicEvents.API
@@ -136,6 +136,8 @@ Garanta que cada arquivo tem o comentário XML no topo da classe principal em po
 
 Os controllers de `Auth`, `Users`, `Events`, `Comments`, `Reactions` e `Registrations` já têm a estrutura base em `AcademicEvents.API/Controllers/`. Sua tarefa é revisar se todos os endpoints estão corretos, se o tratamento de exceções está adequado e se o retorno HTTP (200, 201, 400, 401, 403, 404) está certo para cada caso.
 
+Observação importante: para retornar 403 com mensagem no body, usar `StatusCode(403, ex.Message)` em vez de `Forbid(ex.Message)` - o método `Forbid()` não aceita texto de mensagem.
+
 O controller só recebe o request, chama o service e devolve a resposta. Regra de negócio fica no service, nunca aqui.
 
 Garanta que cada arquivo tem o comentário XML no topo da classe principal em português.
@@ -146,7 +148,7 @@ Garanta que cada arquivo tem o comentário XML no topo da classe principal em po
 
 **Tarefa: Testes manuais, Swagger e documentação final**
 
-Com a API rodando, sua tarefa e:
+Com a API rodando, sua tarefa é:
 
 1. Subir o banco com `docker compose up -d`
 2. Rodar a API com `dotnet run` dentro de `AcademicEvents.API/`
@@ -173,6 +175,79 @@ dotnet run
 ```
 
 Acesse o Swagger em: `http://localhost:5000/swagger`
+
+---
+
+## Estratégia de testes manuais
+
+### Roteiro básico (usar no Swagger ou no endpoints.http)
+
+**Passo 1 - Autenticação**
+```
+POST /api/auth/register  - cadastra um usuário de teste
+POST /api/auth/login     - faz login, copia o token JWT retornado
+```
+
+**Passo 2 - Eventos (público)**
+```
+GET /api/events                    - lista todos os eventos
+GET /api/events?status=Publicado   - filtra por status
+GET /api/events/{id}               - busca evento específico
+```
+
+**Passo 3 - Eventos (protegido - colocar Bearer Token no Swagger)**
+```
+POST /api/events                   - cria novo evento (anote o id retornado)
+GET  /api/events/meus              - lista seus próprios eventos
+PUT  /api/events/{id}              - edita o evento criado
+DELETE /api/events/{id}            - remove o evento
+```
+
+**Passo 4 - Inscrições**
+```
+POST /api/registrations            - inscreve no evento (body: {"eventoId": 1})
+GET  /api/registrations/me         - lista minhas inscrições
+POST /api/registrations            - tenta de novo no mesmo evento (deve retornar 400)
+DELETE /api/registrations/{id}     - cancela inscrição
+```
+
+**Passo 5 - Comentários**
+```
+GET  /api/comments?eventoId=1      - lista comentários (público)
+POST /api/comments                 - adiciona comentário (body: {"eventoId": 1, "conteudo": "..."})
+DELETE /api/comments/{id}          - remove comentário próprio
+DELETE /api/comments/{id}          - tenta remover comentário de outro usuário (deve retornar 403)
+```
+
+**Passo 6 - Reações**
+```
+GET  /api/reactions?eventoId=1     - lista reações (público)
+POST /api/reactions                - adiciona reação (body: {"eventoId": 1, "tipo": "Curtir"})
+POST /api/reactions                - tenta reagir de novo no mesmo evento (deve retornar 400)
+DELETE /api/reactions/{id}         - remove reação
+```
+
+### Casos de erro que devem ser testados
+
+| Cenário                                 | Endpoint              | Esperado |
+|-----------------------------------------|-----------------------|----------|
+| Login com senha errada                  | POST /api/auth/login  | 401      |
+| Email duplicado no cadastro             | POST /api/auth/register | 400    |
+| Criar evento sem token                  | POST /api/events      | 401      |
+| Editar evento de outro usuário          | PUT /api/events/{id}  | 403      |
+| Buscar evento que não existe            | GET /api/events/9999  | 404      |
+| Inscrição duplicada no mesmo evento     | POST /api/registrations | 400    |
+| Reagir duas vezes no mesmo evento       | POST /api/reactions   | 400      |
+| Remover comentário de outro usuário     | DELETE /api/comments/{id} | 403  |
+
+### Melhorias possíveis para o futuro
+
+- Adicionar paginação nos endpoints de lista (GET /api/events)
+- Endpoint para confirmar inscrição manualmente (organizador muda status de Pendente para Confirmada)
+- Endpoint para listar inscrições de um evento (organizador vê quem se inscreveu)
+- Validação de data: impedir criação de evento com data no passado
+- Rate limiting para prevenir abuso dos endpoints públicos
+- Testes de integração com banco real (xUnit + testcontainers)
 
 ---
 

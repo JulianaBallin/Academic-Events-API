@@ -9,9 +9,11 @@ namespace AcademicEvents.API.Controllers;
 
 /// <summary>
 /// Controller de reações a eventos.
+/// Cada usuário pode ter no máximo uma reação por evento.
 /// </summary>
 [ApiController]
 [Route("api/reactions")]
+[Produces("application/json")]
 public class ReactionsController : ControllerBase
 {
     private readonly IReactionService _service;
@@ -21,14 +23,23 @@ public class ReactionsController : ControllerBase
         _service = service;
     }
 
+    /// <summary>
+    /// Lista todas as reações de um evento.
+    /// </summary>
     [HttpGet]
+    [ProducesResponseType(typeof(List<ReactionResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByEvento([FromQuery] int eventoId)
     {
         return Ok(await _service.GetByEventoAsync(eventoId));
     }
 
+    /// <summary>
+    /// Adiciona uma reação a um evento. Só uma por usuário.
+    /// </summary>
     [HttpPost]
     [Authorize]
+    [ProducesResponseType(typeof(ReactionResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(CreateReactionRequest request)
     {
         try
@@ -43,8 +54,14 @@ public class ReactionsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Remove uma reação. Só o autor pode deletar.
+    /// </summary>
     [HttpDelete("{id:int}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {
         try
@@ -59,7 +76,7 @@ public class ReactionsController : ControllerBase
         }
         catch (UnauthorizedException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
         }
     }
 }

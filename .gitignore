@@ -10,5 +10,12 @@ obj/
 appsettings.Development.json
 AGENTE.md
 *.pdf
+!docs/relatorios/*.pdf
+*.pptx
 .claude/
 .history/
+# arquivos auxiliares do LaTeX (gerados na compilacao)
+docs/relatorios/*.aux
+docs/relatorios/*.log
+docs/relatorios/*.out
+docs/relatorios/*.toc

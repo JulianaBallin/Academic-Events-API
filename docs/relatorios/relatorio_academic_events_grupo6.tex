@@ -1,0 +1,625 @@
+% ==============================================================================
+% Relatório Técnico - Academic Events API
+% Curso de Desenvolvimento em C# - Módulo 3
+% Grupo 6: Thailsson, Stevão, Márcio, Allef, Juliana
+% ==============================================================================
+
+\documentclass[11pt, a4paper, oneside]{article}
+
+% ==============================================================================
+% Encoding e idioma
+% ==============================================================================
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+
+% ==============================================================================
+% Layout
+% ==============================================================================
+\usepackage{geometry}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{float}
+\usepackage{xurl}
+\usepackage{amsmath}
+
+% ==============================================================================
+% Gráficos, cores e diagramas
+% ==============================================================================
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
+
+% ==============================================================================
+% Tabelas e listas
+% ==============================================================================
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+
+% ==============================================================================
+% Caixas e código
+% ==============================================================================
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{listings}
+\usepackage{hyperref}
+
+% ==============================================================================
+% Geometria da página
+% ==============================================================================
+\geometry{
+  a4paper,
+  top=25mm, bottom=25mm,
+  left=25mm, right=20mm,
+  headheight=15mm, headsep=6mm,
+  footskip=12mm
+}
+
+\setlength{\emergencystretch}{3em}
+\setlength{\hfuzz}{2pt}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\tabcolsep}{4pt}
+\Urlmuskip=0mu plus 2mu\relax
+
+% ==============================================================================
+% Cores (identidade do projeto)
+% ==============================================================================
+\definecolor{apiblue}{RGB}{30, 58, 138}
+\definecolor{apilightblue}{RGB}{59, 130, 246}
+\definecolor{apidark}{RGB}{15, 23, 42}
+\definecolor{apilight}{RGB}{239, 246, 255}
+\definecolor{tablehead}{RGB}{30, 58, 138}
+\definecolor{tablealt}{RGB}{239, 246, 255}
+\definecolor{codebg}{RGB}{248, 250, 252}
+\definecolor{alertcolor}{RGB}{180, 100, 0}
+\definecolor{successcolor}{RGB}{22, 101, 52}
+\definecolor{successlight}{RGB}{220, 252, 231}
+
+% ==============================================================================
+% Hyperref
+% ==============================================================================
+\hypersetup{
+  colorlinks  = true,
+  linkcolor   = apiblue,
+  urlcolor    = apilightblue,
+  citecolor   = apidark,
+  pdftitle    = {Relatório Técnico - Academic Events API - Grupo 6},
+  pdfauthor   = {Thailsson Clementino; Stevão Whinter; Márcio Franklin; Allef Oliveira; Juliana Ballin},
+  pdfsubject  = {API REST em ASP.NET Core para gerenciamento de eventos acadêmicos},
+  pdfkeywords = {CSharp, ASP.NET Core, REST API, JWT, EF Core, PostgreSQL, DDD}
+}
+
+% ==============================================================================
+% Tipos de coluna
+% ==============================================================================
+\newcolumntype{J}[1]{>{\justifying\arraybackslash\small}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash\small}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash\small}p{#1}}
+\newcolumntype{Y}{>{\justifying\arraybackslash\small}X}
+\renewcommand{\arraystretch}{1.3}
+
+% ==============================================================================
+% Formatação de seções
+% ==============================================================================
+\titleformat{\section}[block]
+  {\Large\bfseries\color{apiblue}}
+  {\thesection}{1em}{}
+  [\vspace{1pt}{\color{apilightblue}\hrule height 1.5pt}\vspace{4pt}]
+
+\titleformat{\subsection}[block]
+  {\large\bfseries\color{apiblue}}
+  {\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}[block]
+  {\normalsize\bfseries\color{apidark}}
+  {\thesubsubsection}{1em}{}
+
+\titlespacing{\section}{0pt}{18pt}{6pt}
+\titlespacing{\subsection}{0pt}{12pt}{4pt}
+\titlespacing{\subsubsection}{0pt}{8pt}{2pt}
+
+% ==============================================================================
+% Configuração de código
+% ==============================================================================
+\lstset{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{apilightblue},
+  numbers=none,
+  keywordstyle=\color{apiblue}\bfseries,
+  stringstyle=\color{successcolor},
+  commentstyle=\color{gray}\itshape,
+  showstringspaces=false,
+  extendedchars=true,
+  inputencoding=utf8,
+  literate=
+    {á}{{\'a}}1 {à}{{\`a}}1 {â}{{\^a}}1 {ã}{{\~a}}1
+    {Á}{{\'A}}1 {À}{{\`A}}1 {Â}{{\^A}}1 {Ã}{{\~A}}1
+    {é}{{\'e}}1 {ê}{{\^e}}1 {É}{{\'E}}1 {Ê}{{\^E}}1
+    {í}{{\'i}}1 {Í}{{\'I}}1
+    {ó}{{\'o}}1 {ô}{{\^o}}1 {õ}{{\~o}}1
+    {Ó}{{\'O}}1 {Ô}{{\^O}}1 {Õ}{{\~O}}1
+    {ú}{{\'u}}1 {Ú}{{\'U}}1
+    {ç}{{\c{c}}}1 {Ç}{{\c{C}}}1
+}
+
+% ==============================================================================
+% Cabeçalho e rodapé
+% ==============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{apiblue}\textbf{Academic Events API}}
+\fancyhead[R]{\small\color{apidark}Grupo 6 - Módulo Desenvolvimento em C\#}
+\fancyfoot[C]{\small\color{apidark}Página \thepage\ de \pageref{LastPage}}
+\renewcommand{\headrulewidth}{1.5pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{apilightblue}\leaders\hrule height \headrulewidth\hfill}}
+
+% ==============================================================================
+% Caixas personalizadas
+% ==============================================================================
+\tcbset{
+  requisito/.style={
+    enhanced, breakable,
+    colback=apilight, colframe=apiblue,
+    fonttitle=\bfseries\color{white},
+    attach boxed title to top left={yshift=-2mm, xshift=4mm},
+    boxed title style={colback=apiblue, rounded corners},
+    sharp corners=south
+  },
+  destaque/.style={
+    enhanced,
+    colback=successlight, colframe=successcolor,
+    fonttitle=\bfseries\color{successcolor},
+    sharp corners
+  }
+}
+
+% ==============================================================================
+% Início do documento
+% ==============================================================================
+\begin{document}
+
+% ==============================================================================
+% CAPA
+% ==============================================================================
+\begin{titlepage}
+\centering
+\vspace*{20mm}
+
+{\color{apiblue}\rule{\linewidth}{2pt}}\\[6mm]
+
+{\Huge\bfseries\color{apiblue} Academic Events API}\\[4mm]
+{\Large\color{apidark} Relatório Técnico - Trabalho Final}\\[3mm]
+{\large\color{apidark} Módulo 3: Desenvolvimento em C\texttt{\#}}\\[8mm]
+
+{\color{apilightblue}\rule{\linewidth}{1pt}}\\[10mm]
+
+\begin{tabular}{ll}
+\textbf{Disciplina:} & Desenvolvimento em C\# - Módulo 3 \\[2mm]
+\textbf{Grupo:}      & Grupo 6 \\[2mm]
+\textbf{Data:}       & Junho de 2026 \\[2mm]
+\end{tabular}
+
+\vspace{10mm}
+
+\begin{tcolorbox}[requisito, title={Integrantes do Grupo 6}, width=0.85\linewidth]
+\begin{tabular}{ll}
+1. & Thailsson Clementino de Andrade \\
+2. & Stevão Whinter Marques de Andrade \\
+3. & Márcio Franklin de Oliveira Lima \\
+4. & Allef Oliveira Ramos \\
+5. & Juliana Ballin Lima \\
+\end{tabular}
+\end{tcolorbox}
+
+\vfill
+
+{\color{apiblue}\rule{\linewidth}{2pt}}\\[4mm]
+{\small\color{apidark} Repositório: \url{https://github.com/JulianaBallin/Academic-Events-API}}
+\end{titlepage}
+
+% ==============================================================================
+% SUMÁRIO
+% ==============================================================================
+\tableofcontents
+\newpage
+
+% ==============================================================================
+\section{Introdução}
+% ==============================================================================
+
+O presente relatório descreve o desenvolvimento da \textbf{Academic Events API}, uma API REST criada como trabalho final do Módulo 3 do curso de Desenvolvimento em C\#. O projeto implementa um sistema de gerenciamento de eventos acadêmicos, como palestras, workshops e seminários, seguindo as boas práticas de desenvolvimento com ASP.NET Core 8.
+
+O objetivo principal foi aplicar os conceitos ensinados ao longo do módulo: orientação a objetos, DTOs, services, repositories, acesso a banco de dados, autenticação e autorização, e organização profissional de código em camadas separadas.
+
+A plataforma permite que usuários se cadastrem, criem e gerenciem eventos acadêmicos, realizem inscrições, publiquem comentários e expressem reações a conteúdos de interesse, funcionando de forma análoga a uma rede social voltada para o ambiente acadêmico.
+
+% ==============================================================================
+\section{Problema e Solução}
+% ==============================================================================
+
+\subsection{O Problema}
+
+Eventos acadêmicos, como palestras, workshops, minicursos e seminários, são parte essencial da vida universitária. No entanto, a organização e divulgação desses eventos muitas vezes acontece de forma fragmentada: grupos de WhatsApp, cartazes físicos e e-mails avulsos dificultam o acompanhamento das oportunidades disponíveis e o controle de inscrições.
+
+\subsection{Nossa Solução}
+
+A Academic Events API centraliza o ciclo de vida completo de um evento acadêmico em uma única plataforma, expondo endpoints REST documentados via Swagger. Qualquer aplicação cliente, seja web, mobile ou desktop, pode consumir a API para:
+
+\begin{itemize}[noitemsep]
+  \item Listar e filtrar eventos por status ou organizador
+  \item Criar e gerenciar eventos (organizadores autenticados)
+  \item Realizar e acompanhar inscrições
+  \item Comentar e reagir a eventos de interesse
+\end{itemize}
+
+% ==============================================================================
+\section{Tecnologias Utilizadas}
+% ==============================================================================
+
+\begin{longtable}{L{4.5cm} L{4cm} L{6cm}}
+\toprule
+\rowcolor{tablehead}
+\color{white}\textbf{Tecnologia} & \color{white}\textbf{Versão} & \color{white}\textbf{Finalidade} \\
+\midrule
+\endhead
+ASP.NET Core & 8.0 & Framework principal da API REST \\
+\rowcolor{tablealt}
+Entity Framework Core & 8.0.11 & ORM para acesso ao banco de dados \\
+Npgsql (PostgreSQL) & 8.0.11 & Driver de conexão com PostgreSQL \\
+\rowcolor{tablealt}
+JWT Bearer Token & 8.0.15 & Autenticação e autorização via token \\
+BCrypt.Net-Next & 4.2.0 & Hash seguro de senhas dos usuários \\
+\rowcolor{tablealt}
+Swashbuckle / Swagger & 6.6.2 & Documentação automática dos endpoints \\
+PostgreSQL & 15 & Banco de dados relacional (Docker) \\
+\rowcolor{tablealt}
+Docker Compose & - & Ambiente de banco de dados isolado \\
+\bottomrule
+\end{longtable}
+
+% ==============================================================================
+\section{Arquitetura do Sistema}
+% ==============================================================================
+
+\subsection{Visão Geral - Clean Architecture em Camadas}
+
+O projeto é organizado em cinco projetos C\# separados dentro de uma única solution, seguindo os princípios de separação de responsabilidades e inversão de dependência:
+
+\begin{tcolorbox}[requisito, title={Estrutura da Solution}]
+\begin{itemize}[noitemsep]
+  \item \textbf{AcademicEvents.Domain} - Entidades, enums, interfaces de repository (sem dependências externas)
+  \item \textbf{AcademicEvents.Exceptions} - Exceções customizadas com semântica de negócio
+  \item \textbf{AcademicEvents.Application} - DTOs, interfaces de service, implementações de service
+  \item \textbf{AcademicEvents.Infrastructure} - DbContext, EF Core, implementações de repository
+  \item \textbf{AcademicEvents.API} - Controllers, JWT, Swagger, Program.cs (ponto de entrada)
+\end{itemize}
+\end{tcolorbox}
+
+\subsection{Fluxo de Dependências entre Projetos}
+
+O gráfico abaixo ilustra como os projetos se relacionam, respeitando a regra de que as camadas internas nunca dependem das externas:
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=1.4cm,
+  every node/.style={
+    rectangle, rounded corners=4pt,
+    minimum width=4.5cm, minimum height=0.9cm,
+    font=\small\bfseries, align=center
+  }
+]
+  \node[fill=apiblue!20, draw=apiblue] (api) {AcademicEvents.API};
+  \node[fill=apiblue!10, draw=apiblue, below=of api] (app) {AcademicEvents.Application};
+  \node[fill=apiblue!10, draw=apiblue, right=2cm of app] (infra) {AcademicEvents.Infrastructure};
+  \node[fill=gray!15, draw=gray, below=of app] (domain) {AcademicEvents.Domain};
+  \node[fill=gray!15, draw=gray, right=2cm of domain] (exc) {AcademicEvents.Exceptions};
+
+  \draw[->, thick, color=apiblue] (api) -- (app);
+  \draw[->, thick, color=apiblue] (api) -- (infra);
+  \draw[->, thick, color=apiblue] (app) -- (domain);
+  \draw[->, thick, color=apiblue] (infra) -- (domain);
+  \draw[->, thick, color=gray] (app) -- (exc);
+  \draw[->, thick, color=gray] (api) -- (exc);
+\end{tikzpicture}
+\end{center}
+
+\subsection{Por que essa Arquitetura?}
+
+\begin{itemize}
+  \item \textbf{Domain sem dependências:} as entidades e interfaces ficam isoladas, podendo ser testadas sem infraestrutura
+  \item \textbf{Application só depende de Domain:} os services não sabem como os dados são persistidos. Apenas chamam interfaces
+  \item \textbf{Infrastructure implementa interfaces do Domain:} a inversão de dependência permite trocar o banco (ex: SQLite para testes) sem mudar a lógica de negócio
+  \item \textbf{API orquestra tudo via DI:} o Program.cs conecta as implementações concretas usando extension methods de injeção de dependência
+\end{itemize}
+
+% ==============================================================================
+\section{Modelagem do Domínio}
+% ==============================================================================
+
+\subsection{Entidades}
+
+O domínio é composto por cinco entidades principais com os respectivos relacionamentos:
+
+\begin{longtable}{L{3cm} L{5cm} L{6.5cm}}
+\toprule
+\rowcolor{tablehead}
+\color{white}\textbf{Entidade} & \color{white}\textbf{Campos principais} & \color{white}\textbf{Descrição} \\
+\midrule
+\endhead
+User & Id, Nome, Email, SenhaHash, CriadoEm & Usuário da plataforma. Pode organizar eventos, se inscrever, comentar e reagir \\
+\rowcolor{tablealt}
+Event & Id, Titulo, Descricao, DataInicio, DataFim, Local, Status, OrganizadorId & Evento acadêmico criado por um organizador. Ciclo: Rascunho, Publicado, Cancelado, Concluído \\
+Registration & Id, UsuarioId, EventoId, Status & Inscrição de um usuário em um evento. Índice único impede duplicatas \\
+\rowcolor{tablealt}
+Comment & Id, UsuarioId, EventoId, Conteudo & Comentário do usuário em um evento \\
+Reaction & Id, UsuarioId, EventoId, Tipo & Reação (curtida) de um usuário a um evento. Um usuário só pode ter uma reação por evento \\
+\bottomrule
+\end{longtable}
+
+\subsection{Enumeradores}
+
+\begin{longtable}{L{4cm} L{10.5cm}}
+\toprule
+\rowcolor{tablehead}
+\color{white}\textbf{Enum} & \color{white}\textbf{Valores} \\
+\midrule
+\endhead
+StatusEvento & Rascunho, Publicado, Cancelado, Concluído \\
+\rowcolor{tablealt}
+StatusInscricao & Pendente, Confirmada, Cancelada \\
+TipoReacao & Curtir, Adorei, Interessante, VouParticipar \\
+\bottomrule
+\end{longtable}
+
+% ==============================================================================
+\section{Autenticação e Autorização}
+% ==============================================================================
+
+\subsection{JWT Bearer Token}
+
+A autenticação utiliza o padrão \textbf{JWT (JSON Web Token)} com algoritmo HMAC-SHA256. O fluxo é:
+
+\begin{enumerate}
+  \item Usuário envia email e senha para \texttt{POST /api/auth/login}
+  \item O \texttt{AuthService} valida as credenciais com BCrypt
+  \item Um token JWT é gerado com as \textit{claims}: \texttt{NameIdentifier} (id), \texttt{Email} e \texttt{Name}
+  \item O token é retornado e deve ser enviado no header \texttt{Authorization: Bearer \{token\}}
+  \item O middleware do ASP.NET valida o token automaticamente em todas as rotas com \texttt{[Authorize]}
+\end{enumerate}
+
+\subsection{Configuração do Token}
+
+\begin{lstlisting}[language={[Sharp]C}]
+// appsettings.json
+"Jwt": {
+  "Key": "chave-secreta-mínimo-32-caracteres-aqui",
+  "Issuer": "AcademicEventsAPI",
+  "Audience": "AcademicEventsClientes",
+  "ExpiresInHours": 8
+}
+\end{lstlisting}
+
+\subsection{Hash de Senha}
+
+As senhas dos usuários nunca são armazenadas em texto puro. O \textbf{BCrypt} é usado para gerar um hash com salt automático, tornando ataques de dicionário impraticáveis mesmo que o banco seja comprometido.
+
+% ==============================================================================
+\section{Endpoints da API}
+% ==============================================================================
+
+\subsection{Autenticação (público)}
+
+\begin{longtable}{L{1.5cm} L{4cm} L{3.5cm} L{5.5cm}}
+\toprule
+\rowcolor{tablehead}
+\color{white}\textbf{Método} & \color{white}\textbf{Rota} & \color{white}\textbf{Retorno} & \color{white}\textbf{Descrição} \\
+\midrule
+\endhead
+POST & /api/auth/register & 200, 400 & Cadastra usuário e retorna JWT \\
+\rowcolor{tablealt}
+POST & /api/auth/login & 200, 401 & Autentica usuário e retorna JWT \\
+GET & /api/me & 200, 401 & Dados do usuário autenticado (JWT) \\
+\bottomrule
+\end{longtable}
+
+\subsection{Eventos}
+
+\begin{longtable}{L{1.5cm} L{5cm} L{2.5cm} L{5.5cm}}
+\toprule
+\rowcolor{tablehead}
+\color{white}\textbf{Método} & \color{white}\textbf{Rota} & \color{white}\textbf{Auth} & \color{white}\textbf{Descrição} \\
+\midrule
+\endhead
+GET & /api/events & Não & Lista todos os eventos \\
+\rowcolor{tablealt}
+GET & /api/events?status=X & Não & Filtra por status \\
+GET & /api/events/\{id\} & Não & Busca evento por id \\
+\rowcolor{tablealt}
+GET & /api/events/meus & Sim & Eventos do organizador autenticado \\
+POST & /api/events & Sim & Cria novo evento \\
+\rowcolor{tablealt}
+PUT & /api/events/\{id\} & Sim & Atualiza evento (só o organizador) \\
+DELETE & /api/events/\{id\} & Sim & Remove evento (só o organizador) \\
+\bottomrule
+\end{longtable}
+
+\subsection{Inscrições, Comentários e Reações}
+
+\begin{longtable}{L{1.5cm} L{5.5cm} L{2cm} L{5cm}}
+\toprule
+\rowcolor{tablehead}
+\color{white}\textbf{Método} & \color{white}\textbf{Rota} & \color{white}\textbf{Auth} & \color{white}\textbf{Descrição} \\
+\midrule
+\endhead
+POST & /api/registrations & Sim & Inscreve usuário em evento \\
+\rowcolor{tablealt}
+GET & /api/registrations/me & Sim & Minhas inscrições \\
+DELETE & /api/registrations/\{id\} & Sim & Cancela inscrição \\
+\midrule
+GET & /api/comments?eventoId=X & Não & Comentários de um evento \\
+\rowcolor{tablealt}
+POST & /api/comments & Sim & Adiciona comentário \\
+DELETE & /api/comments/\{id\} & Sim & Remove comentário (só o autor) \\
+\midrule
+GET & /api/reactions?eventoId=X & Não & Reações de um evento \\
+\rowcolor{tablealt}
+POST & /api/reactions & Sim & Adiciona reação \\
+DELETE & /api/reactions/\{id\} & Sim & Remove reação (só o autor) \\
+\bottomrule
+\end{longtable}
+
+% ==============================================================================
+\section{Camada de Infrastructure}
+% ==============================================================================
+
+\subsection{DbContext e Configurações EF Core}
+
+O \texttt{AcademicEventsDbContext} configura os mapeamentos via \textit{Fluent API} no método \texttt{OnModelCreating}:
+
+\begin{itemize}[noitemsep]
+  \item \textbf{Índice único em User.Email}: impede dois usuários com o mesmo email
+  \item \textbf{Índice único em (UsuarioId, EventoId) na Registration}: impede inscrição duplicada
+  \item \textbf{Índice único em (UsuarioId, EventoId) na Reaction}: impede reação duplicada
+  \item \textbf{DeleteBehavior.Restrict} em Event para User: impede deletar usuário que tem eventos
+  \item \textbf{DeleteBehavior.Cascade} nos demais: ao remover usuário ou evento, registros dependentes são apagados
+\end{itemize}
+
+\subsection{Repository Pattern}
+
+Cada entidade tem seu próprio repository que abstrai o acesso ao banco:
+
+\begin{lstlisting}[language={[Sharp]C}]
+// exemplo de consulta com Include para evitar N+1 queries
+public async Task<List<Event>> GetAllAsync()
+{
+    return await _context.Events
+        .Include(e => e.Organizador)
+        .OrderByDescending(e => e.DataInicio)
+        .ToListAsync();
+}
+\end{lstlisting}
+
+O uso de \texttt{Include} garante que o nome do organizador seja carregado junto com o evento em uma única query SQL, evitando o problema N+1.
+
+\subsection{Banco de Dados via Docker}
+
+O ambiente de banco de dados é provisionado via \texttt{docker-compose.yml}:
+
+\begin{lstlisting}
+docker compose up -d   # sobe o PostgreSQL 15 na porta 5432
+\end{lstlisting}
+
+A inicialização do schema usa \texttt{EnsureCreated()} no startup da API, criando as tabelas automaticamente se não existirem.
+
+% ==============================================================================
+\section{Regras de Negócio Implementadas}
+% ==============================================================================
+
+\begin{longtable}{L{5cm} L{9.5cm}}
+\toprule
+\rowcolor{tablehead}
+\color{white}\textbf{Regra} & \color{white}\textbf{Implementação} \\
+\midrule
+\endhead
+Email único & Verificado no AuthService antes de inserir no banco (400 BadRequest) \\
+\rowcolor{tablealt}
+Senha segura (min 6 chars) & Validação de DataAnnotations no RegisterRequest \\
+Credenciais inválidas & Mesma mensagem independente de email ou senha errados (segurança) \\
+\rowcolor{tablealt}
+DataFim maior que DataInicio & Validado no EventService ao criar evento (400 BadRequest) \\
+Só organizador edita evento & Verificação de OrganizadorId no EventService (403 Forbidden) \\
+\rowcolor{tablealt}
+Inscrição duplicada & Verificação no RegistrationService antes do banco (400 BadRequest) \\
+Reação única por evento & Verificação no ReactionService antes do banco (400 BadRequest) \\
+\rowcolor{tablealt}
+Só autor deleta comentário & Verificação de UsuarioId no CommentService (403 Forbidden) \\
+Respostas HTTP corretas & 200/201 sucesso, 400 dados inválidos, 401 sem auth, 403 sem permissão, 404 não encontrado \\
+\bottomrule
+\end{longtable}
+
+% ==============================================================================
+\section{Dificuldades e Decisões Técnicas}
+% ==============================================================================
+
+\subsection{Versões dos Pacotes NuGet}
+
+A combinação de versões dos pacotes do Entity Framework Core para .NET 8 exigiu atenção especial. A versão \texttt{8.0.11} do \texttt{Npgsql.EntityFrameworkCore.PostgreSQL} foi escolhida por ser a mais estável e compatível com o .NET 8 e o \texttt{Microsoft.EntityFrameworkCore.Design 8.0.11}.
+
+\subsection{Forbid() vs StatusCode(403)}
+
+O método \texttt{Forbid()} do \texttt{ControllerBase} do ASP.NET Core não aceita uma mensagem de texto. Ele espera um nome de esquema de autenticação. Para retornar 403 com mensagem de erro no corpo da resposta, o correto é usar \texttt{StatusCode(403, mensagem)}.
+
+\subsection{Application não depende de Infrastructure}
+
+A camada Application só referencia o Domain (onde estão as interfaces de repository). A Infrastructure é registrada no DI pela API via extension method, resolvendo as implementações concretas em tempo de execução. Isso garante a inversão de dependência correta.
+
+\subsection{Validação em Dois Níveis}
+
+Para inscrições e reações duplicadas, a validação acontece tanto no service (verificação prévia antes do banco) quanto no banco (índice único). O service lança uma exceção customizada com mensagem amigável; o banco é a última linha de defesa contra condições de corrida.
+
+% ==============================================================================
+\section{Como Executar o Projeto}
+% ==============================================================================
+
+\begin{tcolorbox}[destaque, title={Requisitos}]
+\begin{itemize}[noitemsep]
+  \item .NET 8 SDK
+  \item Docker e Docker Compose
+  \item (Opcional) dotnet-ef para migrations: \texttt{dotnet tool install -{}-global dotnet-ef}
+\end{itemize}
+\end{tcolorbox}
+
+\begin{lstlisting}[language=bash]
+# 1. clonar o repositório
+git clone https://github.com/JulianaBallin/Academic-Events-API.git
+cd Academic-Events-API
+
+# 2. subir o banco PostgreSQL via Docker
+docker compose up -d
+
+# 3. iniciar a API (o EnsureCreated cria as tabelas automaticamente)
+cd AcademicEvents.API
+dotnet run
+\end{lstlisting}
+
+Após iniciar, acesse a documentação interativa no Swagger em: \url{http://localhost:5000/swagger}
+
+Para testar os endpoints com autenticação, clique em \textbf{Authorize} no Swagger e informe o token obtido no login no formato \texttt{Bearer \{token\}}.
+
+% ==============================================================================
+\section{Conclusão}
+% ==============================================================================
+
+A Academic Events API atende todos os requisitos obrigatórios do trabalho final: autenticação JWT, cinco entidades com relacionamentos, banco PostgreSQL via EF Core, arquitetura em cinco projetos separados, DTOs request/response, services com regras de negócio, repositories com repository pattern, Swagger/OpenAPI e versionamento via Git.
+
+Além dos requisitos mínimos, o grupo implementou:
+
+\begin{itemize}[noitemsep]
+  \item Cinco exceções customizadas com semântica clara de negócio
+  \item Filtragem de eventos por status e por organizador
+  \item Validações em duas camadas (service + banco) para evitar dados inconsistentes
+  \item Documentação XML em português em todos os arquivos
+  \item Diagramas C4 nos quatro níveis (contexto, container, componente e código)
+  \item Roteiro completo de testes manuais com cenários de sucesso e de erro
+\end{itemize}
+
+O projeto demonstra domínio prático dos conceitos de C\# e ASP.NET Core abordados no módulo, resultando em uma API funcional, bem organizada e pronta para ser consumida por qualquer aplicação cliente.
+
+\end{document}

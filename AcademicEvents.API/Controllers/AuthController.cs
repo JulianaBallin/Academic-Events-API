@@ -10,6 +10,7 @@ namespace AcademicEvents.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/auth")]
+[Produces("application/json")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _service;
@@ -19,7 +20,12 @@ public class AuthController : ControllerBase
         _service = service;
     }
 
+    /// <summary>
+    /// Cria uma nova conta de usuário e retorna o token JWT.
+    /// </summary>
     [HttpPost("register")]
+    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register(RegisterRequest request)
     {
         try
@@ -32,7 +38,12 @@ public class AuthController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Autentica o usuário e retorna o token JWT.
+    /// </summary>
     [HttpPost("login")]
+    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login(LoginRequest request)
     {
         try

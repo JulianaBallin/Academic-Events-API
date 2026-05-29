@@ -63,6 +63,12 @@ public class EventService : IEventService
         return filtrados.Select(MapearParaResponse).ToList();
     }
 
+    public async Task<List<EventResponse>> GetByOrganizadorAsync(int organizadorId)
+    {
+        List<Event> eventos = await _repository.GetByOrganizadorAsync(organizadorId);
+        return eventos.Select(MapearParaResponse).ToList();
+    }
+
     public async Task<EventResponse?> UpdateAsync(int id, UpdateEventRequest request, int usuarioId)
     {
         Event? evento = await _repository.GetByIdAsync(id);

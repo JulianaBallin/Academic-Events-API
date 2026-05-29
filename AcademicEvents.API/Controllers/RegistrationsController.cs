@@ -9,9 +9,12 @@ namespace AcademicEvents.API.Controllers;
 
 /// <summary>
 /// Controller de inscrições em eventos.
+/// Todos os endpoints são protegidos por autenticação JWT.
 /// </summary>
 [ApiController]
 [Route("api/registrations")]
+[Authorize]
+[Produces("application/json")]
 public class RegistrationsController : ControllerBase
 {
     private readonly IRegistrationService _service;
@@ -21,8 +24,12 @@ public class RegistrationsController : ControllerBase
         _service = service;
     }
 
+    /// <summary>
+    /// Inscreve o usuário autenticado em um evento.
+    /// </summary>
     [HttpPost]
-    [Authorize]
+    [ProducesResponseType(typeof(RegistrationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(CreateRegistrationRequest request)
     {
         try
@@ -37,16 +44,24 @@ public class RegistrationsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Lista as inscrições do usuário autenticado.
+    /// </summary>
     [HttpGet("me")]
-    [Authorize]
+    [ProducesResponseType(typeof(List<RegistrationResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetMinhas()
     {
         int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         return Ok(await _service.GetByUsuarioAsync(usuarioId));
     }
 
+    /// <summary>
+    /// Cancela uma inscrição. Só o próprio usuário pode cancelar.
+    /// </summary>
     [HttpDelete("{id:int}")]
-    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {
         try
@@ -61,7 +76,7 @@ public class RegistrationsController : ControllerBase
         }
         catch (UnauthorizedException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
         }
     }
 }
