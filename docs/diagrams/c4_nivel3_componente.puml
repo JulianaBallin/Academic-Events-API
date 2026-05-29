@@ -23,7 +23,7 @@ Container_Boundary(api, "AcademicEvents.API") {
     "GET /api/me\nRetorna dados do usuário autenticado.")
 
   Component(eventCtrl, "EventsController", "ASP.NET Core Controller",
-    "CRUD completo de eventos acadêmicos.\nFiltros por status e organizador.")
+    "CRUD completo de eventos acadêmicos.\nFiltros por status (?status=) e\nevents/meus para o organizador.")
 
   Component(commentCtrl, "CommentsController", "ASP.NET Core Controller",
     "Gerencia comentários em eventos.")
@@ -62,7 +62,6 @@ Container_Boundary(app, "AcademicEvents.Application") {
 
 ' controllers chamam os services correspondentes
 Rel(authCtrl, authSvc, "Usa")
-Rel(userCtrl, authSvc, "Usa para buscar usuário logado")
 Rel(eventCtrl, eventSvc, "Usa")
 Rel(commentCtrl, commentSvc, "Usa")
 Rel(reactionCtrl, reactionSvc, "Usa")

@@ -22,65 +22,66 @@ skinparam enum {
 
 ' entidades do domínio
 class User {
-  + Id : Guid
+  + Id : int
   + Nome : string
   + Email : string
   + SenhaHash : string
   + CriadoEm : DateTime
   --
-  + Eventos : ICollection<Event>
-  + Inscricoes : ICollection<Registration>
-  + Comentarios : ICollection<Comment>
-  + Reacoes : ICollection<Reaction>
+  + EventosOrganizados : List<Event>
+  + Inscricoes : List<Registration>
+  + Comentarios : List<Comment>
+  + Reacoes : List<Reaction>
 }
 
 class Event {
-  + Id : Guid
+  + Id : int
   + Titulo : string
   + Descricao : string
   + DataInicio : DateTime
   + DataFim : DateTime
   + Local : string
   + Status : StatusEvento
-  + OrganizadorId : Guid
+  + OrganizadorId : int
+  + CriadoEm : DateTime
   --
-  + Organizador : User
-  + Inscricoes : ICollection<Registration>
-  + Comentarios : ICollection<Comment>
-  + Reacoes : ICollection<Reaction>
+  + Organizador : User?
+  + Inscricoes : List<Registration>
+  + Comentarios : List<Comment>
+  + Reacoes : List<Reaction>
 }
 
 class Registration {
-  + Id : Guid
-  + DataInscricao : DateTime
+  + Id : int
+  + UsuarioId : int
+  + EventoId : int
   + Status : StatusInscricao
-  + UsuarioId : Guid
-  + EventoId : Guid
+  + CriadoEm : DateTime
   --
-  + Usuario : User
-  + Evento : Event
+  + Usuario : User?
+  + Evento : Event?
 }
 
 class Comment {
-  + Id : Guid
+  + Id : int
+  + UsuarioId : int
+  + EventoId : int
   + Conteudo : string
   + CriadoEm : DateTime
-  + UsuarioId : Guid
-  + EventoId : Guid
   --
-  + Usuario : User
-  + Evento : Event
+  + Usuario : User?
+  + Evento : Event?
 }
 
 class Reaction {
-  + Id : Guid
+  + Id : int
+  + UsuarioId : int
+  + EventoId : int
   + Tipo : TipoReacao
   + CriadoEm : DateTime
-  + UsuarioId : Guid
-  + EventoId : Guid
   --
-  + Usuario : User
-  + Evento : Event
+  + Usuario : User?
+  + Evento : Event?
 }
 
 ' enums do domínio
