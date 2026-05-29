@@ -78,5 +78,10 @@ public class AcademicEventsDbContext : DbContext
             .WithMany(e => e.Reacoes)
             .HasForeignKey(r => r.EventoId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // um usuário não pode reagir duas vezes ao mesmo evento
+        modelBuilder.Entity<Reaction>()
+            .HasIndex(r => new { r.UsuarioId, r.EventoId })
+            .IsUnique();
     }
 }
