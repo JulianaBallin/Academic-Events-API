@@ -19,6 +19,7 @@ docs/diagrams/*.png
 docs/diagrams/*.utxt
 .claude/
 .history/
+.github/workflows/
 # arquivos auxiliares do LaTeX (gerados na compilação)
 docs/relatorios/*.aux
 docs/relatorios/*.log
