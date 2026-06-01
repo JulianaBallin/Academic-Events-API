@@ -28,11 +28,12 @@ public class CommentsController : ControllerBase
     /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetByEvento([FromQuery] int eventoId)
     {
         if (eventoId <= 0)
-            return BadRequest("O id do evento deve ser maior que zero.");
+            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+
         return Ok(await _service.GetByEventoAsync(eventoId));
     }
 
@@ -43,19 +44,12 @@ public class CommentsController : ControllerBase
     [Authorize]
     [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(CreateCommentRequest request)
     {
-        try
-        {
-            int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            CommentResponse response = await _service.CreateAsync(request, usuarioId);
-            return StatusCode(StatusCodes.Status201Created, response);
-        }
-        catch (NotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
+        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        CommentResponse response = await _service.CreateAsync(request, usuarioId);
+        return StatusCode(StatusCodes.Status201Created, response);
     }
 
     /// <summary>
@@ -64,23 +58,12 @@ public class CommentsController : ControllerBase
     [HttpDelete("{id:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            await _service.DeleteAsync(id, usuarioId);
-            return NoContent();
-        }
-        catch (NotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (UnauthorizedException ex)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
-        }
+        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        await _service.DeleteAsync(id, usuarioId);
+        return NoContent();
     }
 }

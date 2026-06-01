@@ -29,24 +29,13 @@ public class RegistrationsController : ControllerBase
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(RegistrationResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(CreateRegistrationRequest request)
     {
-        try
-        {
-            int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            RegistrationResponse response = await _service.CreateAsync(request, usuarioId);
-            return StatusCode(StatusCodes.Status201Created, response);
-        }
-        catch (InscricaoDuplicadaException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (NotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
+        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        RegistrationResponse response = await _service.CreateAsync(request, usuarioId);
+        return StatusCode(StatusCodes.Status201Created, response);
     }
 
     /// <summary>
@@ -65,23 +54,12 @@ public class RegistrationsController : ControllerBase
     /// </summary>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            await _service.DeleteAsync(id, usuarioId);
-            return NoContent();
-        }
-        catch (NotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (UnauthorizedException ex)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
-        }
+        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        await _service.DeleteAsync(id, usuarioId);
+        return NoContent();
     }
 }

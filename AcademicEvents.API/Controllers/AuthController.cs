@@ -25,17 +25,10 @@ public class AuthController : ControllerBase
     /// </summary>
     [HttpPost("register")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register(RegisterRequest request)
     {
-        try
-        {
-            return Ok(await _service.RegisterAsync(request));
-        }
-        catch (DuplicateEmailException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(await _service.RegisterAsync(request));
     }
 
     /// <summary>
@@ -43,16 +36,9 @@ public class AuthController : ControllerBase
     /// </summary>
     [HttpPost("login")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login(LoginRequest request)
     {
-        try
-        {
-            return Ok(await _service.LoginAsync(request));
-        }
-        catch (InvalidCredentialsException ex)
-        {
-            return Unauthorized(ex.Message);
-        }
+        return Ok(await _service.LoginAsync(request));
     }
 }
