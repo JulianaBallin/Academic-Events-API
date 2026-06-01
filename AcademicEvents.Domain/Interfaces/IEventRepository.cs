@@ -14,6 +14,7 @@ public interface IEventRepository
     Task<List<Event>> GetAllAsync();
     Task<List<Event>> GetByStatusAsync(StatusEvento status);
     Task<List<Event>> GetByOrganizadorAsync(int organizadorId);
+    Task<List<Event>> GetFilteredAsync(StatusEvento? status, int? organizadorId);
     Task<Event?> UpdateAsync(Event evento);
     Task DeleteAsync(int id);
 }

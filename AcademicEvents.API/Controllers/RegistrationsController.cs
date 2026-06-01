@@ -28,19 +28,24 @@ public class RegistrationsController : ControllerBase
     /// Inscreve o usuário autenticado em um evento.
     /// </summary>
     [HttpPost]
-    [ProducesResponseType(typeof(RegistrationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(RegistrationResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(CreateRegistrationRequest request)
     {
         try
         {
             int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             RegistrationResponse response = await _service.CreateAsync(request, usuarioId);
-            return Ok(response);
+            return StatusCode(StatusCodes.Status201Created, response);
         }
         catch (InscricaoDuplicadaException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.Message);
         }
     }
 

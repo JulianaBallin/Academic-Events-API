@@ -38,13 +38,21 @@ public class CommentsController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize]
-    [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CommentResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(CreateCommentRequest request)
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        CommentResponse response = await _service.CreateAsync(request, usuarioId);
-        return Ok(response);
+        try
+        {
+            int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            CommentResponse response = await _service.CreateAsync(request, usuarioId);
+            return StatusCode(StatusCodes.Status201Created, response);
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     /// <summary>

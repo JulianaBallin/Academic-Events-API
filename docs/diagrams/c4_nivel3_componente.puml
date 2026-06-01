@@ -1,64 +1,43 @@
 @startuml c4_nivel3_componente
 
-' lib C4 para nível de componente (classes internas dos projetos)
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+' usa a biblioteca C4 embutida no PlantUML (stdlib, não precisa de internet)
+!include <C4/C4_Component>
 
-LAYOUT_LEFT_RIGHT()
+left to right direction
 
 title [Nível 3] Componentes - API e Application
 
 ' componentes internos do projeto AcademicEvents.API
-Container_Boundary(api, "AcademicEvents.API") {
+Component(program, "API - Program.cs", "ASP.NET Core", "Configura DI, EF Core, JWT Bearer,\nSwagger e middlewares globais.")
 
-  Component(program, "Program.cs", "ASP.NET Core",
-    "Configura DI, EF Core, JWT Bearer,\nSwagger e middlewares globais.")
+Component(jwtMid, "API - JWT Middleware", "ASP.NET Core Middleware", "Valida o Bearer Token antes de\nliberar acesso às rotas protegidas.")
 
-  Component(jwtMid, "JWT Middleware", "ASP.NET Core Middleware",
-    "Valida o Bearer Token antes de\nliberar acesso às rotas protegidas.")
+Component(authCtrl, "API - AuthController", "ASP.NET Core Controller", "POST /api/auth/register\nPOST /api/auth/login\nEndpoints públicos de autenticação.")
 
-  Component(authCtrl, "AuthController", "ASP.NET Core Controller",
-    "POST /api/auth/register\nPOST /api/auth/login\nEndpoints públicos de autenticação.")
+Component(userCtrl, "API - UsersController", "ASP.NET Core Controller", "GET /api/me\nRetorna dados do usuário autenticado.")
 
-  Component(userCtrl, "UsersController", "ASP.NET Core Controller",
-    "GET /api/me\nRetorna dados do usuário autenticado.")
+Component(eventCtrl, "API - EventsController", "ASP.NET Core Controller", "CRUD completo de eventos acadêmicos.\nFiltros por status (?status=) e\nevents/meus para o organizador.")
 
-  Component(eventCtrl, "EventsController", "ASP.NET Core Controller",
-    "CRUD completo de eventos acadêmicos.\nFiltros por status (?status=) e\nevents/meus para o organizador.")
+Component(commentCtrl, "API - CommentsController", "ASP.NET Core Controller", "Gerencia comentários em eventos.")
 
-  Component(commentCtrl, "CommentsController", "ASP.NET Core Controller",
-    "Gerencia comentários em eventos.")
+Component(reactionCtrl, "API - ReactionsController", "ASP.NET Core Controller", "Gerencia reações (curtidas) em eventos.")
 
-  Component(reactionCtrl, "ReactionsController", "ASP.NET Core Controller",
-    "Gerencia reações (curtidas) em eventos.")
-
-  Component(registrationCtrl, "RegistrationsController", "ASP.NET Core Controller",
-    "Inscrição de usuários em eventos.\nImpede inscrição duplicada.")
-}
+Component(registrationCtrl, "API - RegistrationsController", "ASP.NET Core Controller", "Inscrição de usuários em eventos.\nImpede inscrição duplicada.")
 
 ' componentes internos do projeto AcademicEvents.Application
-Container_Boundary(app, "AcademicEvents.Application") {
+Component(authSvc, "Application - AuthService", "C# Service", "Registro de usuário com hash BCrypt,\nlogin e geração do token JWT.")
 
-  Component(authSvc, "AuthService", "C# Service",
-    "Registro de usuário com hash BCrypt,\nlogin e geração do token JWT.")
+Component(eventSvc, "Application - EventService", "C# Service", "Regras de negócio de eventos:\ncriar, editar, cancelar, listar com filtros.")
 
-  Component(eventSvc, "EventService", "C# Service",
-    "Regras de negócio de eventos:\ncriar, editar, cancelar, listar com filtros.")
+Component(commentSvc, "Application - CommentService", "C# Service", "Regras para adicionar e remover\ncomentários em eventos.")
 
-  Component(commentSvc, "CommentService", "C# Service",
-    "Regras para adicionar e remover\ncomentários em eventos.")
+Component(reactionSvc, "Application - ReactionService", "C# Service", "Regras para adicionar reações.\nUm usuário só pode reagir uma vez.")
 
-  Component(reactionSvc, "ReactionService", "C# Service",
-    "Regras para adicionar reações.\nUm usuário só pode reagir uma vez.")
+Component(regSvc, "Application - RegistrationService", "C# Service", "Processa inscrições, valida duplicatas\ne gerencia status da inscrição.")
 
-  Component(regSvc, "RegistrationService", "C# Service",
-    "Processa inscrições, valida duplicatas\ne gerencia status da inscrição.")
+Component(dtos, "Application - DTOs", "C# Classes", "Modelos de entrada e saída dos\nendpoints. Desacopla entidades do HTTP.")
 
-  Component(dtos, "DTOs (Request / Response)", "C# Classes",
-    "Modelos de entrada e saída dos\nendpoints. Desacopla entidades do HTTP.")
-
-  Component(interfaces, "Interfaces dos Services", "C# Interfaces",
-    "IAuthService, IEventService,\nICommentService, IReactionService,\nIRegistrationService.")
-}
+Component(interfaces, "Application - Interfaces dos Services", "C# Interfaces", "IAuthService, IEventService,\nICommentService, IReactionService,\nIRegistrationService.")
 
 ' controllers chamam os services correspondentes
 Rel(authCtrl, authSvc, "Usa")

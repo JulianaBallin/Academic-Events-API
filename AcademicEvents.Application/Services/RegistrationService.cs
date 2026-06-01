@@ -13,14 +13,20 @@ namespace AcademicEvents.Application.Services;
 public class RegistrationService : IRegistrationService
 {
     private readonly IRegistrationRepository _repository;
+    private readonly IEventRepository _eventRepository;
 
-    public RegistrationService(IRegistrationRepository repository)
+    public RegistrationService(IRegistrationRepository repository, IEventRepository eventRepository)
     {
         _repository = repository;
+        _eventRepository = eventRepository;
     }
 
     public async Task<RegistrationResponse> CreateAsync(CreateRegistrationRequest request, int usuarioId)
     {
+        Event? evento = await _eventRepository.GetByIdAsync(request.EventoId);
+        if (evento is null)
+            throw new NotFoundException("Evento não encontrado.");
+
         // verifica na camada de serviço antes de chegar no banco
         Registration? existente = await _repository.GetByUsuarioEEventoAsync(usuarioId, request.EventoId);
         if (existente is not null)

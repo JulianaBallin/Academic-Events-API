@@ -13,14 +13,20 @@ namespace AcademicEvents.Application.Services;
 public class ReactionService : IReactionService
 {
     private readonly IReactionRepository _repository;
+    private readonly IEventRepository _eventRepository;
 
-    public ReactionService(IReactionRepository repository)
+    public ReactionService(IReactionRepository repository, IEventRepository eventRepository)
     {
         _repository = repository;
+        _eventRepository = eventRepository;
     }
 
     public async Task<ReactionResponse> CreateAsync(CreateReactionRequest request, int usuarioId)
     {
+        Event? evento = await _eventRepository.GetByIdAsync(request.EventoId);
+        if (evento is null)
+            throw new NotFoundException("Evento não encontrado.");
+
         // verifica se o usuário já reagiu a este evento
         Reaction? existente = await _repository.GetByUsuarioEEventoAsync(usuarioId, request.EventoId);
         if (existente is not null)

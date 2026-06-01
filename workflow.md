@@ -90,6 +90,23 @@ JWT Bearer configurado com validação de issuer, audience, lifetime e chave. Sw
 
 Arquivo `endpoints.http` na raiz com roteiro completo de testes para todos os endpoints.
 
+### 1.10 - Testes automatizados (já feitos - AcademicEvents.Tests/)
+
+Projeto `AcademicEvents.Tests` adicionado à solution com xUnit e Moq.
+
+Cobertura atual:
+- `AuthService`: email duplicado e login com credenciais inválidas
+- `EventService`: datas inválidas, status inválido, organizador inválido e bloqueio de edição por outro usuário
+- `RegistrationService`: evento inexistente e inscrição duplicada
+- `ReactionService`: evento inexistente e reação duplicada
+- `CommentService`: evento inexistente e remoção por usuário que não é autor
+
+Para rodar:
+
+```bash
+dotnet test AcademicEvents.sln
+```
+
 ---
 
 ## Pessoa 2 - Thailsson Clementino de Andrade
@@ -113,17 +130,18 @@ Garanta que cada arquivo tem o comentário XML no topo da classe principal em po
 
 ## Pessoa 3 - Stevão Whinter Marques de Andrade
 
-**Tarefa: Infrastructure - DbContext, EF Core, migrations e repositories**
+**Tarefa: Infrastructure - DbContext, EF Core, criação do schema e repositories**
 
 O `AcademicEventsDbContext` e os repositories já têm a estrutura base em `AcademicEvents.Infrastructure/`. Sua tarefa é revisar os mapeamentos do DbContext e garantir que todos os repositories estão implementando corretamente as interfaces do Domain.
 
 Verifique em `AcademicEvents.Infrastructure/Data/AcademicEventsDbContext.cs` se os relacionamentos e índices únicos estão corretos.
 
-Depois que o banco estiver de pé via Docker, rode as migrations:
+Depois que o banco estiver de pé via Docker, rode a API. O `EnsureCreated()` do `Program.cs` cria as tabelas automaticamente quando o banco ainda está vazio.
 
 ```bash
-dotnet ef migrations add CriacaoInicial --project AcademicEvents.Infrastructure --startup-project AcademicEvents.API
-dotnet ef database update --project AcademicEvents.Infrastructure --startup-project AcademicEvents.API
+docker compose up -d
+cd AcademicEvents.API
+dotnet run
 ```
 
 Garanta que cada arquivo tem o comentário XML no topo da classe principal em português.
@@ -166,10 +184,7 @@ Também é responsável por garantir que o README está completo e atualizado pa
 # 1. subir o banco
 docker compose up -d
 
-# 2. rodar as migrations (se ainda não foram rodadas)
-dotnet ef database update --project AcademicEvents.Infrastructure --startup-project AcademicEvents.API
-
-# 3. iniciar a API
+# 2. iniciar a API (o EnsureCreated cria as tabelas automaticamente)
 cd AcademicEvents.API
 dotnet run
 ```
@@ -192,6 +207,8 @@ POST /api/auth/login     - faz login, copia o token JWT retornado
 ```
 GET /api/events                    - lista todos os eventos
 GET /api/events?status=Publicado   - filtra por status
+GET /api/events?organizadorId=1    - filtra por organizador
+GET /api/events?status=Publicado&organizadorId=1 - combina filtros
 GET /api/events/{id}               - busca evento específico
 ```
 
@@ -237,17 +254,181 @@ DELETE /api/reactions/{id}         - remove reação
 | Editar evento de outro usuário          | PUT /api/events/{id}  | 403      |
 | Buscar evento que não existe            | GET /api/events/9999  | 404      |
 | Inscrição duplicada no mesmo evento     | POST /api/registrations | 400    |
+| Inscrição em evento inexistente         | POST /api/registrations | 404    |
 | Reagir duas vezes no mesmo evento       | POST /api/reactions   | 400      |
+| Reagir em evento inexistente            | POST /api/reactions   | 404      |
+| Comentar em evento inexistente          | POST /api/comments    | 404      |
 | Remover comentário de outro usuário     | DELETE /api/comments/{id} | 403  |
+| DataFim antes de DataInicio no update   | PUT /api/events/{id}  | 400      |
 
-### Melhorias possíveis para o futuro
+---
 
-- Adicionar paginação nos endpoints de lista (GET /api/events)
-- Endpoint para confirmar inscrição manualmente (organizador muda status de Pendente para Confirmada)
-- Endpoint para listar inscrições de um evento (organizador vê quem se inscreveu)
+## Testes automatizados
+
+### Testes unitários com xUnit
+
+O projeto `AcademicEvents.Tests` já foi criado e adicionado à solution para cobrir a lógica dos services sem depender do banco.
+
+```bash
+dotnet test AcademicEvents.sln
+```
+
+Estrutura usada nos testes unitários:
+
+```csharp
+// EventServiceTests.cs
+public class EventServiceTests
+{
+    private readonly Mock<IEventRepository> _repoMock = new();
+    private readonly EventService _service;
+
+    public EventServiceTests()
+    {
+        _service = new EventService(_repoMock.Object);
+    }
+
+    [Fact]
+    public async Task CreateAsync_DataFimAntesDeDataInicio_LancaExcecao()
+    {
+        // preenche a request com data de fim antes da de início
+        var request = new CreateEventRequest
+        {
+            Titulo = "Evento Teste",
+            Descricao = "Descrição de pelo menos 10 caracteres",
+            DataInicio = DateTime.UtcNow.AddDays(2),
+            DataFim = DateTime.UtcNow.AddDays(1),
+            Local = "Sala 101"
+        };
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _service.CreateAsync(request, organizadorId: 1));
+    }
+
+    [Fact]
+    public async Task DeleteAsync_UsuarioNaoEOrganizador_LancaUnauthorizedException()
+    {
+        int organizadorId = 10;
+        int outroUsuario = 99;
+
+        _repoMock.Setup(r => r.GetByIdAsync(1))
+            .ReturnsAsync(new Event { Id = 1, OrganizadorId = organizadorId });
+
+        await Assert.ThrowsAsync<UnauthorizedException>(
+            () => _service.DeleteAsync(1, outroUsuario));
+    }
+}
+```
+
+Casos prioritários para cobrir:
+- `EventService`: DataFim inválida, organizador diferente em Update/Delete, status inválido no filtro
+- `AuthService`: email duplicado em Register, credenciais erradas no Login
+- `RegistrationService`: inscrição duplicada e evento inexistente
+- `ReactionService`: reação duplicada e evento inexistente
+- `CommentService`: evento inexistente e remoção feita por outro usuário
+
+### Testes de integração com TestContainers
+
+Testcontainers sobe um banco PostgreSQL real em Docker por teste. É a forma mais confiável de testar o banco sem depender de um ambiente externo configurado.
+
+```bash
+dotnet add AcademicEvents.Tests package Testcontainers.PostgreSql
+dotnet add AcademicEvents.Tests package Microsoft.AspNetCore.Mvc.Testing
+```
+
+Exemplo de teste de integração:
+
+```csharp
+// EventIntegrationTests.cs
+public class EventIntegrationTests : IAsyncLifetime
+{
+    private readonly PostgreSqlContainer _db = new PostgreSqlBuilder()
+        .WithDatabase("academic_events_test")
+        .WithUsername("postgres")
+        .WithPassword("postgres")
+        .Build();
+
+    public async Task InitializeAsync() => await _db.StartAsync();
+    public async Task DisposeAsync() => await _db.DisposeAsync();
+
+    [Fact]
+    public async Task CreateEvent_DeveRetornar201()
+    {
+        // monta o WebApplicationFactory apontando pro banco do container
+        var factory = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, cfg) =>
+                cfg.AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    ["ConnectionStrings:DefaultConnection"] = _db.GetConnectionString()
+                }!)));
+
+        var client = factory.CreateClient();
+        // ... testa o endpoint completo via HttpClient
+    }
+}
+```
+
+Isso garante que o comportamento do banco (índices únicos, cascades) é testado de verdade.
+
+### Cobertura de código
+
+Para visualizar a cobertura dos testes:
+
+```bash
+dotnet test --collect:"XPlat Code Coverage"
+dotnet tool install -g dotnet-reportgenerator-globaltool
+reportgenerator -reports:coverage.cobertura.xml -targetdir:coverage-report -reporttypes:Html
+```
+
+Meta sugerida: cobrir pelo menos os 5 services e as regras de negócio críticas (duplicatas, autorizações).
+
+---
+
+## GitHub Actions - CI
+
+Arquivo `.github/workflows/ci.yml` criado para rodar build e testes automaticamente a cada push na `develop`, `main` e pull requests.
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Restore
+        run: dotnet restore AcademicEvents.sln
+
+      - name: Build
+        run: dotnet build AcademicEvents.sln --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test AcademicEvents.sln --no-build --configuration Release --verbosity normal
+```
+
+---
+
+## Melhorias possíveis
+
+- Paginação nos endpoints de lista: `GET /api/events?page=1&pageSize=10`
+- Endpoint para confirmar inscrição manualmente pelo organizador
+- Endpoint para o organizador listar inscrições do próprio evento
 - Validação de data: impedir criação de evento com data no passado
 - Rate limiting para prevenir abuso dos endpoints públicos
-- Testes de integração com banco real (xUnit + testcontainers)
+- Soft delete: marcar como deletado em vez de remover fisicamente
+- Refresh token para renovar o JWT sem fazer login novamente
 
 ---
 

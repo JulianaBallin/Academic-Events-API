@@ -65,7 +65,7 @@ AcademicEvents.Infrastructure
 | `AcademicEvents.API` | Controllers, configuração JWT, Swagger, middlewares e `Program.cs`. |
 | `AcademicEvents.Application` | DTOs, services, interfaces dos services, validações e casos de uso. |
 | `AcademicEvents.Domain` | Entidades, enums e regras do domínio. Sem dependência de framework ou banco. |
-| `AcademicEvents.Infrastructure` | `DbContext`, repositories, migrations e configuração do EF Core. |
+| `AcademicEvents.Infrastructure` | `DbContext`, repositories e configuração do EF Core. |
 | `AcademicEvents.Exceptions` | Exceções customizadas e padronização das respostas de erro. |
 
 ---
@@ -134,15 +134,24 @@ AcademicEvents/
 │   ├── Data/
 │   │   └── AcademicEventsDbContext.cs
 │   ├── Repositories/
-│   │   ├── IAcademicEventsRepository.cs
-│   │   └── AcademicEventsRepository.cs
-│   ├── Migrations/
+│   │   ├── UserRepository.cs
+│   │   ├── EventRepository.cs
+│   │   ├── RegistrationRepository.cs
+│   │   ├── CommentRepository.cs
+│   │   └── ReactionRepository.cs
 │   └── InfrastructureDependencyInjectionExtension.cs
 ├── AcademicEvents.Exceptions/
 │   ├── NotFoundException.cs
 │   ├── DuplicateEmailException.cs
 │   ├── UnauthorizedException.cs
+│   ├── InscricaoDuplicadaException.cs
 │   └── InvalidCredentialsException.cs
+├── AcademicEvents.Tests/
+│   ├── AuthServiceTests.cs
+│   ├── EventServiceTests.cs
+│   ├── RegistrationServiceTests.cs
+│   ├── CommentServiceTests.cs
+│   └── ReactionServiceTests.cs
 └── docs/
     └── diagrams/
         ├── logo.svg
@@ -158,7 +167,7 @@ AcademicEvents/
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download)
 - [Docker](https://www.docker.com/) (para subir o PostgreSQL)
-- [dotnet-ef CLI](https://learn.microsoft.com/ef/core/cli/dotnet) (para rodar migrations)
+- [dotnet-ef CLI](https://learn.microsoft.com/ef/core/cli/dotnet) (opcional, para criar migrations)
 
 Instalar o dotnet-ef globalmente:
 
@@ -208,20 +217,24 @@ Abra `AcademicEvents.API/appsettings.json` e ajuste as chaves conforme o seu amb
 }
 ```
 
-**4. Rodar as migrations**
-
-```bash
-dotnet ef database update --project AcademicEvents.Infrastructure --startup-project AcademicEvents.API
-```
-
-**5. Iniciar a API**
+**4. Iniciar a API**
 
 ```bash
 cd AcademicEvents.API
 dotnet run
 ```
 
+Na inicialização, o `Program.cs` chama `EnsureCreated()` para criar as tabelas no PostgreSQL quando elas ainda não existem.
+
 Acesse o Swagger em: `http://localhost:5000/swagger`
+
+**5. Rodar os testes automatizados**
+
+Na raiz do projeto:
+
+```bash
+dotnet test AcademicEvents.sln
+```
 
 ---
 
@@ -248,6 +261,8 @@ Acesse o Swagger em: `http://localhost:5000/swagger`
 | `GET` | `/api/events/{id}` | Público | Busca um evento por ID |
 | `GET` | `/api/events?status=Publicado` | Público | Filtra eventos por status |
 | `GET` | `/api/events?organizadorId={id}` | Público | Filtra eventos por organizador |
+| `GET` | `/api/events?status=Publicado&organizadorId={id}` | Público | Combina os filtros por status e organizador |
+| `GET` | `/api/events/meus` | Protegido | Lista eventos do organizador autenticado |
 | `POST` | `/api/events` | Protegido | Cria um novo evento |
 | `PUT` | `/api/events/{id}` | Protegido | Atualiza um evento (só o organizador) |
 | `DELETE` | `/api/events/{id}` | Protegido | Remove um evento (só o organizador) |
@@ -295,12 +310,38 @@ Os diagramas estão em `docs/diagrams/` no formato PlantUML (`.puml`).
 
 Para visualizar: [PlantUML Online](https://www.plantuml.com/plantuml/uml/) ou plugin PlantUML no VS Code.
 
+Para validar localmente:
+
+```bash
+plantuml -checkonly docs/diagrams/c4_nivel1_contexto.puml docs/diagrams/c4_nivel2_container.puml docs/diagrams/c4_nivel3_componente.puml docs/diagrams/c4_nivel4_codigo.puml
+```
+
 | Arquivo | Nível | Descrição |
 |---------|-------|-----------|
 | `c4_nivel1_contexto.puml` | Nível 1 | Visão geral: usuários, sistema e banco |
 | `c4_nivel2_container.puml` | Nível 2 | Projetos da solution e responsabilidades |
 | `c4_nivel3_componente.puml` | Nível 3 | Componentes internos da API e Application |
 | `c4_nivel4_codigo.puml` | Nível 4 | Classes do domínio e relacionamentos |
+
+---
+
+<h2 align="center">Testes Automatizados</h2>
+
+O projeto inclui `AcademicEvents.Tests` com xUnit e Moq para validar regras dos services sem depender do PostgreSQL.
+
+```bash
+dotnet test AcademicEvents.sln
+```
+
+Cobertura atual:
+
+- `AuthService`: email duplicado e credenciais inválidas
+- `EventService`: datas inválidas, filtros inválidos e permissão do organizador
+- `RegistrationService`: evento inexistente e inscrição duplicada
+- `CommentService`: evento inexistente e remoção por outro usuário
+- `ReactionService`: evento inexistente e reação duplicada
+
+O repositório também possui workflow de CI em `.github/workflows/ci.yml`, rodando restore, build e testes automaticamente.
 
 ---
 
@@ -363,7 +404,7 @@ Sempre usar a branch `develop` para enviar as alterações.
 |------|-----------------|
 | Thailsson Clementino de Andrade | Solution, estrutura inicial, .gitignore e organização do repositório |
 | Stevão Whinter Marques de Andrade | Domain: entidades, enums e interfaces de repository |
-| Márcio Franklin de Oliveira Lima | Infrastructure: DbContext, EF Core, migrations e repositories |
+| Márcio Franklin de Oliveira Lima | Infrastructure: DbContext, EF Core e repositories |
 | Allef Oliveira Ramos | API: controllers CRUD, Swagger e Program.cs base |
 | Juliana Ballin Lima | Application layer: DTOs, services, JWT, exceções e testes |
 

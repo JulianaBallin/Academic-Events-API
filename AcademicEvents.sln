@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcademicEvents.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcademicEvents.Exceptions", "AcademicEvents.Exceptions\AcademicEvents.Exceptions.csproj", "{3A492113-EF4D-4498-B9BE-E6F37AD26EA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcademicEvents.Tests", "AcademicEvents.Tests\AcademicEvents.Tests.csproj", "{911D192A-2FCE-4871-AB6E-7D8FC85E4F46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{3A492113-EF4D-4498-B9BE-E6F37AD26EA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A492113-EF4D-4498-B9BE-E6F37AD26EA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A492113-EF4D-4498-B9BE-E6F37AD26EA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{911D192A-2FCE-4871-AB6E-7D8FC85E4F46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{911D192A-2FCE-4871-AB6E-7D8FC85E4F46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{911D192A-2FCE-4871-AB6E-7D8FC85E4F46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{911D192A-2FCE-4871-AB6E-7D8FC85E4F46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

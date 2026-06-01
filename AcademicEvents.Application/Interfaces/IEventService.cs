@@ -9,7 +9,7 @@ public interface IEventService
 {
     Task<EventResponse> CreateAsync(CreateEventRequest request, int organizadorId);
     Task<EventResponse?> GetByIdAsync(int id);
-    Task<List<EventResponse>> GetAllAsync(string? status);
+    Task<List<EventResponse>> GetAllAsync(string? status, int? organizadorId);
     Task<List<EventResponse>> GetByOrganizadorAsync(int organizadorId);
     Task<EventResponse?> UpdateAsync(int id, UpdateEventRequest request, int usuarioId);
     Task DeleteAsync(int id, int usuarioId);

@@ -60,6 +60,21 @@ public class EventRepository : IEventRepository
             .ToListAsync();
     }
 
+    public async Task<List<Event>> GetFilteredAsync(StatusEvento? status, int? organizadorId)
+    {
+        IQueryable<Event> query = _context.Events.Include(e => e.Organizador);
+
+        if (status.HasValue)
+            query = query.Where(e => e.Status == status.Value);
+
+        if (organizadorId.HasValue)
+            query = query.Where(e => e.OrganizadorId == organizadorId.Value);
+
+        return await query
+            .OrderByDescending(e => e.DataInicio)
+            .ToListAsync();
+    }
+
     public async Task<Event?> UpdateAsync(Event evento)
     {
         _context.Events.Update(evento);

@@ -452,6 +452,9 @@ GET & /api/events & Não & Lista todos os eventos \\
 GET & /api/events?status=X & Não & Filtra por status \\
 GET & /api/events/\{id\} & Não & Busca evento por id \\
 \rowcolor{tablealt}
+GET & /api/events?organizadorId=X & Não & Filtra por organizador \\
+GET & /api/events?status=X\&organizadorId=Y & Não & Combina filtros de status e organizador \\
+\rowcolor{tablealt}
 GET & /api/events/meus & Sim & Eventos do organizador autenticado \\
 POST & /api/events & Sim & Cria novo evento \\
 \rowcolor{tablealt}
@@ -543,11 +546,14 @@ Email único & Verificado no AuthService antes de inserir no banco (400 BadReque
 Senha segura (min 6 chars) & Validação de DataAnnotations no RegisterRequest \\
 Credenciais inválidas & Mesma mensagem independente de email ou senha errados (segurança) \\
 \rowcolor{tablealt}
-DataFim maior que DataInicio & Validado no EventService ao criar evento (400 BadRequest) \\
+DataFim maior que DataInicio & Validado no EventService ao criar e atualizar evento (400 BadRequest) \\
 Só organizador edita evento & Verificação de OrganizadorId no EventService (403 Forbidden) \\
 \rowcolor{tablealt}
 Inscrição duplicada & Verificação no RegistrationService antes do banco (400 BadRequest) \\
+Evento existente em inscrição & RegistrationService retorna 404 quando o evento informado não existe \\
+\rowcolor{tablealt}
 Reação única por evento & Verificação no ReactionService antes do banco (400 BadRequest) \\
+Evento existente em comentários e reações & CommentService e ReactionService retornam 404 quando o evento informado não existe \\
 \rowcolor{tablealt}
 Só autor deleta comentário & Verificação de UsuarioId no CommentService (403 Forbidden) \\
 Respostas HTTP corretas & 200/201 sucesso, 400 dados inválidos, 401 sem auth, 403 sem permissão, 404 não encontrado \\
@@ -604,6 +610,34 @@ Após iniciar, acesse a documentação interativa no Swagger em: \url{http://loc
 Para testar os endpoints com autenticação, clique em \textbf{Authorize} no Swagger e informe o token obtido no login no formato \texttt{Bearer \{token\}}.
 
 % ==============================================================================
+\section{Testes Automatizados e Integração Contínua}
+% ==============================================================================
+
+O projeto também possui o projeto \texttt{AcademicEvents.Tests}, criado com xUnit e Moq para validar as regras de negócio da camada Application sem depender do PostgreSQL. Essa abordagem permite testar os services diretamente, usando mocks das interfaces de repository definidas no Domain.
+
+\begin{lstlisting}[language=bash]
+dotnet test AcademicEvents.sln
+\end{lstlisting}
+
+\begin{longtable}{L{4cm} L{10.5cm}}
+\toprule
+\rowcolor{tablehead}
+\color{white}\textbf{Service testado} & \color{white}\textbf{Cenários cobertos} \\
+\midrule
+\endhead
+AuthService & Email duplicado no cadastro e login com credenciais inválidas \\
+\rowcolor{tablealt}
+EventService & Data final inválida, status inválido, organizador inválido e edição por outro usuário \\
+RegistrationService & Evento inexistente e inscrição duplicada \\
+\rowcolor{tablealt}
+CommentService & Evento inexistente e remoção por usuário que não é autor \\
+ReactionService & Evento inexistente e reação duplicada \\
+\bottomrule
+\end{longtable}
+
+Além dos testes locais, foi criado o workflow \texttt{.github/workflows/ci.yml}. Ele executa restauração de dependências, compilação em modo Release e testes automatizados em pushes para \texttt{develop}, \texttt{main} e pull requests. Assim, cada alteração enviada ao repositório passa por uma verificação mínima antes de ser integrada.
+
+% ==============================================================================
 \section{Conclusão}
 % ==============================================================================
 
@@ -615,6 +649,8 @@ Além dos requisitos mínimos, o grupo implementou:
   \item Cinco exceções customizadas com semântica clara de negócio
   \item Filtragem de eventos por status e por organizador
   \item Validações em duas camadas (service + banco) para evitar dados inconsistentes
+  \item Testes automatizados com xUnit e Moq para os services principais
+  \item Workflow de CI com restore, build e testes automatizados
   \item Documentação XML em português em todos os arquivos
   \item Diagramas C4 nos quatro níveis (contexto, container, componente e código)
   \item Roteiro completo de testes manuais com cenários de sucesso e de erro
