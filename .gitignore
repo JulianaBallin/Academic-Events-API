@@ -13,6 +13,7 @@ PR.md
 apresentacao_academic_events_grupo6.md
 *.pdf
 !docs/relatorios/*.pdf
+!docs/apresentacao/*.pdf
 *.pptx
 docs/diagrams/*.png
 docs/diagrams/*.utxt
