@@ -33,6 +33,19 @@ public class RegistrationServiceTests
     }
 
     [Fact]
+    public async Task CreateAsync_EventoIdInvalido_LancaInvalidOperationException()
+    {
+        RegistrationService service = new RegistrationService(
+            _registrationRepositoryMock.Object,
+            _eventRepositoryMock.Object);
+
+        CreateRegistrationRequest request = new CreateRegistrationRequest { EventoId = 0 };
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.CreateAsync(request, usuarioId: 1));
+    }
+
+    [Fact]
     public async Task CreateAsync_InscricaoDuplicada_LancaInscricaoDuplicadaException()
     {
         RegistrationService service = new RegistrationService(

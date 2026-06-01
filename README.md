@@ -307,6 +307,30 @@ Os enums de entrada podem ser enviados como texto no JSON, por exemplo `"Publica
 
 ---
 
+<h2 align="center">Respostas de Erro</h2>
+
+A API possui um middleware de tratamento de exceções para padronizar erros conhecidos de regra de negócio. Assim, respostas como email duplicado, credenciais inválidas, recurso inexistente e falta de permissão seguem o mesmo formato:
+
+```json
+{
+  "mensagem": "Evento não encontrado.",
+  "statusCode": 404,
+  "caminho": "/api/events/99",
+  "dataHoraUtc": "2026-06-01T20:30:00Z"
+}
+```
+
+Principais códigos usados:
+
+| Código | Quando acontece |
+|--------|-----------------|
+| `400` | Dados inválidos, email duplicado, inscrição duplicada ou reação duplicada |
+| `401` | Login inválido ou ausência de token em rota protegida |
+| `403` | Usuário autenticado tentando alterar recurso de outra pessoa |
+| `404` | Evento, comentário, inscrição ou reação não encontrada |
+
+---
+
 <h2 align="center">Diagramas C4</h2>
 
 Os diagramas estão em `docs/diagrams/` no formato PlantUML (`.puml`).
@@ -338,11 +362,11 @@ dotnet test AcademicEvents.sln
 
 Cobertura atual:
 
-- `AuthService`: email duplicado e credenciais inválidas
-- `EventService`: datas inválidas, filtros inválidos e permissão do organizador
-- `RegistrationService`: evento inexistente e inscrição duplicada
-- `CommentService`: evento inexistente e remoção por outro usuário
-- `ReactionService`: evento inexistente e reação duplicada
+- `AuthService`: email duplicado, normalização de email e credenciais inválidas
+- `EventService`: datas inválidas, textos aparados, filtros inválidos e permissão do organizador
+- `RegistrationService`: evento inexistente, id inválido e inscrição duplicada
+- `CommentService`: evento inexistente, conteúdo em branco, texto aparado e remoção por outro usuário
+- `ReactionService`: evento inexistente, id inválido e reação duplicada
 
 O repositório também possui workflow de CI em `.github/workflows/ci.yml`, rodando restore, build e testes automaticamente.
 
@@ -350,7 +374,7 @@ O repositório também possui workflow de CI em `.github/workflows/ci.yml`, roda
 
 <h2 align="center">Padrão de Documentação do Código</h2>
 
-Todo arquivo C# deve ter um comentário XML no topo da classe principal, em português:
+Todo arquivo C# deve ter um comentário XML no topo da classe principal, em português. O Swagger lê os comentários XML do projeto `AcademicEvents.API`, então os resumos dos controllers aparecem na documentação interativa.
 
 ```csharp
 /// <summary>
@@ -405,7 +429,7 @@ Sempre usar a branch `develop` para enviar as alterações.
 
 | Nome | Responsabilidade |
 |------|-----------------|
-| Juliana Balllin | Desenvolvimento, documentação, testes, relatório técnico e revisão da apresentação |
+| Juliana Ballin | Desenvolvimento, documentação, testes, relatório técnico e revisão da apresentação |
 
 </p>
 

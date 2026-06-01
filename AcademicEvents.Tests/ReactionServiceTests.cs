@@ -38,6 +38,17 @@ public class ReactionServiceTests
     }
 
     [Fact]
+    public async Task GetByEventoAsync_IdInvalido_LancaInvalidOperationException()
+    {
+        ReactionService service = new ReactionService(
+            _reactionRepositoryMock.Object,
+            _eventRepositoryMock.Object);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.GetByEventoAsync(eventoId: 0));
+    }
+
+    [Fact]
     public async Task CreateAsync_ReacaoDuplicada_LancaInvalidOperationException()
     {
         ReactionService service = new ReactionService(

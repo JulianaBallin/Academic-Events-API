@@ -28,17 +28,10 @@ public class EventsController : ControllerBase
     /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(List<EventResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAll([FromQuery] string? status, [FromQuery] int? organizadorId)
     {
-        try
-        {
-            return Ok(await _service.GetAllAsync(status, organizadorId));
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return Ok(await _service.GetAllAsync(status, organizadorId));
     }
 
     /// <summary>
@@ -58,11 +51,13 @@ public class EventsController : ControllerBase
     /// </summary>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(EventResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(int id)
     {
         EventResponse? response = await _service.GetByIdAsync(id);
-        if (response is null) return NotFound();
+        if (response is null)
+            throw new NotFoundException("Evento não encontrado.");
+
         return Ok(response);
     }
 
@@ -72,20 +67,13 @@ public class EventsController : ControllerBase
     [HttpPost]
     [Authorize]
     [ProducesResponseType(typeof(EventResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(CreateEventRequest request)
     {
-        try
-        {
-            // pega o id do usuário logado do token JWT
-            int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            EventResponse response = await _service.CreateAsync(request, usuarioId);
-            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        // pega o id do usuário logado do token JWT
+        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        EventResponse response = await _service.CreateAsync(request, usuarioId);
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
     }
 
     /// <summary>
@@ -94,30 +82,17 @@ public class EventsController : ControllerBase
     [HttpPut("{id:int}")]
     [Authorize]
     [ProducesResponseType(typeof(EventResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Update(int id, UpdateEventRequest request)
     {
-        try
-        {
-            int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            EventResponse? response = await _service.UpdateAsync(id, request, usuarioId);
-            if (response is null) return NotFound();
-            return Ok(response);
-        }
-        catch (NotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (UnauthorizedException ex)
-        {
-            // StatusCode 403 com mensagem no body (Forbid() não aceita mensagem)
-            return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        EventResponse? response = await _service.UpdateAsync(id, request, usuarioId);
+        if (response is null)
+            throw new NotFoundException("Evento não encontrado.");
+
+        return Ok(response);
     }
 
     /// <summary>
@@ -126,23 +101,12 @@ public class EventsController : ControllerBase
     [HttpDelete("{id:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            await _service.DeleteAsync(id, usuarioId);
-            return NoContent();
-        }
-        catch (NotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (UnauthorizedException ex)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
-        }
+        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        await _service.DeleteAsync(id, usuarioId);
+        return NoContent();
     }
 }

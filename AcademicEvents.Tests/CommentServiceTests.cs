@@ -37,6 +37,58 @@ public class CommentServiceTests
     }
 
     [Fact]
+    public async Task CreateAsync_ConteudoEmBranco_LancaInvalidOperationException()
+    {
+        CommentService service = new CommentService(
+            _commentRepositoryMock.Object,
+            _eventRepositoryMock.Object);
+
+        CreateCommentRequest request = new CreateCommentRequest
+        {
+            EventoId = 1,
+            Conteudo = "   "
+        };
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.CreateAsync(request, usuarioId: 1));
+
+        _eventRepositoryMock.Verify(
+            repository => repository.GetByIdAsync(It.IsAny<int>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ConteudoComEspacos_SalvaConteudoAparado()
+    {
+        CommentService service = new CommentService(
+            _commentRepositoryMock.Object,
+            _eventRepositoryMock.Object);
+
+        CreateCommentRequest request = new CreateCommentRequest
+        {
+            EventoId = 1,
+            Conteudo = "  Comentário válido.  "
+        };
+
+        _eventRepositoryMock
+            .Setup(repository => repository.GetByIdAsync(1))
+            .ReturnsAsync(new Event { Id = 1 });
+
+        _commentRepositoryMock
+            .Setup(repository => repository.CreateAsync(It.Is<Comment>(comentario =>
+                comentario.Conteudo == "Comentário válido.")))
+            .ReturnsAsync((Comment comentario) =>
+            {
+                comentario.Id = 2;
+                return comentario;
+            });
+
+        CommentResponse response = await service.CreateAsync(request, usuarioId: 1);
+
+        Assert.Equal("Comentário válido.", response.Conteudo);
+    }
+
+    [Fact]
     public async Task DeleteAsync_UsuarioNaoAutor_LancaUnauthorizedException()
     {
         CommentService service = new CommentService(
