@@ -430,7 +430,7 @@ Sempre usar a branch `develop` para enviar as alterações.
 | Nome | GitHub | Responsabilidade |
 |------|--------|-----------------|
 | Juliana Ballin Lima | [JulianaBallin](https://github.com/JulianaBallin) | Desenvolvimento, documentação, testes, relatório técnico e revisão da apresentação |
-| Allef Oliveira Ramos | [allef-oliveira](https://github.com/allef-oliveira) | Integrante do Grupo 6 |
+| Allef Oliveira Ramos | [allef-oliveira](https://github.com/allef-oliveira) | Testes, estudo de stacks e apoio técnico ao Grupo 6 |
 
 </p>
 
