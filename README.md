@@ -65,7 +65,7 @@ AcademicEvents.Infrastructure
 | `AcademicEvents.API` | Controllers, configuração JWT, Swagger, middlewares e `Program.cs`. |
 | `AcademicEvents.Application` | DTOs, services, interfaces dos services, validações e casos de uso. |
 | `AcademicEvents.Domain` | Entidades, enums e regras do domínio. Sem dependência de framework ou banco. |
-| `AcademicEvents.Infrastructure` | `DbContext`, repositories, migrations e configuração do EF Core. |
+| `AcademicEvents.Infrastructure` | `DbContext`, repositories e configuração do EF Core. |
 | `AcademicEvents.Exceptions` | Exceções customizadas e padronização das respostas de erro. |
 
 ---
@@ -134,15 +134,24 @@ AcademicEvents/
 │   ├── Data/
 │   │   └── AcademicEventsDbContext.cs
 │   ├── Repositories/
-│   │   ├── IAcademicEventsRepository.cs
-│   │   └── AcademicEventsRepository.cs
-│   ├── Migrations/
+│   │   ├── UserRepository.cs
+│   │   ├── EventRepository.cs
+│   │   ├── RegistrationRepository.cs
+│   │   ├── CommentRepository.cs
+│   │   └── ReactionRepository.cs
 │   └── InfrastructureDependencyInjectionExtension.cs
 ├── AcademicEvents.Exceptions/
 │   ├── NotFoundException.cs
 │   ├── DuplicateEmailException.cs
 │   ├── UnauthorizedException.cs
+│   ├── InscricaoDuplicadaException.cs
 │   └── InvalidCredentialsException.cs
+├── AcademicEvents.Tests/
+│   ├── AuthServiceTests.cs
+│   ├── EventServiceTests.cs
+│   ├── RegistrationServiceTests.cs
+│   ├── CommentServiceTests.cs
+│   └── ReactionServiceTests.cs
 └── docs/
     └── diagrams/
         ├── logo.svg
@@ -158,7 +167,7 @@ AcademicEvents/
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download)
 - [Docker](https://www.docker.com/) (para subir o PostgreSQL)
-- [dotnet-ef CLI](https://learn.microsoft.com/ef/core/cli/dotnet) (para rodar migrations)
+- [dotnet-ef CLI](https://learn.microsoft.com/ef/core/cli/dotnet) (opcional, para criar migrations)
 
 Instalar o dotnet-ef globalmente:
 
@@ -208,20 +217,24 @@ Abra `AcademicEvents.API/appsettings.json` e ajuste as chaves conforme o seu amb
 }
 ```
 
-**4. Rodar as migrations**
-
-```bash
-dotnet ef database update --project AcademicEvents.Infrastructure --startup-project AcademicEvents.API
-```
-
-**5. Iniciar a API**
+**4. Iniciar a API**
 
 ```bash
 cd AcademicEvents.API
 dotnet run
 ```
 
+Na inicialização, o `Program.cs` chama `EnsureCreated()` para criar as tabelas no PostgreSQL quando elas ainda não existem.
+
 Acesse o Swagger em: `http://localhost:5000/swagger`
+
+**5. Rodar os testes automatizados**
+
+Na raiz do projeto:
+
+```bash
+dotnet test AcademicEvents.sln
+```
 
 ---
 
@@ -244,10 +257,12 @@ Acesse o Swagger em: `http://localhost:5000/swagger`
 
 | Método | Rota | Proteção | Descrição |
 |--------|------|----------|-----------|
-| `GET` | `/api/events` | Público | Lista todos os eventos publicados |
+| `GET` | `/api/events` | Público | Lista todos os eventos |
 | `GET` | `/api/events/{id}` | Público | Busca um evento por ID |
 | `GET` | `/api/events?status=Publicado` | Público | Filtra eventos por status |
 | `GET` | `/api/events?organizadorId={id}` | Público | Filtra eventos por organizador |
+| `GET` | `/api/events?status=Publicado&organizadorId={id}` | Público | Combina os filtros por status e organizador |
+| `GET` | `/api/events/meus` | Protegido | Lista eventos do organizador autenticado |
 | `POST` | `/api/events` | Protegido | Cria um novo evento |
 | `PUT` | `/api/events/{id}` | Protegido | Atualiza um evento (só o organizador) |
 | `DELETE` | `/api/events/{id}` | Protegido | Remove um evento (só o organizador) |
@@ -260,20 +275,21 @@ Acesse o Swagger em: `http://localhost:5000/swagger`
 | `GET` | `/api/registrations/me` | Lista as inscrições do usuário autenticado |
 | `DELETE` | `/api/registrations/{id}` | Cancela uma inscrição |
 
-**Comentários (protegidos)**
+**Comentários**
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| `POST` | `/api/comments` | Adiciona comentário em um evento |
-| `GET` | `/api/comments?eventoId={id}` | Lista comentários de um evento |
-| `DELETE` | `/api/comments/{id}` | Remove comentário (só o autor) |
+| Método | Rota | Proteção | Descrição |
+|--------|------|----------|-----------|
+| `GET` | `/api/comments?eventoId={id}` | Público | Lista comentários de um evento |
+| `POST` | `/api/comments` | Protegido | Adiciona comentário em um evento |
+| `DELETE` | `/api/comments/{id}` | Protegido | Remove comentário (só o autor) |
 
-**Reações (protegidas)**
+**Reações**
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| `POST` | `/api/reactions` | Adiciona reação em um evento |
-| `GET` | `/api/reactions?eventoId={id}` | Lista reações de um evento |
+| Método | Rota | Proteção | Descrição |
+|--------|------|----------|-----------|
+| `GET` | `/api/reactions?eventoId={id}` | Público | Lista reações de um evento |
+| `POST` | `/api/reactions` | Protegido | Adiciona reação em um evento |
+| `DELETE` | `/api/reactions/{id}` | Protegido | Remove reação (só o autor) |
 
 ---
 
@@ -282,10 +298,12 @@ Acesse o Swagger em: `http://localhost:5000/swagger`
 Depois de fazer login, copie o token retornado e clique em **Authorize** no Swagger. Digite:
 
 ```
-Bearer eyJhbGci...
+eyJhbGci...
 ```
 
-Rotas marcadas com cadeado exigem esse token. Senhas são armazenadas com hash BCrypt e nunca em texto puro.
+No Swagger, cole apenas o token, sem a palavra `Bearer`. Em clientes HTTP como o arquivo `endpoints.http`, o header recomendado é `Authorization: Bearer {token}`. A API também aceita o token puro no header `Authorization` para facilitar a demonstração pelo Swagger. Rotas marcadas com cadeado exigem esse token. Senhas são armazenadas com hash BCrypt e nunca em texto puro.
+
+Os enums de entrada podem ser enviados como texto no JSON, por exemplo `"Publicado"` para status do evento e `"VouParticipar"` para tipo de reação.
 
 ---
 
@@ -295,12 +313,38 @@ Os diagramas estão em `docs/diagrams/` no formato PlantUML (`.puml`).
 
 Para visualizar: [PlantUML Online](https://www.plantuml.com/plantuml/uml/) ou plugin PlantUML no VS Code.
 
+Para validar localmente:
+
+```bash
+plantuml -checkonly docs/diagrams/c4_nivel1_contexto.puml docs/diagrams/c4_nivel2_container.puml docs/diagrams/c4_nivel3_componente.puml docs/diagrams/c4_nivel4_codigo.puml
+```
+
 | Arquivo | Nível | Descrição |
 |---------|-------|-----------|
 | `c4_nivel1_contexto.puml` | Nível 1 | Visão geral: usuários, sistema e banco |
 | `c4_nivel2_container.puml` | Nível 2 | Projetos da solution e responsabilidades |
 | `c4_nivel3_componente.puml` | Nível 3 | Componentes internos da API e Application |
 | `c4_nivel4_codigo.puml` | Nível 4 | Classes do domínio e relacionamentos |
+
+---
+
+<h2 align="center">Testes Automatizados</h2>
+
+O projeto inclui `AcademicEvents.Tests` com xUnit e Moq para validar regras dos services sem depender do PostgreSQL.
+
+```bash
+dotnet test AcademicEvents.sln
+```
+
+Cobertura atual:
+
+- `AuthService`: email duplicado e credenciais inválidas
+- `EventService`: datas inválidas, filtros inválidos e permissão do organizador
+- `RegistrationService`: evento inexistente e inscrição duplicada
+- `CommentService`: evento inexistente e remoção por outro usuário
+- `ReactionService`: evento inexistente e reação duplicada
+
+O repositório também possui workflow de CI em `.github/workflows/ci.yml`, rodando restore, build e testes automaticamente.
 
 ---
 
@@ -318,7 +362,7 @@ public class AuthService : IAuthService
     // verifica se o email já existe antes de criar o usuário
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
-        if (await _repository.GetUserByEmailAsync(request.Email) is not null)
+        if (await _repository.GetByEmailAsync(request.Email) is not null)
             throw new DuplicateEmailException("Esse email já está cadastrado.");
         ...
     }
@@ -355,17 +399,13 @@ Sempre usar a branch `develop` para enviar as alterações.
 
 ---
 
-<h2 align="center">Equipe</h2>
+<h2 align="center">Responsável</h2>
 
 <p align="center">
 
 | Nome | Responsabilidade |
 |------|-----------------|
-| Thailsson Clementino de Andrade | Solution, estrutura inicial, .gitignore e organização do repositório |
-| Stevão Whinter Marques de Andrade | Domain: entidades, enums e interfaces de repository |
-| Márcio Franklin de Oliveira Lima | Infrastructure: DbContext, EF Core, migrations e repositories |
-| Allef Oliveira Ramos | API: controllers CRUD, Swagger e Program.cs base |
-| Juliana Ballin Lima | Application layer: DTOs, services, JWT, exceções e testes |
+| Juliana Balllin | Desenvolvimento, documentação, testes, relatório técnico e revisão da apresentação |
 
 </p>
 

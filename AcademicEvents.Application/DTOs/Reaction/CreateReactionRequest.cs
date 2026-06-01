@@ -14,5 +14,6 @@ public class CreateReactionRequest
     public int EventoId { get; set; }
 
     [Required(ErrorMessage = "O tipo de reação é obrigatório.")]
+    [EnumDataType(typeof(TipoReacao), ErrorMessage = "Tipo de reação inválido.")]
     public TipoReacao Tipo { get; set; }
 }

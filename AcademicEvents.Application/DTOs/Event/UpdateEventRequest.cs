@@ -28,5 +28,6 @@ public class UpdateEventRequest
     public string Local { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "O status é obrigatório.")]
+    [EnumDataType(typeof(StatusEvento), ErrorMessage = "Status inválido.")]
     public StatusEvento Status { get; set; }
 }

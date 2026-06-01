@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using AcademicEvents.Application;
 using AcademicEvents.Infrastructure;
 using AcademicEvents.Infrastructure.Data;
@@ -8,7 +9,11 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 
 // Infrastructure registra o DbContext e os repositories
@@ -34,6 +39,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                string authorization = context.Request.Headers.Authorization.ToString();
+
+                // Aceita o token puro para evitar erro comum ao testar pelo Swagger.
+                if (!string.IsNullOrWhiteSpace(authorization)
+                    && !authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+                    && authorization.Split('.').Length == 3)
+                {
+                    context.Token = authorization;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
     });
 
 // configura o Swagger para aceitar o token Bearer no botão Authorize
@@ -43,12 +66,10 @@ builder.Services.AddSwaggerGen(options =>
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
         BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Digite: Bearer {seu token JWT}"
+        Description = "Cole apenas o token JWT retornado no login ou cadastro."
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement

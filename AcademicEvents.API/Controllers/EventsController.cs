@@ -24,16 +24,16 @@ public class EventsController : ControllerBase
     }
 
     /// <summary>
-    /// Lista todos os eventos. Filtre por status com ?status=Publicado.
+    /// Lista todos os eventos. Filtre por status e organizador com query string.
     /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(List<EventResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetAll([FromQuery] string? status)
+    public async Task<IActionResult> GetAll([FromQuery] string? status, [FromQuery] int? organizadorId)
     {
         try
         {
-            return Ok(await _service.GetAllAsync(status));
+            return Ok(await _service.GetAllAsync(status, organizadorId));
         }
         catch (InvalidOperationException ex)
         {
@@ -113,6 +113,10 @@ public class EventsController : ControllerBase
         {
             // StatusCode 403 com mensagem no body (Forbid() não aceita mensagem)
             return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
         }
     }
 

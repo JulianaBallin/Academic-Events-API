@@ -38,19 +38,24 @@ public class ReactionsController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize]
-    [ProducesResponseType(typeof(ReactionResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ReactionResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(CreateReactionRequest request)
     {
         try
         {
             int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             ReactionResponse response = await _service.CreateAsync(request, usuarioId);
-            return Ok(response);
+            return StatusCode(StatusCodes.Status201Created, response);
         }
         catch (InvalidOperationException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.Message);
         }
     }
 

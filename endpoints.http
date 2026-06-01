@@ -40,10 +40,16 @@ GET http://localhost:5000/api/events
 ### 6. Filtrar por status
 GET http://localhost:5000/api/events?status=Publicado
 
-### 7. Buscar evento por id
+### 7. Filtrar por organizador
+GET http://localhost:5000/api/events?organizadorId=1
+
+### 8. Combinar filtros de status e organizador
+GET http://localhost:5000/api/events?status=Publicado&organizadorId=1
+
+### 9. Buscar evento por id
 GET http://localhost:5000/api/events/1
 
-### 8. Atualizar evento (substituir TOKEN e id)
+### 10. Atualizar evento (substituir TOKEN e id)
 PUT http://localhost:5000/api/events/1
 Content-Type: application/json
 Authorization: Bearer TOKEN
@@ -57,7 +63,7 @@ Authorization: Bearer TOKEN
   "status": "Publicado"
 }
 
-### 9. Se inscrever em um evento (substituir TOKEN)
+### 11. Se inscrever em um evento (substituir TOKEN)
 POST http://localhost:5000/api/registrations
 Content-Type: application/json
 Authorization: Bearer TOKEN
@@ -66,15 +72,24 @@ Authorization: Bearer TOKEN
   "eventoId": 1
 }
 
-### 10. Ver minhas inscrições
+### 12. Tentar se inscrever em evento inexistente (deve retornar 404)
+POST http://localhost:5000/api/registrations
+Content-Type: application/json
+Authorization: Bearer TOKEN
+
+{
+  "eventoId": 9999
+}
+
+### 13. Ver minhas inscrições
 GET http://localhost:5000/api/registrations/me
 Authorization: Bearer TOKEN
 
-### 11. Cancelar inscrição (substituir TOKEN e id)
+### 14. Cancelar inscrição (substituir TOKEN e id)
 DELETE http://localhost:5000/api/registrations/1
 Authorization: Bearer TOKEN
 
-### 12. Comentar em um evento
+### 15. Comentar em um evento
 POST http://localhost:5000/api/comments
 Content-Type: application/json
 Authorization: Bearer TOKEN
@@ -84,14 +99,24 @@ Authorization: Bearer TOKEN
   "conteudo": "Ótimo evento, vai aprender muito!"
 }
 
-### 13. Listar comentários de um evento
+### 16. Tentar comentar em evento inexistente (deve retornar 404)
+POST http://localhost:5000/api/comments
+Content-Type: application/json
+Authorization: Bearer TOKEN
+
+{
+  "eventoId": 9999,
+  "conteudo": "Esse evento não existe."
+}
+
+### 17. Listar comentários de um evento
 GET http://localhost:5000/api/comments?eventoId=1
 
-### 14. Deletar comentário
+### 18. Deletar comentário
 DELETE http://localhost:5000/api/comments/1
 Authorization: Bearer TOKEN
 
-### 15. Reagir a um evento
+### 19. Reagir a um evento
 POST http://localhost:5000/api/reactions
 Content-Type: application/json
 Authorization: Bearer TOKEN
@@ -101,13 +126,23 @@ Authorization: Bearer TOKEN
   "tipo": "VouParticipar"
 }
 
-### 16. Listar reações de um evento
+### 20. Tentar reagir em evento inexistente (deve retornar 404)
+POST http://localhost:5000/api/reactions
+Content-Type: application/json
+Authorization: Bearer TOKEN
+
+{
+  "eventoId": 9999,
+  "tipo": "Curtir"
+}
+
+### 21. Listar reações de um evento
 GET http://localhost:5000/api/reactions?eventoId=1
 
-### 17. Deletar reação
+### 22. Deletar reação
 DELETE http://localhost:5000/api/reactions/1
 Authorization: Bearer TOKEN
 
-### 18. Deletar evento (substituir TOKEN e id)
+### 23. Deletar evento (substituir TOKEN e id)
 DELETE http://localhost:5000/api/events/1
 Authorization: Bearer TOKEN

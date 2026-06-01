@@ -22,6 +22,7 @@ public class EventRepository : IEventRepository
     {
         _context.Events.Add(evento);
         await _context.SaveChangesAsync();
+        await _context.Entry(evento).Reference(e => e.Organizador).LoadAsync();
         return evento;
     }
 
@@ -56,6 +57,21 @@ public class EventRepository : IEventRepository
         return await _context.Events
             .Include(e => e.Organizador)
             .Where(e => e.OrganizadorId == organizadorId)
+            .OrderByDescending(e => e.DataInicio)
+            .ToListAsync();
+    }
+
+    public async Task<List<Event>> GetFilteredAsync(StatusEvento? status, int? organizadorId)
+    {
+        IQueryable<Event> query = _context.Events.Include(e => e.Organizador);
+
+        if (status.HasValue)
+            query = query.Where(e => e.Status == status.Value);
+
+        if (organizadorId.HasValue)
+            query = query.Where(e => e.OrganizadorId == organizadorId.Value);
+
+        return await query
             .OrderByDescending(e => e.DataInicio)
             .ToListAsync();
     }

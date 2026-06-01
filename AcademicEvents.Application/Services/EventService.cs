@@ -46,20 +46,26 @@ public class EventService : IEventService
         return MapearParaResponse(evento);
     }
 
-    public async Task<List<EventResponse>> GetAllAsync(string? status)
+    public async Task<List<EventResponse>> GetAllAsync(string? status, int? organizadorId)
     {
-        // sem filtro retorna todos os eventos
-        if (string.IsNullOrEmpty(status))
-        {
-            List<Event> todos = await _repository.GetAllAsync();
-            return todos.Select(MapearParaResponse).ToList();
-        }
+        if (organizadorId is <= 0)
+            throw new InvalidOperationException("O id do organizador deve ser maior que zero.");
+
+        StatusEvento? statusEnum = null;
 
         // tenta converter o status recebido como string para o enum
-        if (!Enum.TryParse<StatusEvento>(status, ignoreCase: true, out StatusEvento statusEnum))
-            throw new InvalidOperationException($"Status '{status}' inválido.");
+        if (!string.IsNullOrEmpty(status))
+        {
+            if (!Enum.TryParse<StatusEvento>(status, ignoreCase: true, out StatusEvento statusConvertido))
+                throw new InvalidOperationException($"Status '{status}' inválido.");
 
-        List<Event> filtrados = await _repository.GetByStatusAsync(statusEnum);
+            if (!Enum.IsDefined(statusConvertido))
+                throw new InvalidOperationException($"Status '{status}' inválido.");
+
+            statusEnum = statusConvertido;
+        }
+
+        List<Event> filtrados = await _repository.GetFilteredAsync(statusEnum, organizadorId);
         return filtrados.Select(MapearParaResponse).ToList();
     }
 
@@ -77,6 +83,12 @@ public class EventService : IEventService
         // só o organizador pode editar o próprio evento
         if (evento.OrganizadorId != usuarioId)
             throw new UnauthorizedException("Apenas o organizador pode editar este evento.");
+
+        if (request.DataFim <= request.DataInicio)
+            throw new InvalidOperationException("A data de fim deve ser posterior à data de início.");
+
+        if (!Enum.IsDefined(request.Status))
+            throw new InvalidOperationException("Status inválido.");
 
         evento.Titulo = request.Titulo;
         evento.Descricao = request.Descricao;

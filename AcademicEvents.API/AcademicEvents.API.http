@@ -1,6 +1,38 @@
-@AcademicEvents.API_HostAddress = http://localhost:5136
+@AcademicEvents.API_HostAddress = http://localhost:5000
+@token = cole_o_token_aqui
 
-GET {{AcademicEvents.API_HostAddress}}/weatherforecast/
+### Cadastrar usuário
+POST {{AcademicEvents.API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "nome": "Maria Silva",
+  "email": "maria@teste.com",
+  "senha": "Senha123!"
+}
+
+### Login
+POST {{AcademicEvents.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "maria@teste.com",
+  "senha": "Senha123!"
+}
+
+### Listar eventos
+GET {{AcademicEvents.API_HostAddress}}/api/events
 Accept: application/json
 
-###
+### Criar evento
+POST {{AcademicEvents.API_HostAddress}}/api/events
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "titulo": "Workshop de C# em Manaus",
+  "descricao": "Workshop prático sobre ASP.NET Core",
+  "dataInicio": "2026-06-10T09:00:00",
+  "dataFim": "2026-06-10T18:00:00",
+  "local": "Bloco A - Sala 201"
+}

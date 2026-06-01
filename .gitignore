@@ -9,12 +9,17 @@ obj/
 *.env
 appsettings.Development.json
 AGENTE.md
+PR.md
+apresentacao_academic_events_grupo6.md
 *.pdf
 !docs/relatorios/*.pdf
+!docs/apresentacao/*.pdf
 *.pptx
+docs/diagrams/*.png
+docs/diagrams/*.utxt
 .claude/
 .history/
-# arquivos auxiliares do LaTeX (gerados na compilacao)
+# arquivos auxiliares do LaTeX (gerados na compilação)
 docs/relatorios/*.aux
 docs/relatorios/*.log
 docs/relatorios/*.out

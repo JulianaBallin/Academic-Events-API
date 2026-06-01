@@ -1,7 +1,7 @@
 @startuml c4_nivel1_contexto
 
-' usa a lib oficial do C4 Model
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+' usa a biblioteca C4 embutida no PlantUML (stdlib, não precisa de internet)
+!include <C4/C4_Context>
 
 LAYOUT_WITH_LEGEND()
 

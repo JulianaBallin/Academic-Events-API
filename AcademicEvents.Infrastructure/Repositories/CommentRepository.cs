@@ -21,6 +21,7 @@ public class CommentRepository : ICommentRepository
     {
         _context.Comments.Add(comentario);
         await _context.SaveChangesAsync();
+        await _context.Entry(comentario).Reference(c => c.Usuario).LoadAsync();
         return comentario;
     }
 

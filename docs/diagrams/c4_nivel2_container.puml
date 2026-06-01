@@ -1,7 +1,7 @@
 @startuml c4_nivel2_container
 
-' lib C4 para nível de container (projetos da solution)
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+' usa a biblioteca C4 embutida no PlantUML (stdlib, não precisa de internet)
+!include <C4/C4_Container>
 
 LAYOUT_WITH_LEGEND()
 
@@ -9,28 +9,19 @@ title [Nível 2] Containers - AcademicEvents Solution
 
 Person(usuario, "Usuário / Organizador", "Acessa a API via Swagger,\nPostman ou aplicação cliente.")
 
-' agrupamento da nossa solution .NET
-System_Boundary(solution, "AcademicEvents Solution (.NET 8)") {
+' projetos da nossa solution .NET
+Container(apiProj, "AcademicEvents.API", "ASP.NET Core Web API", "Camada de entrada da aplicação.\nControllers, configuração de autenticação,\nSwagger, middlewares e Program.cs.")
 
-  Container(apiProj, "AcademicEvents.API", "ASP.NET Core Web API",
-    "Camada de entrada da aplicação.\nControllers, configuração de autenticação,\nSwagger, middlewares e Program.cs.")
+Container(appProj, "AcademicEvents.Application", "Class Library C#", "Camada de aplicação.\nDTOs, services, interfaces de serviço,\nvalidações de entrada e casos de uso.")
 
-  Container(appProj, "AcademicEvents.Application", "Class Library C#",
-    "Camada de aplicação.\nDTOs, services, interfaces de serviço,\nvalidações de entrada e casos de uso.")
+Container(domainProj, "AcademicEvents.Domain", "Class Library C#", "Camada de domínio.\nEntidades, enums e regras essenciais\ndo problema, sem dependência de framework.")
 
-  Container(domainProj, "AcademicEvents.Domain", "Class Library C#",
-    "Camada de domínio.\nEntidades, enums e regras essenciais\ndo problema, sem dependência de framework.")
+Container(infraProj, "AcademicEvents.Infrastructure", "Class Library C#", "Camada de infraestrutura.\nDbContext, repositories, migrations\ne configurações do EF Core.")
 
-  Container(infraProj, "AcademicEvents.Infrastructure", "Class Library C#",
-    "Camada de infraestrutura.\nDbContext, repositories, migrations\ne configurações do EF Core.")
-
-  Container(excProj, "AcademicEvents.Exceptions", "Class Library C#",
-    "Exceções customizadas e modelos\nde erro padronizados para a API.")
-}
+Container(excProj, "AcademicEvents.Exceptions", "Class Library C#", "Exceções customizadas e modelos\nde erro padronizados para a API.")
 
 ' banco de dados fora da solution
-ContainerDb(db, "PostgreSQL 15", "Banco de Dados Relacional",
-  "Armazena todos os dados da plataforma.\nRoda em container Docker (docker-compose).")
+ContainerDb(db, "PostgreSQL 15", "Banco de Dados Relacional", "Armazena todos os dados da plataforma.\nRoda em container Docker (docker-compose).")
 
 ' fluxo de dependências entre os projetos
 Rel(usuario, apiProj, "Requisições HTTP/HTTPS", "JSON / Bearer Token")

@@ -21,6 +21,8 @@ public class RegistrationRepository : IRegistrationRepository
     {
         _context.Registrations.Add(inscricao);
         await _context.SaveChangesAsync();
+        await _context.Entry(inscricao).Reference(r => r.Usuario).LoadAsync();
+        await _context.Entry(inscricao).Reference(r => r.Evento).LoadAsync();
         return inscricao;
     }
 
@@ -35,6 +37,7 @@ public class RegistrationRepository : IRegistrationRepository
     public async Task<List<Registration>> GetByUsuarioAsync(int usuarioId)
     {
         return await _context.Registrations
+            .Include(r => r.Usuario)
             .Include(r => r.Evento)
             .Where(r => r.UsuarioId == usuarioId)
             .OrderByDescending(r => r.CriadoEm)

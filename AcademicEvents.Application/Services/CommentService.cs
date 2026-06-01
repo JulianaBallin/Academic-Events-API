@@ -12,14 +12,20 @@ namespace AcademicEvents.Application.Services;
 public class CommentService : ICommentService
 {
     private readonly ICommentRepository _repository;
+    private readonly IEventRepository _eventRepository;
 
-    public CommentService(ICommentRepository repository)
+    public CommentService(ICommentRepository repository, IEventRepository eventRepository)
     {
         _repository = repository;
+        _eventRepository = eventRepository;
     }
 
     public async Task<CommentResponse> CreateAsync(CreateCommentRequest request, int usuarioId)
     {
+        Event? evento = await _eventRepository.GetByIdAsync(request.EventoId);
+        if (evento is null)
+            throw new NotFoundException("Evento não encontrado.");
+
         Comment comentario = new Comment
         {
             EventoId = request.EventoId,
