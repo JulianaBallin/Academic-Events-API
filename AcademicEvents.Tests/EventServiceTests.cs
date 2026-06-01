@@ -32,6 +32,36 @@ public class EventServiceTests
     }
 
     [Fact]
+    public async Task CreateAsync_TextosComEspacos_SalvaTextosAparados()
+    {
+        EventService service = new EventService(_eventRepositoryMock.Object);
+        CreateEventRequest request = new CreateEventRequest
+        {
+            Titulo = "  Palestra de C#  ",
+            Descricao = "  Descrição válida para o evento acadêmico.  ",
+            DataInicio = DateTime.UtcNow.AddDays(1),
+            DataFim = DateTime.UtcNow.AddDays(2),
+            Local = "  Auditório  "
+        };
+
+        _eventRepositoryMock
+            .Setup(repository => repository.CreateAsync(It.Is<Event>(evento =>
+                evento.Titulo == "Palestra de C#"
+                && evento.Descricao == "Descrição válida para o evento acadêmico."
+                && evento.Local == "Auditório")))
+            .ReturnsAsync((Event evento) =>
+            {
+                evento.Id = 1;
+                return evento;
+            });
+
+        EventResponse response = await service.CreateAsync(request, organizadorId: 1);
+
+        Assert.Equal("Palestra de C#", response.Titulo);
+        Assert.Equal("Auditório", response.Local);
+    }
+
+    [Fact]
     public async Task UpdateAsync_UsuarioNaoOrganizador_LancaUnauthorizedException()
     {
         EventService service = new EventService(_eventRepositoryMock.Object);
