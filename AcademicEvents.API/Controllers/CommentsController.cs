@@ -28,8 +28,11 @@ public class CommentsController : ControllerBase
     /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetByEvento([FromQuery] int eventoId)
     {
+        if (eventoId <= 0)
+            return BadRequest("O id do evento deve ser maior que zero.");
         return Ok(await _service.GetByEventoAsync(eventoId));
     }
 

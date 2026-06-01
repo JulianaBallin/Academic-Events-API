@@ -405,7 +405,7 @@ Sempre usar a branch `develop` para enviar as alterações.
 
 | Nome | Responsabilidade |
 |------|-----------------|
-| Juliana Balllin | Desenvolvimento, documentação, testes, relatório técnico e revisão da apresentação |
+| Juliana Ballin | Desenvolvimento, documentação, testes, relatório técnico e revisão da apresentação |
 
 </p>
 

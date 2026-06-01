@@ -28,8 +28,10 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
-        // não pode ter dois usuários com o mesmo email
-        if (await _repository.GetByEmailAsync(request.Email) is not null)
+        // normaliza email pra minúsculo antes de gravar, evita duplicatas tipo "Test@" e "test@"
+        string emailNormalizado = request.Email.Trim().ToLower();
+
+        if (await _repository.GetByEmailAsync(emailNormalizado) is not null)
             throw new DuplicateEmailException("Esse email já está em uso.");
 
         // BCrypt cuida do salt automaticamente, não precisa passar nada extra
@@ -37,8 +39,8 @@ public class AuthService : IAuthService
 
         User usuario = new User
         {
-            Nome = request.Nome,
-            Email = request.Email,
+            Nome = request.Nome.Trim(),
+            Email = emailNormalizado,
             SenhaHash = senhaHash
         };
 
@@ -48,7 +50,8 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
-        User? usuario = await _repository.GetByEmailAsync(request.Email);
+        // normaliza antes de buscar, já que os emails são gravados em minúsculo
+        User? usuario = await _repository.GetByEmailAsync(request.Email.Trim().ToLower());
 
         // retorna o mesmo erro independente se email ou senha estão errados (segurança)
         if (usuario is null || !BCrypt.Net.BCrypt.Verify(request.Senha, usuario.SenhaHash))
