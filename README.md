@@ -298,10 +298,10 @@ dotnet test AcademicEvents.sln
 Depois de fazer login, copie o token retornado e clique em **Authorize** no Swagger. Digite:
 
 ```
-Bearer eyJhbGci...
+eyJhbGci...
 ```
 
-Rotas marcadas com cadeado exigem esse token. Senhas são armazenadas com hash BCrypt e nunca em texto puro.
+No Swagger, cole apenas o token, sem a palavra `Bearer`. Em clientes HTTP como o arquivo `endpoints.http`, o header recomendado é `Authorization: Bearer {token}`. A API também aceita o token puro no header `Authorization` para facilitar a demonstração pelo Swagger. Rotas marcadas com cadeado exigem esse token. Senhas são armazenadas com hash BCrypt e nunca em texto puro.
 
 Os enums de entrada podem ser enviados como texto no JSON, por exemplo `"Publicado"` para status do evento e `"VouParticipar"` para tipo de reação.
 
