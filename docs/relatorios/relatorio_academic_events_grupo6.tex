@@ -1,7 +1,7 @@
 % ==============================================================================
 % Relatório Técnico - Academic Events API
 % Curso de Desenvolvimento em C# - Módulo 3
-% Grupo 6: Thailsson, Stevão, Márcio, Allef, Juliana
+% Responsável: Juliana Balllin
 % ==============================================================================
 
 \documentclass[11pt, a4paper, oneside]{article}
@@ -97,8 +97,8 @@
   linkcolor   = apiblue,
   urlcolor    = apilightblue,
   citecolor   = apidark,
-  pdftitle    = {Relatório Técnico - Academic Events API - Grupo 6},
-  pdfauthor   = {Thailsson Clementino; Stevão Whinter; Márcio Franklin; Allef Oliveira; Juliana Ballin},
+  pdftitle    = {Relatório Técnico - Academic Events API},
+  pdfauthor   = {Juliana Balllin},
   pdfsubject  = {API REST em ASP.NET Core para gerenciamento de eventos acadêmicos},
   pdfkeywords = {CSharp, ASP.NET Core, REST API, JWT, EF Core, PostgreSQL, DDD}
 }
@@ -165,7 +165,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small\color{apiblue}\textbf{Academic Events API}}
-\fancyhead[R]{\small\color{apidark}Grupo 6 - Módulo Desenvolvimento em C\#}
+\fancyhead[R]{\small\color{apidark}Juliana Balllin - Módulo Desenvolvimento em C\#}
 \fancyfoot[C]{\small\color{apidark}Página \thepage\ de \pageref{LastPage}}
 \renewcommand{\headrulewidth}{1.5pt}
 \renewcommand{\headrule}{\hbox to\headwidth{\color{apilightblue}\leaders\hrule height \headrulewidth\hfill}}
@@ -212,19 +212,15 @@
 
 \begin{tabular}{ll}
 \textbf{Disciplina:} & Desenvolvimento em C\# - Módulo 3 \\[2mm]
-\textbf{Grupo:}      & Grupo 6 \\[2mm]
+\textbf{Responsável:} & Juliana Balllin \\[2mm]
 \textbf{Data:}       & Junho de 2026 \\[2mm]
 \end{tabular}
 
 \vspace{10mm}
 
-\begin{tcolorbox}[requisito, title={Integrantes do Grupo 6}, width=0.85\linewidth]
+\begin{tcolorbox}[requisito, title={Autoria do Relatório}, width=0.85\linewidth]
 \begin{tabular}{ll}
-1. & Thailsson Clementino de Andrade \\
-2. & Stevão Whinter Marques de Andrade \\
-3. & Márcio Franklin de Oliveira Lima \\
-4. & Allef Oliveira Ramos \\
-5. & Juliana Ballin Lima \\
+1. & Juliana Balllin \\
 \end{tabular}
 \end{tcolorbox}
 
@@ -488,6 +484,10 @@ DELETE & /api/reactions/\{id\} & Sim & Remove reação (só o autor) \\
 \bottomrule
 \end{longtable}
 
+\subsection{Formato dos Enums nos Contratos}
+
+O projeto configura o \texttt{JsonStringEnumConverter} no \texttt{Program.cs}. Com isso, os campos de enum podem ser enviados como texto no corpo das requisições, mantendo os exemplos do Swagger e do arquivo \texttt{endpoints.http} mais legíveis. Exemplos: \texttt{"Publicado"} para \texttt{StatusEvento} e \texttt{"VouParticipar"} para \texttt{TipoReacao}.
+
 % ==============================================================================
 \section{Camada de Infrastructure}
 % ==============================================================================
@@ -643,7 +643,7 @@ Além dos testes locais, foi criado o workflow \texttt{.github/workflows/ci.yml}
 
 A Academic Events API atende todos os requisitos obrigatórios do trabalho final: autenticação JWT, cinco entidades com relacionamentos, banco PostgreSQL via EF Core, arquitetura em cinco projetos separados, DTOs request/response, services com regras de negócio, repositories com repository pattern, Swagger/OpenAPI e versionamento via Git.
 
-Além dos requisitos mínimos, o grupo implementou:
+Além dos requisitos mínimos, o projeto implementou:
 
 \begin{itemize}[noitemsep]
   \item Cinco exceções customizadas com semântica clara de negócio

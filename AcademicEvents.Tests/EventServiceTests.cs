@@ -62,11 +62,42 @@ public class EventServiceTests
     }
 
     [Fact]
+    public async Task GetAllAsync_StatusNumericoForaDoEnum_LancaInvalidOperationException()
+    {
+        EventService service = new EventService(_eventRepositoryMock.Object);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.GetAllAsync("99", organizadorId: null));
+    }
+
+    [Fact]
     public async Task GetAllAsync_OrganizadorInvalido_LancaInvalidOperationException()
     {
         EventService service = new EventService(_eventRepositoryMock.Object);
 
         await Assert.ThrowsAsync<InvalidOperationException>(
             () => service.GetAllAsync(status: null, organizadorId: 0));
+    }
+
+    [Fact]
+    public async Task UpdateAsync_StatusForaDoEnum_LancaInvalidOperationException()
+    {
+        EventService service = new EventService(_eventRepositoryMock.Object);
+        UpdateEventRequest request = new UpdateEventRequest
+        {
+            Titulo = "Palestra atualizada",
+            Descricao = "Descrição válida para atualização.",
+            DataInicio = DateTime.UtcNow.AddDays(2),
+            DataFim = DateTime.UtcNow.AddDays(3),
+            Local = "Auditório",
+            Status = (AcademicEvents.Domain.Enums.StatusEvento)99
+        };
+
+        _eventRepositoryMock
+            .Setup(repository => repository.GetByIdAsync(10))
+            .ReturnsAsync(new Event { Id = 10, OrganizadorId = 1 });
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.UpdateAsync(id: 10, request, usuarioId: 1));
     }
 }

@@ -23,6 +23,9 @@ public class ReactionService : IReactionService
 
     public async Task<ReactionResponse> CreateAsync(CreateReactionRequest request, int usuarioId)
     {
+        if (!Enum.IsDefined(request.Tipo))
+            throw new InvalidOperationException("Tipo de reação inválido.");
+
         Event? evento = await _eventRepository.GetByIdAsync(request.EventoId);
         if (evento is null)
             throw new NotFoundException("Evento não encontrado.");

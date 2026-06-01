@@ -21,6 +21,7 @@ public class ReactionRepository : IReactionRepository
     {
         _context.Reactions.Add(reacao);
         await _context.SaveChangesAsync();
+        await _context.Entry(reacao).Reference(r => r.Usuario).LoadAsync();
         return reacao;
     }
 
@@ -36,6 +37,7 @@ public class ReactionRepository : IReactionRepository
         return await _context.Reactions
             .Include(r => r.Usuario)
             .Where(r => r.EventoId == eventoId)
+            .OrderByDescending(r => r.CriadoEm)
             .ToListAsync();
     }
 

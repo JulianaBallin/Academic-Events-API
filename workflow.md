@@ -1,6 +1,6 @@
 # Workflow - Academic Events API
 
-Olá pessoal, nosso projeto é a **Academic Events API**, uma API REST em .NET para gerenciar eventos acadêmicos. Aqui está a divisão de tarefas para os 5 integrantes.
+Olá, este é o roteiro técnico da **Academic Events API**, uma API REST em .NET para gerenciar eventos acadêmicos. Aqui está a organização das áreas do projeto.
 
 O professor deixou o repositório `minisocial-project` como referência. Sigam o mesmo estilo de código que ele usa lá: extension methods para DI, repository pattern, service com regras de negócio, DTOs separados e `EnsureCreated` no Program.cs. A diferença do nosso projeto é que vamos ter **JWT** e **5 projetos separados** em vez de um só.
 
@@ -32,11 +32,11 @@ public class AuthService : IAuthService
 
 ---
 
-## Pessoa 1 - Juliana Ballin Lima
+## Responsável - Juliana Balllin
 
 **Tarefa: Estrutura inicial da solution + Application layer completa + autenticação JWT + exceções + testes**
 
-Essa é a parte mais complexa e inicial do projeto. A Juliana ficou responsável por criar a base que todos os outros vão usar, além de toda a camada Application.
+Essa é a parte mais complexa e inicial do projeto. A Juliana ficou responsável por criar a base da API, além de toda a camada Application.
 
 ### 1.1 - Estrutura da solution (já feita - commit na develop)
 
@@ -109,7 +109,7 @@ dotnet test AcademicEvents.sln
 
 ---
 
-## Pessoa 2 - Thailsson Clementino de Andrade
+## Área 2 - Domain
 
 **Tarefa: Domain - entidades completas, enums e interfaces de repository**
 
@@ -128,7 +128,7 @@ Garanta que cada arquivo tem o comentário XML no topo da classe principal em po
 
 ---
 
-## Pessoa 3 - Stevão Whinter Marques de Andrade
+## Área 3 - Infrastructure
 
 **Tarefa: Infrastructure - DbContext, EF Core, criação do schema e repositories**
 
@@ -148,7 +148,7 @@ Garanta que cada arquivo tem o comentário XML no topo da classe principal em po
 
 ---
 
-## Pessoa 4 - Márcio Franklin de Oliveira Lima
+## Área 4 - API
 
 **Tarefa: API - controllers CRUD completos**
 
@@ -162,7 +162,7 @@ Garanta que cada arquivo tem o comentário XML no topo da classe principal em po
 
 ---
 
-## Pessoa 5 - Allef Oliveira Ramos
+## Área 5 - Testes manuais, Swagger e documentação final
 
 **Tarefa: Testes manuais, Swagger e documentação final**
 
@@ -439,4 +439,4 @@ jobs:
 - Qualquer dúvida sobre JWT, ver a documentação do `Microsoft.AspNetCore.Authentication.JwtBearer`
 - O Swagger deve funcionar completamente com o botão Authorize para rotas protegidas
 
-Boa sorte pessoal!
+Boa apresentação!

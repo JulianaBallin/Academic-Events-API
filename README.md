@@ -257,7 +257,7 @@ dotnet test AcademicEvents.sln
 
 | Método | Rota | Proteção | Descrição |
 |--------|------|----------|-----------|
-| `GET` | `/api/events` | Público | Lista todos os eventos publicados |
+| `GET` | `/api/events` | Público | Lista todos os eventos |
 | `GET` | `/api/events/{id}` | Público | Busca um evento por ID |
 | `GET` | `/api/events?status=Publicado` | Público | Filtra eventos por status |
 | `GET` | `/api/events?organizadorId={id}` | Público | Filtra eventos por organizador |
@@ -275,20 +275,21 @@ dotnet test AcademicEvents.sln
 | `GET` | `/api/registrations/me` | Lista as inscrições do usuário autenticado |
 | `DELETE` | `/api/registrations/{id}` | Cancela uma inscrição |
 
-**Comentários (protegidos)**
+**Comentários**
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| `POST` | `/api/comments` | Adiciona comentário em um evento |
-| `GET` | `/api/comments?eventoId={id}` | Lista comentários de um evento |
-| `DELETE` | `/api/comments/{id}` | Remove comentário (só o autor) |
+| Método | Rota | Proteção | Descrição |
+|--------|------|----------|-----------|
+| `GET` | `/api/comments?eventoId={id}` | Público | Lista comentários de um evento |
+| `POST` | `/api/comments` | Protegido | Adiciona comentário em um evento |
+| `DELETE` | `/api/comments/{id}` | Protegido | Remove comentário (só o autor) |
 
-**Reações (protegidas)**
+**Reações**
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| `POST` | `/api/reactions` | Adiciona reação em um evento |
-| `GET` | `/api/reactions?eventoId={id}` | Lista reações de um evento |
+| Método | Rota | Proteção | Descrição |
+|--------|------|----------|-----------|
+| `GET` | `/api/reactions?eventoId={id}` | Público | Lista reações de um evento |
+| `POST` | `/api/reactions` | Protegido | Adiciona reação em um evento |
+| `DELETE` | `/api/reactions/{id}` | Protegido | Remove reação (só o autor) |
 
 ---
 
@@ -301,6 +302,8 @@ Bearer eyJhbGci...
 ```
 
 Rotas marcadas com cadeado exigem esse token. Senhas são armazenadas com hash BCrypt e nunca em texto puro.
+
+Os enums de entrada podem ser enviados como texto no JSON, por exemplo `"Publicado"` para status do evento e `"VouParticipar"` para tipo de reação.
 
 ---
 
@@ -359,7 +362,7 @@ public class AuthService : IAuthService
     // verifica se o email já existe antes de criar o usuário
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
-        if (await _repository.GetUserByEmailAsync(request.Email) is not null)
+        if (await _repository.GetByEmailAsync(request.Email) is not null)
             throw new DuplicateEmailException("Esse email já está cadastrado.");
         ...
     }
@@ -396,17 +399,13 @@ Sempre usar a branch `develop` para enviar as alterações.
 
 ---
 
-<h2 align="center">Equipe</h2>
+<h2 align="center">Responsável</h2>
 
 <p align="center">
 
 | Nome | Responsabilidade |
 |------|-----------------|
-| Thailsson Clementino de Andrade | Solution, estrutura inicial, .gitignore e organização do repositório |
-| Stevão Whinter Marques de Andrade | Domain: entidades, enums e interfaces de repository |
-| Márcio Franklin de Oliveira Lima | Infrastructure: DbContext, EF Core e repositories |
-| Allef Oliveira Ramos | API: controllers CRUD, Swagger e Program.cs base |
-| Juliana Ballin Lima | Application layer: DTOs, services, JWT, exceções e testes |
+| Juliana Balllin | Desenvolvimento, documentação, testes, relatório técnico e revisão da apresentação |
 
 </p>
 

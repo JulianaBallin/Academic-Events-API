@@ -61,4 +61,21 @@ public class ReactionServiceTests
         await Assert.ThrowsAsync<InvalidOperationException>(
             () => service.CreateAsync(request, usuarioId: 1));
     }
+
+    [Fact]
+    public async Task CreateAsync_TipoForaDoEnum_LancaInvalidOperationException()
+    {
+        ReactionService service = new ReactionService(
+            _reactionRepositoryMock.Object,
+            _eventRepositoryMock.Object);
+
+        CreateReactionRequest request = new CreateReactionRequest
+        {
+            EventoId = 7,
+            Tipo = (TipoReacao)99
+        };
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.CreateAsync(request, usuarioId: 1));
+    }
 }

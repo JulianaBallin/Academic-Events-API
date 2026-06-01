@@ -59,6 +59,9 @@ public class EventService : IEventService
             if (!Enum.TryParse<StatusEvento>(status, ignoreCase: true, out StatusEvento statusConvertido))
                 throw new InvalidOperationException($"Status '{status}' inválido.");
 
+            if (!Enum.IsDefined(statusConvertido))
+                throw new InvalidOperationException($"Status '{status}' inválido.");
+
             statusEnum = statusConvertido;
         }
 
@@ -83,6 +86,9 @@ public class EventService : IEventService
 
         if (request.DataFim <= request.DataInicio)
             throw new InvalidOperationException("A data de fim deve ser posterior à data de início.");
+
+        if (!Enum.IsDefined(request.Status))
+            throw new InvalidOperationException("Status inválido.");
 
         evento.Titulo = request.Titulo;
         evento.Descricao = request.Descricao;
