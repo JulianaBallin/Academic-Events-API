@@ -22,6 +22,13 @@ public class CommentService : ICommentService
 
     public async Task<CommentResponse> CreateAsync(CreateCommentRequest request, int usuarioId)
     {
+        if (request.EventoId <= 0)
+            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+
+        string conteudo = (request.Conteudo ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(conteudo))
+            throw new InvalidOperationException("O conteúdo do comentário é obrigatório.");
+
         Event? evento = await _eventRepository.GetByIdAsync(request.EventoId);
         if (evento is null)
             throw new NotFoundException("Evento não encontrado.");
@@ -30,7 +37,7 @@ public class CommentService : ICommentService
         {
             EventoId = request.EventoId,
             UsuarioId = usuarioId,
-            Conteudo = request.Conteudo
+            Conteudo = conteudo
         };
 
         Comment criado = await _repository.CreateAsync(comentario);
@@ -39,6 +46,9 @@ public class CommentService : ICommentService
 
     public async Task<List<CommentResponse>> GetByEventoAsync(int eventoId)
     {
+        if (eventoId <= 0)
+            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+
         List<Comment> comentarios = await _repository.GetByEventoAsync(eventoId);
         return comentarios.Select(MapearParaResponse).ToList();
     }

@@ -29,17 +29,28 @@ public class AuthService : IAuthService
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
         // normaliza email pra minúsculo antes de gravar, evita duplicatas tipo "Test@" e "test@"
-        string emailNormalizado = request.Email.Trim().ToLower();
+        string emailNormalizado = (request.Email ?? string.Empty).Trim().ToLowerInvariant();
+        string nomeNormalizado = (request.Nome ?? string.Empty).Trim();
+        string senha = request.Senha ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(nomeNormalizado))
+            throw new InvalidOperationException("O nome é obrigatório.");
+
+        if (string.IsNullOrWhiteSpace(emailNormalizado))
+            throw new InvalidOperationException("O email é obrigatório.");
+
+        if (string.IsNullOrWhiteSpace(senha))
+            throw new InvalidOperationException("A senha é obrigatória.");
 
         if (await _repository.GetByEmailAsync(emailNormalizado) is not null)
             throw new DuplicateEmailException("Esse email já está em uso.");
 
         // BCrypt cuida do salt automaticamente, não precisa passar nada extra
-        string senhaHash = BCrypt.Net.BCrypt.HashPassword(request.Senha);
+        string senhaHash = BCrypt.Net.BCrypt.HashPassword(senha);
 
         User usuario = new User
         {
-            Nome = request.Nome.Trim(),
+            Nome = nomeNormalizado,
             Email = emailNormalizado,
             SenhaHash = senhaHash
         };
@@ -51,10 +62,12 @@ public class AuthService : IAuthService
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
         // normaliza antes de buscar, já que os emails são gravados em minúsculo
-        User? usuario = await _repository.GetByEmailAsync(request.Email.Trim().ToLower());
+        string emailNormalizado = (request.Email ?? string.Empty).Trim().ToLowerInvariant();
+        string senha = request.Senha ?? string.Empty;
+        User? usuario = await _repository.GetByEmailAsync(emailNormalizado);
 
         // retorna o mesmo erro independente se email ou senha estão errados (segurança)
-        if (usuario is null || !BCrypt.Net.BCrypt.Verify(request.Senha, usuario.SenhaHash))
+        if (usuario is null || !BCrypt.Net.BCrypt.Verify(senha, usuario.SenhaHash))
             throw new InvalidCredentialsException("Email ou senha inválidos.");
 
         return GerarTokenResponse(usuario);

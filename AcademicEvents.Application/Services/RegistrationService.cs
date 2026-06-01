@@ -23,6 +23,9 @@ public class RegistrationService : IRegistrationService
 
     public async Task<RegistrationResponse> CreateAsync(CreateRegistrationRequest request, int usuarioId)
     {
+        if (request.EventoId <= 0)
+            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+
         Event? evento = await _eventRepository.GetByIdAsync(request.EventoId);
         if (evento is null)
             throw new NotFoundException("Evento não encontrado.");

@@ -22,16 +22,29 @@ public class EventService : IEventService
 
     public async Task<EventResponse> CreateAsync(CreateEventRequest request, int organizadorId)
     {
+        string titulo = (request.Titulo ?? string.Empty).Trim();
+        string descricao = (request.Descricao ?? string.Empty).Trim();
+        string local = (request.Local ?? string.Empty).Trim();
+
+        if (string.IsNullOrWhiteSpace(titulo))
+            throw new InvalidOperationException("O título é obrigatório.");
+
+        if (string.IsNullOrWhiteSpace(descricao))
+            throw new InvalidOperationException("A descrição é obrigatória.");
+
+        if (string.IsNullOrWhiteSpace(local))
+            throw new InvalidOperationException("O local é obrigatório.");
+
         if (request.DataFim <= request.DataInicio)
             throw new InvalidOperationException("A data de fim deve ser posterior à data de início.");
 
         Event evento = new Event
         {
-            Titulo = request.Titulo,
-            Descricao = request.Descricao,
+            Titulo = titulo,
+            Descricao = descricao,
             DataInicio = request.DataInicio,
             DataFim = request.DataFim,
-            Local = request.Local,
+            Local = local,
             OrganizadorId = organizadorId
         };
 
@@ -54,9 +67,11 @@ public class EventService : IEventService
         StatusEvento? statusEnum = null;
 
         // tenta converter o status recebido como string para o enum
-        if (!string.IsNullOrEmpty(status))
+        if (!string.IsNullOrWhiteSpace(status))
         {
-            if (!Enum.TryParse<StatusEvento>(status, ignoreCase: true, out StatusEvento statusConvertido))
+            string statusNormalizado = status.Trim();
+
+            if (!Enum.TryParse<StatusEvento>(statusNormalizado, ignoreCase: true, out StatusEvento statusConvertido))
                 throw new InvalidOperationException($"Status '{status}' inválido.");
 
             if (!Enum.IsDefined(statusConvertido))
@@ -77,6 +92,10 @@ public class EventService : IEventService
 
     public async Task<EventResponse?> UpdateAsync(int id, UpdateEventRequest request, int usuarioId)
     {
+        string titulo = (request.Titulo ?? string.Empty).Trim();
+        string descricao = (request.Descricao ?? string.Empty).Trim();
+        string local = (request.Local ?? string.Empty).Trim();
+
         Event? evento = await _repository.GetByIdAsync(id);
         if (evento is null) throw new NotFoundException("Evento não encontrado.");
 
@@ -87,14 +106,23 @@ public class EventService : IEventService
         if (request.DataFim <= request.DataInicio)
             throw new InvalidOperationException("A data de fim deve ser posterior à data de início.");
 
+        if (string.IsNullOrWhiteSpace(titulo))
+            throw new InvalidOperationException("O título é obrigatório.");
+
+        if (string.IsNullOrWhiteSpace(descricao))
+            throw new InvalidOperationException("A descrição é obrigatória.");
+
+        if (string.IsNullOrWhiteSpace(local))
+            throw new InvalidOperationException("O local é obrigatório.");
+
         if (!Enum.IsDefined(request.Status))
             throw new InvalidOperationException("Status inválido.");
 
-        evento.Titulo = request.Titulo;
-        evento.Descricao = request.Descricao;
+        evento.Titulo = titulo;
+        evento.Descricao = descricao;
         evento.DataInicio = request.DataInicio;
         evento.DataFim = request.DataFim;
-        evento.Local = request.Local;
+        evento.Local = local;
         evento.Status = request.Status;
 
         Event? atualizado = await _repository.UpdateAsync(evento);

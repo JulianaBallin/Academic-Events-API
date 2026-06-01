@@ -23,6 +23,9 @@ public class ReactionService : IReactionService
 
     public async Task<ReactionResponse> CreateAsync(CreateReactionRequest request, int usuarioId)
     {
+        if (request.EventoId <= 0)
+            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+
         if (!Enum.IsDefined(request.Tipo))
             throw new InvalidOperationException("Tipo de reação inválido.");
 
@@ -48,6 +51,9 @@ public class ReactionService : IReactionService
 
     public async Task<List<ReactionResponse>> GetByEventoAsync(int eventoId)
     {
+        if (eventoId <= 0)
+            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+
         List<Reaction> reacoes = await _repository.GetByEventoAsync(eventoId);
         return reacoes.Select(MapearParaResponse).ToList();
     }
