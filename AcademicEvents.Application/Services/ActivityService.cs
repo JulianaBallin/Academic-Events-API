@@ -35,6 +35,12 @@ public class ActivityService : IActivityService
         if (string.IsNullOrWhiteSpace(location))
             throw new InvalidOperationException("O local é obrigatório.");
 
+        if (request.StartAt is null)
+            throw new InvalidOperationException("A data de início é obrigatória.");
+
+        if (request.EndedAt is null)
+            throw new InvalidOperationException("A data de fim é obrigatória.");
+
         if (request.EndedAt <= request.StartAt)
             throw new InvalidOperationException("A data de fim deve ser posterior à data de início.");
 
@@ -61,8 +67,8 @@ public class ActivityService : IActivityService
             Title = title,
             Description = description,
             Type = request.Type,
-            StartAt = request.StartAt,
-            EndedAt = request.EndedAt,
+            StartAt = request.StartAt.Value,
+            EndedAt = request.EndedAt.Value,
             Location = location
         };
 
@@ -119,14 +125,20 @@ public class ActivityService : IActivityService
         if (string.IsNullOrWhiteSpace(location))
             throw new InvalidOperationException("O local é obrigatório.");
 
+        if (request.StartAt is null)
+            throw new InvalidOperationException("A data de início é obrigatória.");
+
+        if (request.EndedAt is null)
+            throw new InvalidOperationException("A data de fim é obrigatória.");
+
         if (request.EndedAt <= request.StartAt)
             throw new InvalidOperationException("A data de fim deve ser posterior à data de início.");
 
         activity.Title = title;
         activity.Description = description;
         activity.Type = request.Type;
-        activity.StartAt = request.StartAt;
-        activity.EndedAt = request.EndedAt;
+        activity.StartAt = request.StartAt.Value;
+        activity.EndedAt = request.EndedAt.Value;
         activity.Location = location;
 
         await _repository.UpdateAsync(activity);

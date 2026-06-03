@@ -25,10 +25,10 @@ public class CreateActivityRequest
     public ActivityType Type { get; set; }
 
     [Required(ErrorMessage = "A data de início é obrigatória.")]
-    public DateTime StartAt { get; set; }
+    public DateTime? StartAt { get; set; }
 
     [Required(ErrorMessage = "A data de fim é obrigatória.")]
-    public DateTime EndedAt { get; set; }
+    public DateTime? EndedAt { get; set; }
 
     [Required(ErrorMessage = "O local é obrigatório.")]
     [StringLength(300, MinimumLength = 3, ErrorMessage = "O local deve ter entre 3 e 300 caracteres.")]

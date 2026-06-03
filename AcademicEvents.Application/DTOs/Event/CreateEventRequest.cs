@@ -17,10 +17,10 @@ public class CreateEventRequest
     public string Description { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Start date is required.")]
-    public DateTime StartDate { get; set; }
+    public DateTime? StartDate { get; set; }
 
     [Required(ErrorMessage = "End date is required.")]
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
     [Required(ErrorMessage = "Location is required.")]
     [StringLength(300, MinimumLength = 3, ErrorMessage = "Location must have between 3 e 300 characters.")]

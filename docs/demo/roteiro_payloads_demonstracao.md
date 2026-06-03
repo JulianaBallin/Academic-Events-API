@@ -35,60 +35,9 @@ dotnet run --urls http://localhost:5000
 
 ---
 
-## Variáveis para Anotar Durante a Demonstração
-
-Preencha estes valores conforme as respostas do Swagger:
-
-```text
-TOKEN_MARIA      =
-TOKEN_JOAO       =
-EVENT_ID         =
-ACTIVITY_ID      =
-COMMENT_ID       =
-REACTION_ID      =
-REGISTRATION_ID  =
-```
-
----
-
 ## PARTE 1 - USUÁRIOS
 
-### 1. Cadastrar a Maria, usuária principal
-
-Endpoint:
-
-```text
-POST /api/auth/register
-```
-
-Payload:
-
-```json
-{
-  "name": "Maria Silva",
-  "email": "maria@test.com",
-  "password": "Password123!"
-}
-```
-
-```text
-TOKEN_MARIA = valor do token
-```
-
-Resposta esperada:
-
-```json
-{
-  "token": "eyJhbGci...",
-  "name": "Maria Silva",
-  "email": "maria@test.com",
-  "expiresIn": "2026-06-04T..."
-}
-```
-
----
-
-### 2. Cadastrar o João, segundo usuário para testar restrição de permissão
+### 1. Cadastrar o João, segundo usuário para testar restrição de permissão
 
 Endpoint:
 
@@ -119,6 +68,41 @@ Resposta esperada:
   "token": "eyJhbGci...",
   "name": "João Souza",
   "email": "joao@test.com",
+  "expiresIn": "2026-06-04T..."
+}
+```
+
+---
+
+### 2. Cadastrar a Maria, usuária principal
+
+Endpoint:
+
+```text
+POST /api/auth/register
+```
+
+Payload:
+
+```json
+{
+  "name": "Maria Silva",
+  "email": "maria@test.com",
+  "password": "Password123!"
+}
+```
+
+```text
+TOKEN_MARIA = valor do token
+```
+
+Resposta esperada:
+
+```json
+{
+  "token": "eyJhbGci...",
+  "name": "Maria Silva",
+  "email": "maria@test.com",
   "expiresIn": "2026-06-04T..."
 }
 ```
