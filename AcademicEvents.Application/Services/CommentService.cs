@@ -7,7 +7,7 @@ using AcademicEvents.Exceptions;
 namespace AcademicEvents.Application.Services;
 
 /// <summary>
-/// Service de comentários em eventos.
+/// Service for event comments.
 /// </summary>
 public class CommentService : ICommentService
 {
@@ -23,58 +23,57 @@ public class CommentService : ICommentService
     public async Task<CommentResponse> CreateAsync(CreateCommentRequest request, int userId)
     {
         if (request.EventId <= 0)
-            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+            throw new InvalidOperationException("Event id must be greater than zero.");
 
-        string conteudo = (request.Content ?? string.Empty).Trim();
-        if (string.IsNullOrWhiteSpace(conteudo))
-            throw new InvalidOperationException("O conteúdo do comentário é obrigatório.");
+        string content = (request.Content ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(content))
+            throw new InvalidOperationException("Comment content is required.");
 
-        Event? evento = await _eventRepository.GetByIdAsync(request.EventId);
-        if (evento is null)
-            throw new NotFoundException("Evento não encontrado.");
+        Event? ev = await _eventRepository.GetByIdAsync(request.EventId);
+        if (ev is null)
+            throw new NotFoundException("Evento nao encontrado.");
 
-        Comment comentario = new Comment
+        Comment comment = new Comment
         {
             EventId = request.EventId,
             UserId = userId,
-            Content = conteudo
+            Content = content
         };
 
-        Comment criado = await _repository.CreateAsync(comentario);
-        return MapearParaResponse(criado);
+        Comment created = await _repository.CreateAsync(comment);
+        return MapToResponse(created);
     }
 
     public async Task<List<CommentResponse>> GetByEventAsync(int eventId)
     {
         if (eventId <= 0)
-            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+            throw new InvalidOperationException("Event id must be greater than zero.");
 
-        List<Comment> comentarios = await _repository.GetByEventAsync(eventId);
-        return comentarios.Select(MapearParaResponse).ToList();
+        List<Comment> comments = await _repository.GetByEventAsync(eventId);
+        return comments.Select(MapToResponse).ToList();
     }
 
     public async Task DeleteAsync(int id, int userId)
     {
-        Comment? comentario = await _repository.GetByIdAsync(id);
-        if (comentario is null) throw new NotFoundException("Comentário não encontrado.");
+        Comment? comment = await _repository.GetByIdAsync(id);
+        if (comment is null) throw new NotFoundException("Comentario nao encontrado.");
 
-        // só o autor pode deletar o próprio comentário
-        if (comentario.UserId != userId)
-            throw new UnauthorizedException("Apenas o autor pode remover este comentário.");
+        if (comment.UserId != userId)
+            throw new UnauthorizedException("Apenas o autor pode remover este comentario.");
 
         await _repository.DeleteAsync(id);
     }
 
-    private static CommentResponse MapearParaResponse(Comment comentario)
+    private static CommentResponse MapToResponse(Comment comment)
     {
         return new CommentResponse
         {
-            Id = comentario.Id,
-            EventId = comentario.EventId,
-            UserId = comentario.UserId,
-            UserName = comentario.User?.Name ?? string.Empty,
-            Content = comentario.Content,
-            CreatedAt = comentario.CreatedAt
+            Id = comment.Id,
+            EventId = comment.EventId,
+            UserId = comment.UserId,
+            UserName = comment.User?.Name ?? string.Empty,
+            Content = comment.Content,
+            CreatedAt = comment.CreatedAt
         };
     }
 }

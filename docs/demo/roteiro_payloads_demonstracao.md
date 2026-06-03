@@ -341,7 +341,7 @@ Resposta esperada:
 Endpoint:
 
 ```text
-GET /api/events/meus
+GET /api/events/mine
 ```
 
 Precisa estar autorizado com `TOKEN_MARIA`.
@@ -550,7 +550,7 @@ Payload:
 Resposta esperada, erro 400:
 
 ```text
-Você já está inscrito neste evento.
+The user is already registered for this event.
 ```
 
 ---
@@ -736,7 +736,7 @@ Resposta esperada:
 7.  PUT  /api/events/{EVENT_ID}  (publicar)
 8.  GET  /api/events
 9.  GET  /api/events?status=Published
-10. GET  /api/events/meus
+10. GET  /api/events/mine
 
 --- ATIVIDADES ---
 11. POST /api/activity  (Cerimônia de Abertura)

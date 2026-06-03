@@ -41,7 +41,7 @@ The API implements a REST platform for managing academic events with JWT authent
 - `GET /api/events?status=X`: filters events by status
 - `GET /api/events?organizerId=X`: filters events by organizer
 - `GET /api/events/{id}`: fetches event by id
-- `GET /api/events/meus`: lists events of the authenticated user
+- `GET /api/events/mine`: lists events of the authenticated user
 - `POST /api/events`: creates event (authenticated)
 - `PUT /api/events/{id}`: updates event, organizer only
 - `DELETE /api/events/{id}`: removes event, organizer only
@@ -49,7 +49,7 @@ The API implements a REST platform for managing academic events with JWT authent
 **Registrations, comments and reactions**
 
 - `POST /api/registrations`: registers authenticated user in an event
-- `GET /api/registrations/me`: lists registrations of the authenticated user
+- `GET /api/registrations/mine`: lists registrations of the authenticated user
 - `DELETE /api/registrations/{id}`: cancels registration
 - `GET /api/comments?eventId=X`: lists comments for an event
 - `POST /api/comments`: adds comment

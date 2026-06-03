@@ -299,7 +299,7 @@ dotnet test AcademicEvents.sln
 | `GET` | `/api/events?status=Published` | Public | Filters events by status |
 | `GET` | `/api/events?organizerId={id}` | Public | Filters events by organizer |
 | `GET` | `/api/events?status=Published&organizerId={id}` | Public | Combines status and organizer filters |
-| `GET` | `/api/events/meus` | Protected | Lists events of the authenticated organizer |
+| `GET` | `/api/events/mine` | Protected | Lists events of the authenticated organizer |
 | `POST` | `/api/events` | Protected | Creates a new event |
 | `PUT` | `/api/events/{id}` | Protected | Updates an event (organizer only) |
 | `DELETE` | `/api/events/{id}` | Protected | Removes an event (organizer only) |
@@ -309,7 +309,7 @@ dotnet test AcademicEvents.sln
 | Method | Route | Description |
 |--------|-------|-------------|
 | `POST` | `/api/registrations` | Registers the authenticated user for an event |
-| `GET` | `/api/registrations/me` | Lists registrations of the authenticated user |
+| `GET` | `/api/registrations/mine` | Lists registrations of the authenticated user |
 | `DELETE` | `/api/registrations/{id}` | Cancels a registration |
 
 **Comments**
