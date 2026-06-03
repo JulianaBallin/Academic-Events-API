@@ -77,7 +77,7 @@ public class ReactionService : IReactionService
             EventId = reaction.EventId,
             UserId = reaction.UserId,
             UserName = reaction.User?.Name ?? string.Empty,
-            Typo = reaction.Type.ToString(),
+            Type = reaction.Type.ToString(),
             CreatedAt = reaction.CreatedAt
         };
     }

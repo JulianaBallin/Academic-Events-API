@@ -17,6 +17,7 @@ public class AcademicEventsDbContext : DbContext
     public DbSet<Registration> Registrations => Set<Registration>();
     public DbSet<Comment> Comments => Set<Comment>();
     public DbSet<Reaction> Reactions => Set<Reaction>();
+    public DbSet<Activity> Activities => Set<Activity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -83,5 +84,12 @@ public class AcademicEventsDbContext : DbContext
         modelBuilder.Entity<Reaction>()
             .HasIndex(r => new { r.UserId, r.EventId })
             .IsUnique();
+
+        // Relationship between Activity and Event.
+        modelBuilder.Entity<Activity>()
+        .HasOne(a => a.Event)
+        .WithMany(e => e.Activities)
+        .HasForeignKey(a => a.EventId)
+        .OnDelete(DeleteBehavior.Cascade);
     }
 }

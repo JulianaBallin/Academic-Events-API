@@ -27,5 +27,6 @@ public static class InfrastructureDependencyInjectionExtension
         services.AddScoped<IRegistrationRepository, RegistrationRepository>();
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<IReactionRepository, ReactionRepository>();
+        services.AddScoped<IActivityRepository, ActivityRepository>();
     }
 }
