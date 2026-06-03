@@ -212,7 +212,7 @@
 
 \begin{tabular}{ll}
 \textbf{Disciplina:} & Desenvolvimento em C\# - Módulo 3 \\[2mm]
-\textbf{Integrantes:} & Juliana Ballin Lima e Allef Oliveira Ramos \\[2mm]
+\textbf{Integrantes:} & Juliana Ballin Lima, Allef Oliveira Ramos e Thailsson Clementino \\[2mm]
 \textbf{Data:}       & Junho de 2026 \\[2mm]
 \end{tabular}
 
@@ -222,6 +222,7 @@
 \begin{tabular}{ll}
 1. & Juliana Ballin Lima - \url{https://github.com/JulianaBallin} \\
 2. & Allef Oliveira Ramos - \url{https://github.com/allef-oliveira} \\
+3. & Thailsson Clementino - \url{https://github.com/clementino1971} \\
 \end{tabular}
 \end{tcolorbox}
 
@@ -367,6 +368,8 @@ Registration & Id, UsuarioId, EventoId, Status & Inscrição de um usuário em u
 \rowcolor{tablealt}
 Comment & Id, UsuarioId, EventoId, Conteudo & Comentário do usuário em um evento \\
 Reaction & Id, UsuarioId, EventoId, Tipo & Reação (curtida) de um usuário a um evento. Um usuário só pode ter uma reação por evento \\
+\rowcolor{tablealt}
+Activity & Id, Titulo, Descricao, Tipo, EventoId & Atividades que fazem parte da programação de um evento. \\
 \bottomrule
 \end{longtable}
 
@@ -382,6 +385,8 @@ StatusEvento & Rascunho, Publicado, Cancelado, Concluído \\
 \rowcolor{tablealt}
 StatusInscricao & Pendente, Confirmada, Cancelada \\
 TipoReacao & Curtir, Adorei, Interessante, VouParticipar \\
+\rowcolor{tablealt}
+TipoAtividade &     Abertura, Palestra, Workshop, MesaRedonda, CoffeBreak, Encerramento, SessaoTecnica, Outro\\
 \bottomrule
 \end{longtable}
 
@@ -438,7 +443,7 @@ GET & /api/me & 200, 401 & Dados do usuário autenticado (JWT) \\
 
 \subsection{Eventos}
 
-\begin{longtable}{L{1.5cm} L{5cm} L{2.5cm} L{5.5cm}}
+\begin{longtable}{L{1.5cm} L{6cm} L{1.5cm} L{5.5cm}}
 \toprule
 \rowcolor{tablehead}
 \color{white}\textbf{Método} & \color{white}\textbf{Rota} & \color{white}\textbf{Auth} & \color{white}\textbf{Descrição} \\
@@ -458,6 +463,23 @@ POST & /api/events & Sim & Cria novo evento \\
 PUT & /api/events/\{id\} & Sim & Atualiza evento (só o organizador) \\
 DELETE & /api/events/\{id\} & Sim & Remove evento (só o organizador) \\
 \bottomrule
+\end{longtable}
+
+\subsection{Atividades}
+
+\begin{longtable}{L{1.5cm} L{6cm} L{1.5cm} L{5.5cm}}
+\toprule
+\rowcolor{tablehead}
+\color{white}\textbf{Método} & \color{white}\textbf{Rota} & \color{white}\textbf{Auth} & \color{white}\textbf{Descrição} \\
+\midrule
+\endhead
+GET & /api/activity/{id} & Não & Retorna uma atividade pelo id \\
+\rowcolor{tablealt}
+GET & /api/activity/event/{eventId} & Não & Retorna todas as atividades de um evento pelo EventId \\
+POST & /api/activity & Sim & Cria uma nova atividade. Só o organizador do evento pode criar as atividades associadas. \\
+\rowcolor{tablealt}
+PUT & //api/activity/{id} & Sim & Edita uma atividade. Só o organizador do evento pode editar atividades associadas. \\
+DELETE & /api/activity/{id} & Sim & Remove uma atividade. Só o organizador do evento pode excluir atividades associadas. \\
 \end{longtable}
 
 \subsection{Inscrições, Comentários e Reações}
@@ -606,7 +628,7 @@ cd AcademicEvents.API
 dotnet run
 \end{lstlisting}
 
-Após iniciar, acesse a documentação interativa no Swagger em: \url{http://localhost:5000/swagger}
+Após iniciar, acesse a documentação interativa no Swagger em: \url{http://localhost:5136/swagger}
 
 Para testar os endpoints com autenticação, clique em \textbf{Authorize} no Swagger e informe o token obtido no login no formato \texttt{Bearer \{token\}}.
 

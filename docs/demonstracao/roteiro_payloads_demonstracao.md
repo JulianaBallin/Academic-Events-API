@@ -45,6 +45,7 @@ Preencha estes valores conforme as respostas do Swagger:
 TOKEN_MARIA =
 TOKEN_JOAO =
 EVENTO_ID =
+ACTIVITY_ID =
 COMENTARIO_ID =
 REACAO_ID =
 INSCRICAO_ID =
@@ -243,7 +244,102 @@ Evidência para print:
 - Resposta 200
 - Status `Publicado`
 
-## 7. Listar Eventos Públicos
+## 7. Criar atividades
+
+Endpoint:
+
+```text
+POST /api/activities
+```
+
+Payload:
+
+```json
+{
+  "eventId": 1,
+  "titulo": "Cerimônia de Abertura",
+  "descricao": "Abertura oficial do Workshop de C#.",
+  "tipo": "Abertura",
+  "dataInicio": "2026-06-10T09:00:00Z",
+  "dataFim": "2026-06-10T09:30:00Z",
+  "local": "Auditório Principal"
+}
+```
+
+Resposta esperada:
+
+```json
+{
+  "id": 1,
+  "eventId": 1,
+  "titulo": "Cerimônia de Abertura",
+  "descricao": "Abertura oficial do Workshop de C#.",
+  "tipo": "Abertura",
+  "dataInicio": "2026-06-10T09:00:00Z",
+  "dataFim": "2026-06-10T09:30:00Z",
+  "local": "Auditório Principal"
+}
+```
+
+Payload:
+
+```json
+{
+  "eventId": 1,
+  "titulo": "Workshop ASP.NET Core",
+  "descricao": "Introdução prática ao ASP.NET Core.",
+  "tipo": "Workshop",
+  "dataInicio": "2026-06-10T10:00:00Z",
+  "dataFim": "2026-06-10T12:00:00Z",
+  "local": "Laboratório 01"
+}
+```
+
+## 8. Listar atividades do Evento
+
+Endpoint:
+```text
+GET /api/activities/event/{EVENTO_ID}
+```
+
+Exemplo:
+
+```text
+GET /api/activities/event/1
+```
+
+Resposta esperada:
+```json
+[
+  {
+    "id": 1,
+    "titulo": "Cerimônia de Abertura",
+    "descricao": "Abertura oficial do Workshop de C#.",
+    "tipo": "Abertura",
+    "dataInicio": "2026-06-10T09:00:00Z",
+    "dataFim": "2026-06-10T09:30:00Z",
+    "local": "Auditório Principal",
+    "eventId": 1
+  },
+  {
+    "id": 2,
+    "titulo": "Workshop ASP.NET Core",
+    "descricao": "Introdução prática ao ASP.NET Core.",
+    "tipo": "Workshop",
+    "dataInicio": "2026-06-10T10:00:00Z",
+    "dataFim": "2026-06-10T12:00:00Z",
+    "local": "Laboratório 01",
+    "eventId": 1
+  }
+]
+```
+
+Evidência para print:
+
+- Lista contendo as duas atividades
+
+
+## 9. Listar Eventos Públicos
 
 Endpoint:
 
@@ -257,7 +353,7 @@ Evidência para print:
 
 - Lista contendo o evento criado
 
-## 8. Filtrar Eventos por Status
+## 10. Filtrar Eventos por Status
 
 Endpoint:
 
@@ -271,7 +367,7 @@ Evidência para print:
 
 - Lista contendo o evento publicado
 
-## 9. Listar Meus Eventos
+## 11. Listar Meus Eventos
 
 Endpoint:
 
@@ -291,7 +387,7 @@ Evidência para print:
 
 - Lista de eventos criados pela Maria
 
-## 10. Fazer Inscrição
+## 12. Fazer Inscrição
 
 Endpoint:
 
@@ -332,7 +428,7 @@ Evidência para print:
 
 - Resposta 201 com inscrição criada
 
-## 11. Tentar Inscrição Duplicada
+## 13. Tentar Inscrição Duplicada
 
 Endpoint:
 
@@ -361,7 +457,7 @@ Evidência para print:
 - Resposta 400
 - Mensagem de inscrição duplicada
 
-## 12. Adicionar Comentário
+## 14. Adicionar Comentário
 
 Endpoint:
 
@@ -403,7 +499,7 @@ Evidência para print:
 - Resposta 201
 - Comentário com `nomeUsuario`
 
-## 13. Adicionar Reação
+## 15. Adicionar Reação
 
 Endpoint:
 
@@ -445,7 +541,7 @@ Evidência para print:
 - Resposta 201
 - Reação com `tipo` igual a `VouParticipar`
 
-## 14. Cadastrar Segundo Usuário para Testar 403
+## 16. Cadastrar Segundo Usuário para Testar 403
 
 Endpoint:
 
@@ -475,7 +571,7 @@ Depois clique em `Authorize` e substitua o token da Maria pelo token do João:
 TOKEN_JOAO
 ```
 
-## 15. Tentar Deletar Comentário de Outro Usuário
+## 17. Tentar Deletar Comentário de Outro Usuário
 
 Endpoint:
 
@@ -502,7 +598,7 @@ Evidência para print:
 - Resposta 403
 - Mensagem de permissão negada
 
-## 16. Evidência Extra: Listar Comentários
+## 18. Evidência Extra: Listar Comentários
 
 Endpoint:
 
@@ -518,7 +614,7 @@ Evidência para print:
 
 - Comentário da Maria visível publicamente
 
-## 17. Evidência Extra: Listar Reações
+## 19. Evidência Extra: Listar Reações
 
 Endpoint:
 
@@ -534,7 +630,7 @@ Evidência para print:
 
 - Reação da Maria visível publicamente
 
-## 18. Ordem Resumida para a Apresentação
+## 20. Ordem Resumida para a Apresentação
 
 ```text
 1. Abrir Swagger
@@ -543,20 +639,22 @@ Evidência para print:
 4. Authorize com TOKEN_MARIA
 5. GET /api/me
 6. POST /api/events
-7. PUT /api/events/{EVENTO_ID} com status Publicado
-8. GET /api/events
-9. GET /api/events?status=Publicado
-10. GET /api/events/meus
-11. POST /api/registrations
-12. POST /api/registrations novamente para erro 400
-13. POST /api/comments
-14. POST /api/reactions
-15. POST /api/auth/register com João
-16. Authorize com TOKEN_JOAO
-17. DELETE /api/comments/{COMENTARIO_ID} para erro 403
+7. POST /api/activities
+8. GET /api/activities/event/{EVENTO_ID}
+9. PUT /api/events/{EVENTO_ID} com status Publicado
+10. GET /api/events
+11. GET /api/events?status=Publicado
+12. GET /api/events/meus
+13. POST /api/registrations
+14. POST /api/registrations novamente para erro 400
+15. POST /api/comments
+16. POST /api/reactions
+17. POST /api/auth/register com João
+18. Authorize com TOKEN_JOAO
+19. DELETE /api/comments/{COMENTARIO_ID} para erro 403
 ```
 
-## 19. Problemas Comuns na Hora da Aula
+## 21. Problemas Comuns na Hora da Aula
 
 ### Porta 5432 ocupada
 

@@ -89,6 +89,7 @@ public class AcademicEventsDbContext : DbContext
         modelBuilder.Entity<Activity>()
         .HasOne(a => a.Event)
         .WithMany(e => e.Atividades)
-        .HasForeignKey(a => a.EventId);
+        .HasForeignKey(a => a.EventId)
+        .OnDelete(DeleteBehavior.Cascade);
     }
 }

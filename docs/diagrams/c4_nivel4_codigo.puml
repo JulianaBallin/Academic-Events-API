@@ -49,6 +49,20 @@ class Event {
   + Inscricoes : List<Registration>
   + Comentarios : List<Comment>
   + Reacoes : List<Reaction>
+  + Atividades: List<Activity>
+}
+
+class Activity {
+  + Id : int
+  + Titulo : string
+  + Descricao : string
+  + Tipo: TipoAtividade
+  + DataInicio : DateTime
+  + DataFim : DateTime
+  + Local : string
+  + EventId : int
+  --
+  + Event : Event?
 }
 
 class Registration {
@@ -105,6 +119,17 @@ enum TipoReacao {
   VouParticipar
 }
 
+enum TipoAtividade {
+    Abertura
+    Palestra
+    Workshop
+    MesaRedonda
+    CoffeBreak
+    Encerramento
+    SessaoTecnica
+    Outro
+}
+
 ' relacionamentos entre as entidades
 User "1" --> "0..*" Event : organiza
 User "1" --> "0..*" Registration : realiza
@@ -114,10 +139,12 @@ User "1" --> "0..*" Reaction : faz
 Event "1" --> "0..*" Registration : recebe
 Event "1" --> "0..*" Comment : tem
 Event "1" --> "0..*" Reaction : recebe
+Event "1" --> "0..*" Activity : tem
 
 ' entidades que usam os enums
 Event ..> StatusEvento
 Registration ..> StatusInscricao
 Reaction ..> TipoReacao
+Activity ..> TipoAtividade
 
 @enduml
