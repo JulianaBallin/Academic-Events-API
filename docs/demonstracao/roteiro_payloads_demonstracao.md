@@ -1,66 +1,64 @@
-# Roteiro de Demonstração - Payloads para Popular o Banco
+# Demo Script - Payloads for Populating the Database
 
-Este roteiro foi pensado para usar no Swagger durante a apresentação ao vivo.
+This script is designed for use in Swagger during the live presentation.
 
-URL base esperada:
+Expected base URL:
 
 ```text
 http://localhost:5000/swagger
 ```
 
-Se a porta `5000` estiver ocupada, rode a API em outra porta, por exemplo `5002`, e troque a URL para:
+If port `5000` is busy, run the API on another port, for example `5002`, and change the URL to:
 
 ```text
 http://localhost:5002/swagger
 ```
 
-## Antes de Começar
+## Before Starting
 
-Subir o banco:
+Start the database:
 
 ```bash
 docker compose up -d
 docker compose ps
 ```
 
-Rodar a API:
+Run the API:
 
 ```bash
 cd AcademicEvents.API
 dotnet run --urls http://localhost:5000
 ```
 
-Se precisar usar a porta `5002`:
+If you need to use port `5002`:
 
 ```bash
 cd AcademicEvents.API
 dotnet run --urls http://localhost:5002
 ```
 
-## Variáveis para Anotar Durante a Demo
+## Variables to Note During the Demo
 
-Preencha estes valores conforme as respostas do Swagger:
+Fill in these values as you get responses from Swagger:
 
 ```text
 TOKEN_MARIA =
-TOKEN_JOAO =
-EVENTO_ID =
+TOKEN_JOAO  =
+EVENT_ID    =
 ACTIVITY_ID =
-COMENTARIO_ID =
-REACAO_ID =
-INSCRICAO_ID =
+COMMENT_ID  =
+REACTION_ID =
+REGISTRATION_ID =
 ```
 
-Observação: a linha acima usa `REACAO_ID` sem acento para facilitar copiar e colar em terminal.
-
-Se o banco já tiver sido usado antes e retornar erro de email duplicado, troque os emails por novos valores, por exemplo `maria1@teste.com` e `joao1@teste.com`, ou limpe o volume do banco com:
+If the database was used before and returns a duplicate email error, use new emails such as `maria1@test.com` and `joao1@test.com`, or clear the database volume with:
 
 ```bash
 docker compose down -v
 docker compose up -d
 ```
 
-## 1. Cadastrar Usuário Principal
+## 1. Register Main User
 
 Endpoint:
 
@@ -72,24 +70,24 @@ Payload:
 
 ```json
 {
-  "nome": "Maria Silva",
-  "email": "maria@teste.com",
-  "senha": "Senha123!"
+  "Name": "Maria Silva",
+  "Email": "maria@test.com",
+  "Password": "Password123!"
 }
 ```
 
-O que anotar:
+What to note:
 
 ```text
-TOKEN_MARIA = valor do campo "token"
+TOKEN_MARIA = value of the "Token" field
 ```
 
-Evidência para print:
+Evidence for screenshot:
 
-- Resposta 200 com token JWT
-- Campos `nome`, `email` e `expiraEm`
+- Response 200 with JWT token
+- Fields `Name`, `Email` and `ExpiresIn`
 
-## 2. Fazer Login com o Usuário Principal
+## 2. Log In with Main User
 
 Endpoint:
 
@@ -101,38 +99,49 @@ Payload:
 
 ```json
 {
-  "email": "maria@teste.com",
-  "senha": "Senha123!"
+  "Email": "maria@test.com",
+  "Password": "Password123!"
 }
 ```
 
-O que anotar:
+What to note:
 
 ```text
-TOKEN_MARIA = valor do campo "token"
+TOKEN_MARIA = value of the "Token" field
 ```
 
-Evidência para print:
+Expected response:
 
-- Login retornando 200
-- Token JWT retornado pelo login
+```json
+{
+  "Token": "eyJhbGci...",
+  "Name": "Maria Silva",
+  "Email": "maria@test.com",
+  "ExpiresIn": "2026-06-04T..."
+}
+```
 
-## 3. Autorizar no Swagger
+Evidence for screenshot:
 
-Clique em `Authorize`.
+- Login returning 200
+- JWT token returned by login
 
-Cole apenas o token:
+## 3. Authorize in Swagger
+
+Click `Authorize`.
+
+Paste only the token:
 
 ```text
 TOKEN_MARIA
 ```
 
-Observação:
+Note:
 
-- No Swagger revisado, cole só o token, sem escrever `Bearer`.
-- Em clientes HTTP externos, o formato recomendado continua sendo `Authorization: Bearer TOKEN`.
+- In Swagger, paste only the token without writing `Bearer`.
+- In external HTTP clients, the recommended format is `Authorization: Bearer TOKEN`.
 
-## 4. Conferir o Usuário Autenticado
+## 4. Check the Authenticated User
 
 Endpoint:
 
@@ -140,23 +149,23 @@ Endpoint:
 GET /api/me
 ```
 
-Não precisa de payload.
+No payload needed.
 
-Resposta esperada:
+Expected response:
 
 ```json
 {
-  "id": "1",
-  "email": "maria@teste.com",
-  "nome": "Maria Silva"
+  "Id": "1",
+  "Email": "maria@test.com",
+  "Name": "Maria Silva"
 }
 ```
 
-Evidência para print:
+Evidence for screenshot:
 
-- Resposta 200 do endpoint protegido
+- 200 response from protected endpoint
 
-## 5. Criar Evento
+## 5. Create Event
 
 Endpoint:
 
@@ -168,178 +177,186 @@ Payload:
 
 ```json
 {
-  "titulo": "Workshop de C# em Manaus",
-  "descricao": "Workshop prático sobre ASP.NET Core, Entity Framework Core e construção de APIs REST.",
-  "dataInicio": "2026-06-10T09:00:00Z",
-  "dataFim": "2026-06-10T18:00:00Z",
-  "local": "Bloco A - Sala 201"
+  "Title": "C# Workshop in Manaus",
+  "Description": "Hands-on workshop on ASP.NET Core, Entity Framework Core and REST API development.",
+  "StartDate": "2026-06-10T09:00:00Z",
+  "EndDate": "2026-06-10T18:00:00Z",
+  "Location": "Block A - Room 201"
 }
 ```
 
-O que anotar:
+What to note:
 
 ```text
-EVENTO_ID = valor do campo "id"
+EVENT_ID = value of the "Id" field
 ```
 
-Resposta esperada:
+Expected response:
 
 ```json
 {
-  "id": 1,
-  "titulo": "Workshop de C# em Manaus",
-  "descricao": "Workshop prático sobre ASP.NET Core, Entity Framework Core e construção de APIs REST.",
-  "dataInicio": "2026-06-10T09:00:00Z",
-  "dataFim": "2026-06-10T18:00:00Z",
-  "local": "Bloco A - Sala 201",
-  "status": "Rascunho",
-  "organizadorId": 1,
-  "nomeOrganizador": "Maria Silva"
+  "Id": 1,
+  "Title": "C# Workshop in Manaus",
+  "Description": "Hands-on workshop on ASP.NET Core, Entity Framework Core and REST API development.",
+  "StartDate": "2026-06-10T09:00:00Z",
+  "EndDate": "2026-06-10T18:00:00Z",
+  "Location": "Block A - Room 201",
+  "Status": "Draft",
+  "OrganizerId": 1,
+  "OrganizerName": "Maria Silva",
+  "CreatedAt": "2026-06-03T..."
 }
 ```
 
-Evidência para print:
+Evidence for screenshot:
 
-- Resposta 201
-- `status` inicial como `Rascunho`
-- `nomeOrganizador` preenchido
+- Response 201
+- `Status` initial value as `Draft`
+- `OrganizerName` populated
 
-## 6. Publicar o Evento
+## 6. Publish the Event
 
-Este passo é importante para o filtro `GET /api/events?status=Publicado` mostrar o evento.
+This step is important so the `GET /api/events?status=Published` filter shows the event.
 
 Endpoint:
 
 ```text
-PUT /api/events/{EVENTO_ID}
+PUT /api/events/{EVENT_ID}
 ```
 
 Payload:
 
 ```json
 {
-  "titulo": "Workshop de C# em Manaus - Atualizado",
-  "descricao": "Workshop prático sobre ASP.NET Core, Entity Framework Core, autenticação JWT e construção de APIs REST.",
-  "dataInicio": "2026-06-10T09:00:00Z",
-  "dataFim": "2026-06-10T18:00:00Z",
-  "local": "Bloco B - Auditório",
-  "status": "Publicado"
+  "Title": "C# Workshop in Manaus - Updated",
+  "Description": "Hands-on workshop on ASP.NET Core, Entity Framework Core, JWT authentication and REST API development.",
+  "StartDate": "2026-06-10T09:00:00Z",
+  "EndDate": "2026-06-10T18:00:00Z",
+  "Location": "Block B - Auditorium",
+  "EventStatus": "Published"
 }
 ```
 
-Resposta esperada:
+Expected response:
 
 ```json
 {
-  "id": 1,
-  "titulo": "Workshop de C# em Manaus - Atualizado",
-  "status": "Publicado",
-  "organizadorId": 1,
-  "nomeOrganizador": "Maria Silva"
+  "Id": 1,
+  "Title": "C# Workshop in Manaus - Updated",
+  "Status": "Published",
+  "OrganizerId": 1,
+  "OrganizerName": "Maria Silva"
 }
 ```
 
-Evidência para print:
+Evidence for screenshot:
 
-- Resposta 200
-- Status `Publicado`
+- Response 200
+- Status `Published`
 
-## 7. Criar atividades
+## 7. Create Activities
 
 Endpoint:
 
 ```text
-POST /api/activities
+POST /api/activity
 ```
 
-Payload:
+First activity payload:
 
 ```json
 {
-  "eventId": 1,
-  "titulo": "Cerimônia de Abertura",
-  "descricao": "Abertura oficial do Workshop de C#.",
-  "tipo": "Abertura",
-  "dataInicio": "2026-06-10T09:00:00Z",
-  "dataFim": "2026-06-10T09:30:00Z",
-  "local": "Auditório Principal"
+  "EventId": 1,
+  "Title": "Opening Ceremony",
+  "Description": "Official opening of the C# Workshop.",
+  "Type": "Opening",
+  "StartAt": "2026-06-10T09:00:00Z",
+  "EndedAt": "2026-06-10T09:30:00Z",
+  "Location": "Main Auditorium"
 }
 ```
 
-Resposta esperada:
+What to note:
+
+```text
+ACTIVITY_ID = value of the "Id" field
+```
+
+Expected response:
 
 ```json
 {
-  "id": 1,
-  "eventId": 1,
-  "titulo": "Cerimônia de Abertura",
-  "descricao": "Abertura oficial do Workshop de C#.",
-  "tipo": "Abertura",
-  "dataInicio": "2026-06-10T09:00:00Z",
-  "dataFim": "2026-06-10T09:30:00Z",
-  "local": "Auditório Principal"
+  "Id": 1,
+  "EventId": 1,
+  "Title": "Opening Ceremony",
+  "Description": "Official opening of the C# Workshop.",
+  "Type": "Opening",
+  "StartAt": "2026-06-10T09:00:00Z",
+  "EndedAt": "2026-06-10T09:30:00Z",
+  "Location": "Main Auditorium"
 }
 ```
 
-Payload:
+Second activity payload:
 
 ```json
 {
-  "eventId": 1,
-  "titulo": "Workshop ASP.NET Core",
-  "descricao": "Introdução prática ao ASP.NET Core.",
-  "tipo": "Workshop",
-  "dataInicio": "2026-06-10T10:00:00Z",
-  "dataFim": "2026-06-10T12:00:00Z",
-  "local": "Laboratório 01"
+  "EventId": 1,
+  "Title": "ASP.NET Core Workshop",
+  "Description": "Hands-on introduction to ASP.NET Core.",
+  "Type": "Workshop",
+  "StartAt": "2026-06-10T10:00:00Z",
+  "EndedAt": "2026-06-10T12:00:00Z",
+  "Location": "Lab 01"
 }
 ```
 
-## 8. Listar atividades do Evento
+## 8. List Event Activities
 
 Endpoint:
-```text
-GET /api/activities/event/{EVENTO_ID}
-```
-
-Exemplo:
 
 ```text
-GET /api/activities/event/1
+GET /api/activity/event/{EVENT_ID}
 ```
 
-Resposta esperada:
+Example:
+
+```text
+GET /api/activity/event/1
+```
+
+Expected response:
+
 ```json
 [
   {
-    "id": 1,
-    "titulo": "Cerimônia de Abertura",
-    "descricao": "Abertura oficial do Workshop de C#.",
-    "tipo": "Abertura",
-    "dataInicio": "2026-06-10T09:00:00Z",
-    "dataFim": "2026-06-10T09:30:00Z",
-    "local": "Auditório Principal",
-    "eventId": 1
+    "Id": 1,
+    "Title": "Opening Ceremony",
+    "Description": "Official opening of the C# Workshop.",
+    "Type": "Opening",
+    "StartAt": "2026-06-10T09:00:00Z",
+    "EndedAt": "2026-06-10T09:30:00Z",
+    "Location": "Main Auditorium",
+    "EventId": 1
   },
   {
-    "id": 2,
-    "titulo": "Workshop ASP.NET Core",
-    "descricao": "Introdução prática ao ASP.NET Core.",
-    "tipo": "Workshop",
-    "dataInicio": "2026-06-10T10:00:00Z",
-    "dataFim": "2026-06-10T12:00:00Z",
-    "local": "Laboratório 01",
-    "eventId": 1
+    "Id": 2,
+    "Title": "ASP.NET Core Workshop",
+    "Description": "Hands-on introduction to ASP.NET Core.",
+    "Type": "Workshop",
+    "StartAt": "2026-06-10T10:00:00Z",
+    "EndedAt": "2026-06-10T12:00:00Z",
+    "Location": "Lab 01",
+    "EventId": 1
   }
 ]
 ```
 
-Evidência para print:
+Evidence for screenshot:
 
-- Lista contendo as duas atividades
+- List containing the two activities
 
-
-## 9. Listar Eventos Públicos
+## 9. List Public Events
 
 Endpoint:
 
@@ -347,27 +364,27 @@ Endpoint:
 GET /api/events
 ```
 
-Não precisa de payload.
+No payload needed.
 
-Evidência para print:
+Evidence for screenshot:
 
-- Lista contendo o evento criado
+- List containing the created event
 
-## 10. Filtrar Eventos por Status
+## 10. Filter Events by Status
 
 Endpoint:
 
 ```text
-GET /api/events?status=Publicado
+GET /api/events?status=Published
 ```
 
-Não precisa de payload.
+No payload needed.
 
-Evidência para print:
+Evidence for screenshot:
 
-- Lista contendo o evento publicado
+- List containing the published event
 
-## 11. Listar Meus Eventos
+## 11. List My Events
 
 Endpoint:
 
@@ -375,60 +392,19 @@ Endpoint:
 GET /api/events/meus
 ```
 
-Não precisa de payload.
+No payload needed.
 
-Precisa estar autorizado com:
+Must be authorized with:
 
 ```text
 TOKEN_MARIA
 ```
 
-Evidência para print:
+Evidence for screenshot:
 
-- Lista de eventos criados pela Maria
+- List of events created by Maria
 
-## 12. Fazer Inscrição
-
-Endpoint:
-
-```text
-POST /api/registrations
-```
-
-Payload:
-
-```json
-{
-  "eventoId": 1
-}
-```
-
-Se o evento criado tiver outro id, trocar `1` pelo valor de `EVENTO_ID`.
-
-O que anotar:
-
-```text
-INSCRICAO_ID = valor do campo "id"
-```
-
-Resposta esperada:
-
-```json
-{
-  "id": 1,
-  "eventoId": 1,
-  "tituloEvento": "Workshop de C# em Manaus - Atualizado",
-  "usuarioId": 1,
-  "nomeUsuario": "Maria Silva",
-  "status": "Pendente"
-}
-```
-
-Evidência para print:
-
-- Resposta 201 com inscrição criada
-
-## 13. Tentar Inscrição Duplicada
+## 12. Register for Event
 
 Endpoint:
 
@@ -440,24 +416,66 @@ Payload:
 
 ```json
 {
-  "eventoId": 1
+  "EventId": 1
 }
 ```
 
-Se o evento criado tiver outro id, trocar `1` pelo valor de `EVENTO_ID`.
+If the created event has a different id, replace `1` with the value of `EVENT_ID`.
 
-Resposta esperada:
+What to note:
+
+```text
+REGISTRATION_ID = value of the "Id" field
+```
+
+Expected response:
+
+```json
+{
+  "Id": 1,
+  "EventId": 1,
+  "EventTitle": "C# Workshop in Manaus - Updated",
+  "UserId": 1,
+  "UserName": "Maria Silva",
+  "Status": "Pending",
+  "CreatedAt": "2026-06-03T..."
+}
+```
+
+Evidence for screenshot:
+
+- Response 201 with registration created
+
+## 13. Try Duplicate Registration
+
+Endpoint:
+
+```text
+POST /api/registrations
+```
+
+Payload:
+
+```json
+{
+  "EventId": 1
+}
+```
+
+If the created event has a different id, replace `1` with the value of `EVENT_ID`.
+
+Expected response:
 
 ```text
 Você já está inscrito neste evento.
 ```
 
-Evidência para print:
+Evidence for screenshot:
 
-- Resposta 400
-- Mensagem de inscrição duplicada
+- Response 400
+- Duplicate registration message
 
-## 14. Adicionar Comentário
+## 14. Add Comment
 
 Endpoint:
 
@@ -469,37 +487,38 @@ Payload:
 
 ```json
 {
-  "eventoId": 1,
-  "conteudo": "Ótimo evento, vai ajudar muito na prática com APIs em C#."
+  "EventId": 1,
+  "Content": "Great event, it will really help with API development in C#."
 }
 ```
 
-Se o evento criado tiver outro id, trocar `1` pelo valor de `EVENTO_ID`.
+If the created event has a different id, replace `1` with the value of `EVENT_ID`.
 
-O que anotar:
+What to note:
 
 ```text
-COMENTARIO_ID = valor do campo "id"
+COMMENT_ID = value of the "Id" field
 ```
 
-Resposta esperada:
+Expected response:
 
 ```json
 {
-  "id": 1,
-  "eventoId": 1,
-  "usuarioId": 1,
-  "nomeUsuario": "Maria Silva",
-  "conteudo": "Ótimo evento, vai ajudar muito na prática com APIs em C#."
+  "Id": 1,
+  "EventId": 1,
+  "UserId": 1,
+  "UserName": "Maria Silva",
+  "Content": "Great event, it will really help with API development in C#.",
+  "CreatedAt": "2026-06-03T..."
 }
 ```
 
-Evidência para print:
+Evidence for screenshot:
 
-- Resposta 201
-- Comentário com `nomeUsuario`
+- Response 201
+- Comment with `UserName`
 
-## 15. Adicionar Reação
+## 15. Add Reaction
 
 Endpoint:
 
@@ -511,37 +530,38 @@ Payload:
 
 ```json
 {
-  "eventoId": 1,
-  "tipo": "VouParticipar"
+  "EventId": 1,
+  "Type": "WillParticipate"
 }
 ```
 
-Se o evento criado tiver outro id, trocar `1` pelo valor de `EVENTO_ID`.
+If the created event has a different id, replace `1` with the value of `EVENT_ID`.
 
-O que anotar:
+What to note:
 
 ```text
-REACAO_ID = valor do campo "id"
+REACTION_ID = value of the "Id" field
 ```
 
-Resposta esperada:
+Expected response:
 
 ```json
 {
-  "id": 1,
-  "eventoId": 1,
-  "usuarioId": 1,
-  "nomeUsuario": "Maria Silva",
-  "tipo": "VouParticipar"
+  "Id": 1,
+  "EventId": 1,
+  "UserId": 1,
+  "UserName": "Maria Silva",
+  "Type": "WillParticipate",
+  "CreatedAt": "2026-06-03T..."
 }
 ```
 
-Evidência para print:
+Evidence for screenshot:
 
-- Resposta 201
-- Reação com `tipo` igual a `VouParticipar`
+- Response 201
+- Reaction with `Type` equal to `WillParticipate`
 
-## 16. Cadastrar Segundo Usuário para Testar 403
+## 16. Register Second User to Test 403
 
 Endpoint:
 
@@ -553,127 +573,128 @@ Payload:
 
 ```json
 {
-  "nome": "João Souza",
-  "email": "joao@teste.com",
-  "senha": "Senha123!"
+  "Name": "Joao Souza",
+  "Email": "joao@test.com",
+  "Password": "Password123!"
 }
 ```
 
-O que anotar:
+What to note:
 
 ```text
-TOKEN_JOAO = valor do campo "token"
+TOKEN_JOAO = value of the "Token" field
 ```
 
-Depois clique em `Authorize` e substitua o token da Maria pelo token do João:
+Then click `Authorize` and replace Maria's token with Joao's token:
 
 ```text
 TOKEN_JOAO
 ```
 
-## 17. Tentar Deletar Comentário de Outro Usuário
+## 17. Try Deleting Another User's Comment
 
 Endpoint:
 
 ```text
-DELETE /api/comments/{COMENTARIO_ID}
+DELETE /api/comments/{COMMENT_ID}
 ```
 
-Não precisa de payload.
+No payload needed.
 
-Precisa estar autorizado com:
+Must be authorized with:
 
 ```text
 TOKEN_JOAO
 ```
 
-Resposta esperada:
+Expected response:
 
 ```text
 Apenas o autor pode remover este comentário.
 ```
 
-Evidência para print:
+Evidence for screenshot:
 
-- Resposta 403
-- Mensagem de permissão negada
+- Response 403
+- Permission denied message
 
-## 18. Evidência Extra: Listar Comentários
-
-Endpoint:
-
-```text
-GET /api/comments?eventoId=1
-```
-
-Se o evento criado tiver outro id, trocar `1` pelo valor de `EVENTO_ID`.
-
-Não precisa de token.
-
-Evidência para print:
-
-- Comentário da Maria visível publicamente
-
-## 19. Evidência Extra: Listar Reações
+## 18. Extra Evidence: List Comments
 
 Endpoint:
 
 ```text
-GET /api/reactions?eventoId=1
+GET /api/comments?eventId=1
 ```
 
-Se o evento criado tiver outro id, trocar `1` pelo valor de `EVENTO_ID`.
+If the created event has a different id, replace `1` with the value of `EVENT_ID`.
 
-Não precisa de token.
+No token needed.
 
-Evidência para print:
+Evidence for screenshot:
 
-- Reação da Maria visível publicamente
+- Maria's comment visible publicly
 
-## 20. Ordem Resumida para a Apresentação
+## 19. Extra Evidence: List Reactions
+
+Endpoint:
 
 ```text
-1. Abrir Swagger
-2. POST /api/auth/register com Maria
-3. POST /api/auth/login com Maria
-4. Authorize com TOKEN_MARIA
-5. GET /api/me
-6. POST /api/events
-7. POST /api/activities
-8. GET /api/activities/event/{EVENTO_ID}
-9. PUT /api/events/{EVENTO_ID} com status Publicado
-10. GET /api/events
-11. GET /api/events?status=Publicado
-12. GET /api/events/meus
-13. POST /api/registrations
-14. POST /api/registrations novamente para erro 400
-15. POST /api/comments
-16. POST /api/reactions
-17. POST /api/auth/register com João
-18. Authorize com TOKEN_JOAO
-19. DELETE /api/comments/{COMENTARIO_ID} para erro 403
+GET /api/reactions?eventId=1
 ```
 
-## 21. Problemas Comuns na Hora da Aula
+If the created event has a different id, replace `1` with the value of `EVENT_ID`.
 
-### Porta 5432 ocupada
+No token needed.
 
-Se o PostgreSQL local estiver usando a porta:
+Evidence for screenshot:
+
+- Maria's reaction visible publicly
+
+## 20. Summary Order for the Presentation
+
+```text
+1.  Open Swagger
+2.  POST /api/auth/register with Maria
+3.  POST /api/auth/login with Maria
+4.  Authorize with TOKEN_MARIA
+5.  GET /api/me
+6.  POST /api/events
+7.  POST /api/activity (Opening Ceremony)
+8.  POST /api/activity (ASP.NET Core Workshop)
+9.  GET /api/activity/event/{EVENT_ID}
+10. PUT /api/events/{EVENT_ID} with status Published
+11. GET /api/events
+12. GET /api/events?status=Published
+13. GET /api/events/meus
+14. POST /api/registrations
+15. POST /api/registrations again for error 400
+16. POST /api/comments
+17. POST /api/reactions
+18. POST /api/auth/register with Joao
+19. Authorize with TOKEN_JOAO
+20. DELETE /api/comments/{COMMENT_ID} for error 403
+```
+
+## 21. Common Issues During Class
+
+### Port 5432 busy
+
+If local PostgreSQL is using the port:
 
 ```bash
 sudo systemctl stop postgresql
 docker compose up -d
 ```
 
-Depois da aula:
+After class:
 
 ```bash
 sudo systemctl start postgresql
 ```
 
-### Porta 5000 ocupada
+### Port 5000 busy
 
-Rode a API na porta `5002`:
+Run the API on port `5002`:
 
 ```bash
 cd AcademicEvents.API
@@ -686,17 +707,17 @@ Use:
 http://localhost:5002/swagger
 ```
 
-### Token não funciona no Swagger
+### Token not working in Swagger
 
-Pare a API com `Ctrl+C`, rode novamente e gere um token novo.
+Stop the API with `Ctrl+C`, run it again and generate a new token.
 
-No Swagger revisado:
+In Swagger:
 
 ```text
-Cole apenas o token, sem Bearer.
+Paste only the token, without Bearer.
 ```
 
-Em clientes HTTP externos:
+In external HTTP clients:
 
 ```text
 Authorization: Bearer TOKEN
