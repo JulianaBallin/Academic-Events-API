@@ -85,6 +85,22 @@ public class ActivityController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Remove uma atividade. Só o organizador do evento pode excluir atividades associadas. 
+    /// </summary>
+    [HttpDelete("{id:int}")]
+    [Authorize]
+    [ProducesResponseType(typeof(ActivityResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> Delete(int id)
+    {   
+        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        await _service.DeleteAsync(id,usuarioId);
+
+        return NoContent();
+    }
 
 
 }

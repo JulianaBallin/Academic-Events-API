@@ -50,7 +50,7 @@ public class ActivityService : IActivityService
             throw new NotFoundException("Evento não encontrado.");
 
         if (evento.OrganizadorId != usuarioId)
-            throw new UnauthorizedException("Apenas o organizador do evento pode editar esta atividade.");
+            throw new UnauthorizedException("Apenas o organizador do evento pode criar esta atividade.");
 
         if (request.DataInicio < evento.DataInicio)
             throw new InvalidOperationException(
@@ -141,6 +141,24 @@ public class ActivityService : IActivityService
         await _repository.UpdateAsync(activity);
 
         return MapearParaResponse(activity);
+    }
+
+    public async Task DeleteAsync(int activityId,int usuarioId)
+    {
+        Activity? activity = await _repository.GetByIdAsync(activityId);
+
+        if (activity is null)
+            throw new NotFoundException("Atividade não encontrada.");
+
+        Event? evento = await _eventRepository.GetByIdAsync(activity.EventId);
+
+        if (evento is null)
+            throw new NotFoundException("Evento não encontrado.");
+
+        if (evento.OrganizadorId != usuarioId)
+            throw new UnauthorizedException("Apenas o organizador do evento pode excluir esta atividade.");
+
+        await _repository.DeleteAsync(activity);
     }
 
     private static ActivityResponse MapearParaResponse(Activity atividade)
