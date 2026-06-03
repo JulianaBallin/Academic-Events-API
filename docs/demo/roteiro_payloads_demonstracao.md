@@ -1,17 +1,11 @@
 # Roteiro de Demonstração - Payloads para Popular o Banco
 
-Este roteiro é uma cola para usar no Swagger durante a demonstração prática da API.
+Este roteiro de demonstração prática da API.
 
 URL base esperada:
 
 ```text
 http://localhost:5000/swagger
-```
-
-Se a porta `5000` estiver ocupada, rode a API em outra porta, por exemplo `5002`, e troque a URL para:
-
-```text
-http://localhost:5002/swagger
 ```
 
 ---
@@ -25,18 +19,18 @@ docker compose up -d
 docker compose ps
 ```
 
+Se o banco já tiver sido usado antes e retornar erro limpe o volume com:
+
+```bash
+docker compose down -v
+docker compose up -d
+```
+
 Rodar a API:
 
 ```bash
 cd AcademicEvents.API
 dotnet run --urls http://localhost:5000
-```
-
-Se precisar usar a porta `5002`:
-
-```bash
-cd AcademicEvents.API
-dotnet run --urls http://localhost:5002
 ```
 
 ---
@@ -55,13 +49,6 @@ REACTION_ID      =
 REGISTRATION_ID  =
 ```
 
-Se o banco já tiver sido usado antes e retornar erro de e-mail duplicado, troque os e-mails ou limpe o volume com:
-
-```bash
-docker compose down -v
-docker compose up -d
-```
-
 ---
 
 ## PARTE 1 - USUÁRIOS
@@ -78,26 +65,24 @@ Payload:
 
 ```json
 {
-  "Name": "Maria Silva",
-  "Email": "maria@test.com",
-  "Password": "Password123!"
+  "name": "Maria Silva",
+  "email": "maria@test.com",
+  "password": "Password123!"
 }
 ```
 
-O que anotar:
-
 ```text
-TOKEN_MARIA = valor do campo "Token"
+TOKEN_MARIA = valor do token
 ```
 
 Resposta esperada:
 
 ```json
 {
-  "Token": "eyJhbGci...",
-  "Name": "Maria Silva",
-  "Email": "maria@test.com",
-  "ExpiresIn": "2026-06-04T..."
+  "token": "eyJhbGci...",
+  "name": "Maria Silva",
+  "email": "maria@test.com",
+  "expiresIn": "2026-06-04T..."
 }
 ```
 
@@ -115,26 +100,26 @@ Payload:
 
 ```json
 {
-  "Name": "João Souza",
-  "Email": "joao@test.com",
-  "Password": "Password123!"
+  "name": "João Souza",
+  "email": "joao@test.com",
+  "password": "Password123!"
 }
 ```
 
 O que anotar:
 
 ```text
-TOKEN_JOAO = valor do campo "Token"
+TOKEN_JOAO = valor do token
 ```
 
 Resposta esperada:
 
 ```json
 {
-  "Token": "eyJhbGci...",
-  "Name": "João Souza",
-  "Email": "joao@test.com",
-  "ExpiresIn": "2026-06-04T..."
+  "token": "eyJhbGci...",
+  "name": "João Souza",
+  "email": "joao@test.com",
+  "expiresIn": "2026-06-04T..."
 }
 ```
 
@@ -154,8 +139,8 @@ Payload:
 
 ```json
 {
-  "Email": "maria@test.com",
-  "Password": "Password123!"
+  "email": "maria@test.com",
+  "password": "Password123!"
 }
 ```
 
@@ -163,10 +148,10 @@ Resposta esperada:
 
 ```json
 {
-  "Token": "eyJhbGci...",
-  "Name": "Maria Silva",
-  "Email": "maria@test.com",
-  "ExpiresIn": "2026-06-04T..."
+  "token": "eyJhbGci...",
+  "name": "Maria Silva",
+  "email": "maria@test.com",
+  "expiresIn": "2026-06-04T..."
 }
 ```
 
@@ -174,7 +159,7 @@ Resposta esperada:
 
 ### 4. Autorizar no Swagger com o token da Maria
 
-Clique em `Authorize` e cole apenas o token, sem a palavra `Bearer`:
+Em `Authorize` colar o token:
 
 ```text
 TOKEN_MARIA
@@ -198,9 +183,9 @@ Resposta esperada:
 
 ```json
 {
-  "Id": "1",
-  "Email": "maria@test.com",
-  "Name": "Maria Silva"
+  "id": "1",
+  "email": "maria@test.com",
+  "name": "Maria Silva"
 }
 ```
 
@@ -220,29 +205,27 @@ Payload:
 
 ```json
 {
-  "Title": "Workshop de C# em Manaus",
-  "Description": "Workshop prático sobre ASP.NET Core, Entity Framework Core e construção de APIs REST.",
-  "StartDate": "2026-06-10T09:00:00Z",
-  "EndDate": "2026-06-10T18:00:00Z",
-  "Location": "Bloco A - Sala 201"
+  "title": "Workshop de C# em Manaus",
+  "description": "Workshop prático sobre ASP.NET Core, Entity Framework Core e construção de APIs REST.",
+  "startDate": "2026-06-10T09:00:00Z",
+  "endDate": "2026-06-10T18:00:00Z",
+  "location": "Bloco A - Sala 201"
 }
 ```
 
-O que anotar:
-
 ```text
-EVENT_ID = valor do campo "Id"
+EVENT_ID = valor do id
 ```
 
 Resposta esperada:
 
 ```json
 {
-  "Id": 1,
-  "Title": "Workshop de C# em Manaus",
-  "Status": "Draft",
-  "OrganizerId": 1,
-  "OrganizerName": "Maria Silva"
+  "id": 1,
+  "title": "Workshop de C# em Manaus",
+  "status": "Draft",
+  "organizerId": 1,
+  "organizerName": "Maria Silva"
 }
 ```
 
@@ -262,12 +245,12 @@ Payload:
 
 ```json
 {
-  "Title": "Workshop de C# em Manaus - Atualizado",
-  "Description": "Workshop prático sobre ASP.NET Core, Entity Framework Core, autenticação JWT e construção de APIs REST.",
-  "StartDate": "2026-06-10T09:00:00Z",
-  "EndDate": "2026-06-10T18:00:00Z",
-  "Location": "Bloco B - Auditório",
-  "EventStatus": "Published"
+  "title": "Workshop de C# em Manaus - Atualizado",
+  "description": "Workshop prático sobre ASP.NET Core, Entity Framework Core, autenticação JWT e construção de APIs REST.",
+  "startDate": "2026-06-10T09:00:00Z",
+  "endDate": "2026-06-10T18:00:00Z",
+  "location": "Bloco B - Auditório",
+  "eventStatus": "Published"
 }
 ```
 
@@ -275,11 +258,11 @@ Resposta esperada:
 
 ```json
 {
-  "Id": 1,
-  "Title": "Workshop de C# em Manaus - Atualizado",
-  "Status": "Published",
-  "OrganizerId": 1,
-  "OrganizerName": "Maria Silva"
+  "id": 1,
+  "title": "Workshop de C# em Manaus - Atualizado",
+  "status": "Published",
+  "organizerId": 1,
+  "organizerName": "Maria Silva"
 }
 ```
 
@@ -300,11 +283,11 @@ Resposta esperada:
 ```json
 [
   {
-    "Id": 1,
-    "Title": "Workshop de C# em Manaus - Atualizado",
-    "Status": "Published",
-    "OrganizerId": 1,
-    "OrganizerName": "Maria Silva"
+    "id": 1,
+    "title": "Workshop de C# em Manaus - Atualizado",
+    "status": "Published",
+    "organizerId": 1,
+    "organizerName": "Maria Silva"
   }
 ]
 ```
@@ -312,6 +295,8 @@ Resposta esperada:
 ---
 
 ### 9. Filtrar eventos por status
+
+No Swagger, use o mesmo endpoint `GET /api/events` e preencha o campo `status` com o valor `Published`.
 
 Endpoint:
 
@@ -326,10 +311,10 @@ Resposta esperada:
 ```json
 [
   {
-    "Id": 1,
-    "Title": "Workshop de C# em Manaus - Atualizado",
-    "Status": "Published",
-    "OrganizerName": "Maria Silva"
+    "id": 1,
+    "title": "Workshop de C# em Manaus - Atualizado",
+    "status": "Published",
+    "organizerName": "Maria Silva"
   }
 ]
 ```
@@ -351,11 +336,11 @@ Resposta esperada:
 ```json
 [
   {
-    "Id": 1,
-    "Title": "Workshop de C# em Manaus - Atualizado",
-    "Status": "Published",
-    "OrganizerId": 1,
-    "OrganizerName": "Maria Silva"
+    "id": 1,
+    "title": "Workshop de C# em Manaus - Atualizado",
+    "status": "Published",
+    "organizerId": 1,
+    "organizerName": "Maria Silva"
   }
 ]
 ```
@@ -376,33 +361,33 @@ Payload:
 
 ```json
 {
-  "EventId": 1,
-  "Title": "Cerimônia de Abertura",
-  "Description": "Abertura oficial do Workshop de C#.",
-  "Type": "Opening",
-  "StartAt": "2026-06-10T09:00:00Z",
-  "EndedAt": "2026-06-10T09:30:00Z",
-  "Location": "Auditório Principal"
+  "eventId": 1,
+  "title": "Cerimônia de Abertura",
+  "description": "Abertura oficial do Workshop de C#.",
+  "type": "Opening",
+  "startAt": "2026-06-10T09:00:00Z",
+  "endedAt": "2026-06-10T09:30:00Z",
+  "location": "Auditório Principal"
 }
 ```
 
 O que anotar:
 
 ```text
-ACTIVITY_ID = valor do campo "Id"
+ACTIVITY_ID = valor do campo "id"
 ```
 
 Resposta esperada:
 
 ```json
 {
-  "Id": 1,
-  "EventId": 1,
-  "Title": "Cerimônia de Abertura",
-  "Type": "Opening",
-  "StartAt": "2026-06-10T09:00:00Z",
-  "EndedAt": "2026-06-10T09:30:00Z",
-  "Location": "Auditório Principal"
+  "id": 1,
+  "eventId": 1,
+  "title": "Cerimônia de Abertura",
+  "type": "Opening",
+  "startAt": "2026-06-10T09:00:00Z",
+  "endedAt": "2026-06-10T09:30:00Z",
+  "location": "Auditório Principal"
 }
 ```
 
@@ -420,13 +405,13 @@ Payload:
 
 ```json
 {
-  "EventId": 1,
-  "Title": "Workshop ASP.NET Core",
-  "Description": "Introdução prática ao ASP.NET Core.",
-  "Type": "Workshop",
-  "StartAt": "2026-06-10T10:00:00Z",
-  "EndedAt": "2026-06-10T12:00:00Z",
-  "Location": "Laboratório 01"
+  "eventId": 1,
+  "title": "Workshop ASP.NET Core",
+  "description": "Introdução prática ao ASP.NET Core.",
+  "type": "Workshop",
+  "startAt": "2026-06-10T10:00:00Z",
+  "endedAt": "2026-06-10T12:00:00Z",
+  "location": "Laboratório 01"
 }
 ```
 
@@ -434,13 +419,13 @@ Resposta esperada:
 
 ```json
 {
-  "Id": 2,
-  "EventId": 1,
-  "Title": "Workshop ASP.NET Core",
-  "Type": "Workshop",
-  "StartAt": "2026-06-10T10:00:00Z",
-  "EndedAt": "2026-06-10T12:00:00Z",
-  "Location": "Laboratório 01"
+  "id": 2,
+  "eventId": 1,
+  "title": "Workshop ASP.NET Core",
+  "type": "Workshop",
+  "startAt": "2026-06-10T10:00:00Z",
+  "endedAt": "2026-06-10T12:00:00Z",
+  "location": "Laboratório 01"
 }
 ```
 
@@ -465,22 +450,22 @@ Resposta esperada:
 ```json
 [
   {
-    "Id": 1,
-    "EventId": 1,
-    "Title": "Cerimônia de Abertura",
-    "Type": "Opening",
-    "StartAt": "2026-06-10T09:00:00Z",
-    "EndedAt": "2026-06-10T09:30:00Z",
-    "Location": "Auditório Principal"
+    "id": 1,
+    "eventId": 1,
+    "title": "Cerimônia de Abertura",
+    "type": "Opening",
+    "startAt": "2026-06-10T09:00:00Z",
+    "endedAt": "2026-06-10T09:30:00Z",
+    "location": "Auditório Principal"
   },
   {
-    "Id": 2,
-    "EventId": 1,
-    "Title": "Workshop ASP.NET Core",
-    "Type": "Workshop",
-    "StartAt": "2026-06-10T10:00:00Z",
-    "EndedAt": "2026-06-10T12:00:00Z",
-    "Location": "Laboratório 01"
+    "id": 2,
+    "eventId": 1,
+    "title": "Workshop ASP.NET Core",
+    "type": "Workshop",
+    "startAt": "2026-06-10T10:00:00Z",
+    "endedAt": "2026-06-10T12:00:00Z",
+    "location": "Laboratório 01"
   }
 ]
 ```
@@ -503,7 +488,7 @@ Payload:
 
 ```json
 {
-  "EventId": 1
+  "eventId": 1
 }
 ```
 
@@ -512,20 +497,20 @@ Se o evento criado tiver outro id, troque `1` pelo valor de `EVENT_ID`.
 O que anotar:
 
 ```text
-REGISTRATION_ID = valor do campo "Id"
+REGISTRATION_ID = valor do campo "id"
 ```
 
 Resposta esperada:
 
 ```json
 {
-  "Id": 1,
-  "EventId": 1,
-  "EventTitle": "Workshop de C# em Manaus - Atualizado",
-  "UserId": 1,
-  "UserName": "Maria Silva",
-  "Status": "Pending",
-  "CreatedAt": "2026-06-03T..."
+  "id": 1,
+  "eventId": 1,
+  "eventTitle": "Workshop de C# em Manaus - Atualizado",
+  "userId": 1,
+  "userName": "Maria Silva",
+  "status": "Pending",
+  "createdAt": "2026-06-03T..."
 }
 ```
 
@@ -543,7 +528,7 @@ Payload:
 
 ```json
 {
-  "EventId": 1
+  "eventId": 1
 }
 ```
 
@@ -571,27 +556,27 @@ Payload:
 
 ```json
 {
-  "EventId": 1,
-  "Content": "Ótimo evento, vai ajudar muito na prática com APIs em C#."
+  "eventId": 1,
+  "content": "Ótimo evento, vai ajudar muito na prática com APIs em C#."
 }
 ```
 
 O que anotar:
 
 ```text
-COMMENT_ID = valor do campo "Id"
+COMMENT_ID = valor do campo "id"
 ```
 
 Resposta esperada:
 
 ```json
 {
-  "Id": 1,
-  "EventId": 1,
-  "UserId": 1,
-  "UserName": "Maria Silva",
-  "Content": "Ótimo evento, vai ajudar muito na prática com APIs em C#.",
-  "CreatedAt": "2026-06-03T..."
+  "id": 1,
+  "eventId": 1,
+  "userId": 1,
+  "userName": "Maria Silva",
+  "content": "Ótimo evento, vai ajudar muito na prática com APIs em C#.",
+  "createdAt": "2026-06-03T..."
 }
 ```
 
@@ -644,10 +629,10 @@ Resposta esperada:
 ```json
 [
   {
-    "Id": 1,
-    "EventId": 1,
-    "UserName": "Maria Silva",
-    "Content": "Ótimo evento, vai ajudar muito na prática com APIs em C#."
+    "id": 1,
+    "eventId": 1,
+    "userName": "Maria Silva",
+    "content": "Ótimo evento, vai ajudar muito na prática com APIs em C#."
   }
 ]
 ```
@@ -670,27 +655,27 @@ Payload:
 
 ```json
 {
-  "EventId": 1,
-  "Type": "WillParticipate"
+  "eventId": 1,
+  "type": "WillParticipate"
 }
 ```
 
 O que anotar:
 
 ```text
-REACTION_ID = valor do campo "Id"
+REACTION_ID = valor do campo "id"
 ```
 
 Resposta esperada:
 
 ```json
 {
-  "Id": 1,
-  "EventId": 1,
-  "UserId": 1,
-  "UserName": "Maria Silva",
-  "Type": "WillParticipate",
-  "CreatedAt": "2026-06-03T..."
+  "id": 1,
+  "eventId": 1,
+  "userId": 1,
+  "userName": "Maria Silva",
+  "type": "WillParticipate",
+  "createdAt": "2026-06-03T..."
 }
 ```
 
@@ -711,10 +696,10 @@ Resposta esperada:
 ```json
 [
   {
-    "Id": 1,
-    "EventId": 1,
-    "UserName": "Maria Silva",
-    "Type": "WillParticipate"
+    "id": 1,
+    "eventId": 1,
+    "userName": "Maria Silva",
+    "type": "WillParticipate"
   }
 ]
 ```
@@ -733,9 +718,9 @@ Resposta esperada:
 
 --- EVENTOS ---
 6.  POST /api/events
-7.  PUT  /api/events/{EVENT_ID}  (publicar)
+7.  PUT  /api/events/{EVENT_ID}  (publicar com eventStatus=Published)
 8.  GET  /api/events
-9.  GET  /api/events?status=Published
+9.  GET  /api/events  (preencher campo status=Published no Swagger)
 10. GET  /api/events/mine
 
 --- ATIVIDADES ---
@@ -754,8 +739,9 @@ Resposta esperada:
 19. GET  /api/comments?eventId=1
 
 --- REAÇÕES ---
-20. POST /api/reactions
-21. GET  /api/reactions?eventId=1
+20. Authorize com TOKEN_MARIA
+21. POST /api/reactions
+22. GET  /api/reactions?eventId=1
 ```
 
 ---
