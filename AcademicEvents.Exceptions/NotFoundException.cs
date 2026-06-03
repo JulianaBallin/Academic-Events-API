@@ -1,8 +1,8 @@
 namespace AcademicEvents.Exceptions;
 
 /// <summary>
-/// Lançada quando um recurso solicitado não existe no banco.
-/// O controller deve capturar e retornar 404.
+/// Exception thrown when a resource doesn't exist in database. 
+/// they are already registered for.
 /// </summary>
 public class NotFoundException : Exception
 {

@@ -5,8 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace AcademicEvents.Application;
 
 /// <summary>
-/// Registra os services da camada Application no DI do ASP.NET.
-/// Chamar no Program.cs com builder.Services.AddApplication().
+/// Registers Application layer services in ASP.NET dependency injection.
+/// Call in Program.cs using builder.Services.AddApplication().
 /// </summary>
 public static class ApplicationDependencyInjectionExtension
 {

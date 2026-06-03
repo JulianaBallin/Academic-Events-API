@@ -12,8 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 namespace AcademicEvents.Application.Services;
 
 /// <summary>
-/// Implementação do service de autenticação.
-/// Usa BCrypt para hash de senha e gera JWT Bearer Token.
+/// Provides authentication services, including password hashing with BCrypt
+/// and JWT bearer token generation.
 /// </summary>
 public class AuthService : IAuthService
 {
@@ -28,56 +28,56 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
-        // normaliza email pra minúsculo antes de gravar, evita duplicatas tipo "Test@" e "test@"
-        string emailNormalizado = (request.Email ?? string.Empty).Trim().ToLowerInvariant();
-        string nomeNormalizado = (request.Nome ?? string.Empty).Trim();
-        string senha = request.Senha ?? string.Empty;
+        // Normalize email before saving to avoid duplicates like "Test@" and "test@".
+        string normalizedEmail = (request.Email ?? string.Empty).Trim().ToLowerInvariant();
+        string normalizedName = (request.Name ?? string.Empty).Trim();
+        string password = request.Password ?? string.Empty;
 
-        if (string.IsNullOrWhiteSpace(nomeNormalizado))
-            throw new InvalidOperationException("O nome é obrigatório.");
+        if (string.IsNullOrWhiteSpace(normalizedName))
+            throw new InvalidOperationException("The name is required..");
 
-        if (string.IsNullOrWhiteSpace(emailNormalizado))
-            throw new InvalidOperationException("O email é obrigatório.");
+        if (string.IsNullOrWhiteSpace(normalizedEmail))
+            throw new InvalidOperationException("The email is required.");
 
-        if (string.IsNullOrWhiteSpace(senha))
-            throw new InvalidOperationException("A senha é obrigatória.");
+        if (string.IsNullOrWhiteSpace(password))
+            throw new InvalidOperationException("The password is required.");
 
-        if (await _repository.GetByEmailAsync(emailNormalizado) is not null)
-            throw new DuplicateEmailException("Esse email já está em uso.");
+        if (await _repository.GetByEmailAsync(normalizedEmail) is not null)
+            throw new DuplicateEmailException("A user with this email address already exists.");
 
-        // BCrypt cuida do salt automaticamente, não precisa passar nada extra
-        string senhaHash = BCrypt.Net.BCrypt.HashPassword(senha);
+        // BCrypt generates and stores the salt automatically.
+        string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
-        User usuario = new User
+        User user = new User
         {
-            Nome = nomeNormalizado,
-            Email = emailNormalizado,
-            SenhaHash = senhaHash
+            Name = normalizedName,
+            Email = normalizedEmail,
+            Password = passwordHash
         };
 
-        User criado = await _repository.CreateAsync(usuario);
-        return GerarTokenResponse(criado);
+        User createdUser = await _repository.CreateAsync(user);
+        return GenerateTokenResponse(createdUser);
     }
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
-        // normaliza antes de buscar, já que os emails são gravados em minúsculo
-        string emailNormalizado = (request.Email ?? string.Empty).Trim().ToLowerInvariant();
-        string senha = request.Senha ?? string.Empty;
-        User? usuario = await _repository.GetByEmailAsync(emailNormalizado);
+        // normalizes email before search
+        string normalizedEmail = (request.Email ?? string.Empty).Trim().ToLowerInvariant();
+        string password = request.Password ?? string.Empty;
+        User? user = await _repository.GetByEmailAsync(normalizedEmail);
 
-        // retorna o mesmo erro independente se email ou senha estão errados (segurança)
-        if (usuario is null || !BCrypt.Net.BCrypt.Verify(senha, usuario.SenhaHash))
-            throw new InvalidCredentialsException("Email ou senha inválidos.");
+        // returns the same error despite invalid email or password (security)
+        if (user is null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
+            throw new InvalidCredentialsException("Invalid email or password.");
 
-        return GerarTokenResponse(usuario);
+        return GenerateTokenResponse(user);
     }
 
-    private AuthResponse GerarTokenResponse(User usuario)
+    private AuthResponse GenerateTokenResponse(User user)
     {
-        // pega as configs do appsettings pra assinar o token
+        // get app_settings configs to assign token
         string key = _configuration["Jwt:Key"]
-            ?? throw new InvalidOperationException("Jwt:Key não configurada.");
+            ?? throw new InvalidOperationException("Jwt:Key not configured.");
         string issuer = _configuration["Jwt:Issuer"]!;
         string audience = _configuration["Jwt:Audience"]!;
         int expiresIn = int.Parse(_configuration["Jwt:ExpiresInHours"] ?? "8");
@@ -87,27 +87,27 @@ public class AuthService : IAuthService
 
         Claim[] claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-            new Claim(ClaimTypes.Email, usuario.Email),
-            new Claim(ClaimTypes.Name, usuario.Nome)
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.Name)
         };
 
-        DateTime expira = DateTime.UtcNow.AddHours(expiresIn);
+        DateTime expires = DateTime.UtcNow.AddHours(expiresIn);
 
         JwtSecurityToken token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
             claims: claims,
-            expires: expira,
+            expires: expires,
             signingCredentials: credentials
         );
 
         return new AuthResponse
         {
             Token = new JwtSecurityTokenHandler().WriteToken(token),
-            Nome = usuario.Nome,
-            Email = usuario.Email,
-            ExpiraEm = expira
+            Name = user.Name,
+            Email = user.Email,
+            ExpiresIn = expires
         };
     }
 }

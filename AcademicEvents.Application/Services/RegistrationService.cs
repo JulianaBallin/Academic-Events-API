@@ -7,8 +7,7 @@ using AcademicEvents.Exceptions;
 namespace AcademicEvents.Application.Services;
 
 /// <summary>
-/// Service de inscrições em eventos.
-/// Valida duplicata antes de inserir mesmo com o índice único no banco.
+/// Event registration service.
 /// </summary>
 public class RegistrationService : IRegistrationService
 {
@@ -21,59 +20,59 @@ public class RegistrationService : IRegistrationService
         _eventRepository = eventRepository;
     }
 
-    public async Task<RegistrationResponse> CreateAsync(CreateRegistrationRequest request, int usuarioId)
+    public async Task<RegistrationResponse> CreateAsync(CreateRegistrationRequest request, int userId)
     {
-        if (request.EventoId <= 0)
-            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+        if (request.EventId <= 0)
+            throw new InvalidOperationException("Event id must be greater then zero.");
 
-        Event? evento = await _eventRepository.GetByIdAsync(request.EventoId);
-        if (evento is null)
-            throw new NotFoundException("Evento não encontrado.");
+        Event? eventRepository = await _eventRepository.GetByIdAsync(request.EventId);
+        if (eventRepository is null)
+            throw new NotFoundException("Event not fount.");
 
-        // verifica na camada de serviço antes de chegar no banco
-        Registration? existente = await _repository.GetByUsuarioEEventoAsync(usuarioId, request.EventoId);
-        if (existente is not null)
-            throw new InscricaoDuplicadaException("Você já está inscrito neste evento.");
+        // Checks event on service layer, before the database
+        Registration? searchEventResponse = await _repository.GetByUserEventAsync(userId, request.EventId);
+        if (searchEventResponse is not null)
+            throw new DuplicateRegistrationException("The user is already registered for this event.");
 
-        Registration inscricao = new Registration
+        Registration registration = new Registration
         {
-            EventoId = request.EventoId,
-            UsuarioId = usuarioId
+            EventId = request.EventId,
+            UserId = userId
         };
 
-        Registration criada = await _repository.CreateAsync(inscricao);
-        return MapearParaResponse(criada);
+        Registration createdEvent = await _repository.CreateAsync(registration);
+        return MapResponse(createdEvent);
     }
 
-    public async Task<List<RegistrationResponse>> GetByUsuarioAsync(int usuarioId)
+    public async Task<List<RegistrationResponse>> GetByUserAsync(int userId)
     {
-        List<Registration> inscricoes = await _repository.GetByUsuarioAsync(usuarioId);
-        return inscricoes.Select(MapearParaResponse).ToList();
+        List<Registration> registrations = await _repository.GetByUserAsync(userId);
+        return registrations.Select(MapResponse).ToList();
     }
 
-    public async Task DeleteAsync(int id, int usuarioId)
+    public async Task DeleteAsync(int id, int userId)
     {
-        Registration? inscricao = await _repository.GetByIdAsync(id);
-        if (inscricao is null) throw new NotFoundException("Inscrição não encontrada.");
+        Registration? registration = await _repository.GetByIdAsync(id);
+        if (registration is null) throw new NotFoundException("Subscription not found.");
 
-        // só o próprio usuário pode cancelar a própria inscrição
-        if (inscricao.UsuarioId != usuarioId)
-            throw new UnauthorizedException("Você só pode cancelar suas próprias inscrições.");
+        // Only subscribed user may cancel its event subscription 
+        if (registration.UserId != userId)
+            throw new UnauthorizedException("Can`t unsubscribe another user from a event.");
 
         await _repository.DeleteAsync(id);
     }
 
-    private static RegistrationResponse MapearParaResponse(Registration inscricao)
+    private static RegistrationResponse MapResponse(Registration registration)
     {
         return new RegistrationResponse
         {
-            Id = inscricao.Id,
-            EventoId = inscricao.EventoId,
-            TituloEvento = inscricao.Evento?.Titulo ?? string.Empty,
-            UsuarioId = inscricao.UsuarioId,
-            NomeUsuario = inscricao.Usuario?.Nome ?? string.Empty,
-            Status = inscricao.Status.ToString(),
-            CriadoEm = inscricao.CriadoEm
+            Id = registration.Id,
+            EventId = registration.EventId,
+            EventTitle = registration.Event?.Title ?? string.Empty,
+            UserId = registration.UserId,
+            UserName = registration.User?.Name ?? string.Empty,
+            Status = registration.Status.ToString(),
+            CreatedAt = registration.CreatedAt
         };
     }
 }

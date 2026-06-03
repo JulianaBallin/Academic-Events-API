@@ -3,11 +3,11 @@ using AcademicEvents.Application.DTOs.Comment;
 namespace AcademicEvents.Application.Interfaces;
 
 /// <summary>
-/// Contrato do service de comentários.
+/// Contract of comments service.
 /// </summary>
 public interface ICommentService
 {
-    Task<CommentResponse> CreateAsync(CreateCommentRequest request, int usuarioId);
-    Task<List<CommentResponse>> GetByEventoAsync(int eventoId);
-    Task DeleteAsync(int id, int usuarioId);
+    Task<CommentResponse> CreateAsync(CreateCommentRequest request, int userId);
+    Task<List<CommentResponse>> GetByEventAsync(int eventId);
+    Task DeleteAsync(int id, int userId);
 }

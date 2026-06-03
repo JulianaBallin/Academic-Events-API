@@ -3,7 +3,7 @@ using AcademicEvents.Application.DTOs.Auth;
 namespace AcademicEvents.Application.Interfaces;
 
 /// <summary>
-/// Contrato do service de autenticação.
+/// Contract of authentication service.
 /// </summary>
 public interface IAuthService
 {

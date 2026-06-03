@@ -3,14 +3,14 @@ using System.ComponentModel.DataAnnotations;
 namespace AcademicEvents.Application.DTOs.Auth;
 
 /// <summary>
-/// Dados recebidos no endpoint de login.
+/// Data received by the login endpoint.
 /// </summary>
 public class LoginRequest
 {
-    [Required(ErrorMessage = "O email é obrigatório.")]
-    [EmailAddress(ErrorMessage = "Formato de email inválido.")]
+    [Required(ErrorMessage = "Email is required.")]
+    [EmailAddress(ErrorMessage = "Invalid email format.")]
     public string Email { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "A senha é obrigatória.")]
-    public string Senha { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Password is required.")]
+    public string Password { get; set; } = string.Empty;
 }

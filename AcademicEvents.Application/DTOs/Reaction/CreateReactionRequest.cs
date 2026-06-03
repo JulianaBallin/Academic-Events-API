@@ -4,16 +4,16 @@ using AcademicEvents.Domain.Enums;
 namespace AcademicEvents.Application.DTOs.Reaction;
 
 /// <summary>
-/// Dados recebidos para reagir a um evento.
-/// Cada usuário pode reagir apenas uma vez por evento.
+/// Data received to react to an event.
+/// Each user can react only once per event.
 /// </summary>
 public class CreateReactionRequest
 {
-    [Required(ErrorMessage = "O id do evento é obrigatório.")]
-    [Range(1, int.MaxValue, ErrorMessage = "O id do evento deve ser maior que zero.")]
-    public int EventoId { get; set; }
+    [Required(ErrorMessage = "Event id is required.")]
+    [Range(1, int.MaxValue, ErrorMessage = "Event id must be greater than zero.")]
+    public int EventId { get; set; }
 
-    [Required(ErrorMessage = "O tipo de reação é obrigatório.")]
-    [EnumDataType(typeof(TipoReacao), ErrorMessage = "Tipo de reação inválido.")]
-    public TipoReacao Tipo { get; set; }
+    [Required(ErrorMessage = "Reaction type is required.")]
+    [EnumDataType(typeof(ReactionType), ErrorMessage = "Invalid reaction type.")]
+    public ReactionType Type { get; set; }
 }

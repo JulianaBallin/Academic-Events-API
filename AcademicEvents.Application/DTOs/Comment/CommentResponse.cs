@@ -1,14 +1,14 @@
 namespace AcademicEvents.Application.DTOs.Comment;
 
 /// <summary>
-/// Dados do comentário retornados nos endpoints de leitura.
+/// Comment data returned by read endpoints.
 /// </summary>
 public class CommentResponse
 {
     public int Id { get; set; }
-    public int EventoId { get; set; }
-    public int UsuarioId { get; set; }
-    public string NomeUsuario { get; set; } = string.Empty;
-    public string Conteudo { get; set; } = string.Empty;
-    public DateTime CriadoEm { get; set; }
+    public int EventId { get; set; }
+    public int UserId { get; set; }
+    public string UserName { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
 }

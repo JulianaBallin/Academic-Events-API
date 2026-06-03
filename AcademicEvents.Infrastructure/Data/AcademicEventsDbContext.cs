@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 namespace AcademicEvents.Infrastructure.Data;
 
 /// <summary>
-/// DbContext principal do projeto.
-/// Mapeia as entidades do domínio para o PostgreSQL via EF Core.
+/// Main DbContext for the project.
+/// Maps domain entities to PostgreSQL using EF Core.
 /// </summary>
 public class AcademicEventsDbContext : DbContext
 {
@@ -22,66 +22,66 @@ public class AcademicEventsDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // email único por usuário
+        // Email must be unique per user.
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
 
-        // um usuário não pode se inscrever duas vezes no mesmo evento
+        // A user cannot register for the same event twice.
         modelBuilder.Entity<Registration>()
-            .HasIndex(r => new { r.UsuarioId, r.EventoId })
+            .HasIndex(r => new { r.UserId, r.EventId })
             .IsUnique();
 
-        // relacionamento de Event com User (organizador)
+        // Relationship between Event and User (organizer).
         modelBuilder.Entity<Event>()
-            .HasOne(e => e.Organizador)
-            .WithMany(u => u.EventosOrganizados)
-            .HasForeignKey(e => e.OrganizadorId)
+            .HasOne(e => e.Organizer)
+            .WithMany(u => u.OrganizedEventList)
+            .HasForeignKey(e => e.OrganizerId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // relacionamento de Registration com User
+        //  Relationship between Registration and User.
         modelBuilder.Entity<Registration>()
-            .HasOne(r => r.Usuario)
-            .WithMany(u => u.Inscricoes)
-            .HasForeignKey(r => r.UsuarioId)
+            .HasOne(r => r.User)
+            .WithMany(u => u.Registrations)
+            .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // relacionamento de Registration com Event
+        // Relationship between Registration and Event.
         modelBuilder.Entity<Registration>()
-            .HasOne(r => r.Evento)
-            .WithMany(e => e.Inscricoes)
-            .HasForeignKey(r => r.EventoId)
+            .HasOne(r => r.Event)
+            .WithMany(e => e.Registrations)
+            .HasForeignKey(r => r.EventId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // relacionamento de Comment com User
+        // Relationship between Comment and User.
         modelBuilder.Entity<Comment>()
-            .HasOne(c => c.Usuario)
-            .WithMany(u => u.Comentarios)
-            .HasForeignKey(c => c.UsuarioId)
+            .HasOne(c => c.User)
+            .WithMany(u => u.Comments)
+            .HasForeignKey(c => c.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // relacionamento de Comment com Event
+        //  Relationship between Comment and Event.
         modelBuilder.Entity<Comment>()
-            .HasOne(c => c.Evento)
-            .WithMany(e => e.Comentarios)
-            .HasForeignKey(c => c.EventoId)
+            .HasOne(c => c.Event)
+            .WithMany(e => e.Comments)
+            .HasForeignKey(c => c.EventId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // relacionamento de Reaction com User
+        //  Relationship between Reaction and User.
         modelBuilder.Entity<Reaction>()
-            .HasOne(r => r.Usuario)
-            .WithMany(u => u.Reacoes)
-            .HasForeignKey(r => r.UsuarioId)
+            .HasOne(r => r.User)
+            .WithMany(u => u.Reactions)
+            .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // relacionamento de Reaction com Event
+        //  Relationship between Reaction and Event.
         modelBuilder.Entity<Reaction>()
-            .HasOne(r => r.Evento)
-            .WithMany(e => e.Reacoes)
-            .HasForeignKey(r => r.EventoId)
+            .HasOne(r => r.Event)
+            .WithMany(e => e.Reactions)
+            .HasForeignKey(r => r.EventId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // um usuário não pode reagir duas vezes ao mesmo evento
+        // A user cannot react to the same event twice.
         modelBuilder.Entity<Reaction>()
-            .HasIndex(r => new { r.UsuarioId, r.EventoId })
+            .HasIndex(r => new { r.UserId, r.EventId })
             .IsUnique();
     }
 }

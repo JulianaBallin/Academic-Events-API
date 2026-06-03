@@ -9,7 +9,7 @@ using Moq;
 namespace AcademicEvents.Tests;
 
 /// <summary>
-/// Testes unitários das regras de autenticação.
+/// Unit tests for authentication business rules.
 /// </summary>
 public class AuthServiceTests
 {
@@ -17,7 +17,7 @@ public class AuthServiceTests
     private readonly Mock<IConfiguration> _configurationMock = new();
 
     [Fact]
-    public async Task RegisterAsync_EmailDuplicado_LancaDuplicateEmailException()
+    public async Task RegisterAsync_WhenEmailAlreadyExists_ThrowsDuplicateEmailException()
     {
         AuthService service = new AuthService(
             _userRepositoryMock.Object,
@@ -25,9 +25,9 @@ public class AuthServiceTests
 
         RegisterRequest request = new RegisterRequest
         {
-            Nome = "Maria Silva",
+            Name = "Maria Silva",
             Email = "maria@teste.com",
-            Senha = "Senha123"
+            Password = "Senha123"
         };
 
         _userRepositoryMock
@@ -39,7 +39,7 @@ public class AuthServiceTests
     }
 
     [Fact]
-    public async Task RegisterAsync_EmailComEspacosENomeComEspacos_NormalizaAntesDeSalvar()
+    public async Task RegisterAsync_WhenEmailAndNameHaveSpaces_NormalizesBeforeSaving()
     {
         AuthService service = new AuthService(
             _userRepositoryMock.Object,
@@ -47,9 +47,9 @@ public class AuthServiceTests
 
         RegisterRequest request = new RegisterRequest
         {
-            Nome = "  Maria Silva  ",
+            Name = "  Maria Silva  ",
             Email = "  MARIA@TESTE.COM  ",
-            Senha = "Senha123"
+            Password = "Senha123"
         };
 
         _configurationMock.Setup(configuration => configuration["Jwt:Key"])
@@ -66,25 +66,25 @@ public class AuthServiceTests
             .ReturnsAsync((User?)null);
 
         _userRepositoryMock
-            .Setup(repository => repository.CreateAsync(It.Is<User>(usuario =>
-                usuario.Nome == "Maria Silva"
-                && usuario.Email == "maria@teste.com"
-                && !string.IsNullOrWhiteSpace(usuario.SenhaHash))))
-            .ReturnsAsync((User usuario) =>
+            .Setup(repository => repository.CreateAsync(It.Is<User>(user =>
+                user.Name == "Maria Silva"
+                && user.Email == "maria@teste.com"
+                && !string.IsNullOrWhiteSpace(user.Password))))
+            .ReturnsAsync((User user) =>
             {
-                usuario.Id = 10;
-                return usuario;
+                user.Id = 10;
+                return user;
             });
 
         AuthResponse response = await service.RegisterAsync(request);
 
-        Assert.Equal("Maria Silva", response.Nome);
+        Assert.Equal("Maria Silva", response.Name);
         Assert.Equal("maria@teste.com", response.Email);
         Assert.False(string.IsNullOrWhiteSpace(response.Token));
     }
 
     [Fact]
-    public async Task LoginAsync_EmailInexistente_LancaInvalidCredentialsException()
+    public async Task LoginAsync_WhenEmailDoesNotExist_ThrowsInvalidCredentialsException()
     {
         AuthService service = new AuthService(
             _userRepositoryMock.Object,
@@ -93,7 +93,7 @@ public class AuthServiceTests
         LoginRequest request = new LoginRequest
         {
             Email = "inexistente@teste.com",
-            Senha = "Senha123"
+            Password = "Senha123"
         };
 
         _userRepositoryMock
