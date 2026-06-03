@@ -1,8 +1,6 @@
 # Roteiro de Demonstração: Payloads para Popular o Banco
 
-Este roteiro é uma cola rápida para a demonstração prática da API no Swagger.
-
-URL base esperada:
+URL:
 
 ```text
 http://localhost:5000/swagger
@@ -15,9 +13,7 @@ Subir o banco:
 ```bash
 docker compose up -d
 docker compose ps
-```
-
-Se o banco já tiver sido usado antes e retornar erro de e-mail duplicado, limpe o volume:
+``
 
 ```bash
 docker compose down -v
@@ -31,21 +27,9 @@ cd AcademicEvents.API
 dotnet run --urls http://localhost:5000
 ```
 
-## Valores para Anotar
-
-```text
-TOKEN_JOAO  =
-TOKEN_MARIA =
-EVENT_ID    =
-```
-
-Se o banco estiver limpo, o primeiro evento normalmente terá `id` igual a `1`. Se vier outro valor na resposta, troque `1` pelo valor real do `EVENT_ID` nos próximos payloads.
-
 ## PARTE 1: USUÁRIOS
 
 ### 1. Cadastrar o João
-
-Vou criar o João primeiro para guardar um segundo token. No fim ele será usado para reagir ao evento.
 
 Endpoint:
 
@@ -63,21 +47,11 @@ Payload:
 }
 ```
 
-Retorno esperado:
-
 ```text
-200 OK com token, name, email e expiresIn.
-```
-
-Anotar:
-
-```text
-TOKEN_JOAO = valor do campo token
+TOKEN_JOAO = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJqb2FvQHRlc3QuY29tIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6Ikpvw6NvIFNvdXphIiwiZXhwIjoxNzgwNTM3OTgzLCJpc3MiOiJBY2FkZW1pY0V2ZW50c0FQSSIsImF1ZCI6IkFjYWRlbWljRXZlbnRzQ2xpZW50ZXMifQ.UoD4H-BAWx9fzfHMucncTGhbH-WpCwEQzAV-5wTg6pM
 ```
 
 ### 2. Cadastrar a Maria
-
-Maria será a usuária principal da demonstração.
 
 Endpoint:
 
@@ -95,15 +69,7 @@ Payload:
 }
 ```
 
-Retorno esperado:
-
-```text
-200 OK com token, name, email e expiresIn.
-```
-
 ### 3. Fazer login com a Maria
-
-Vou fazer login para pegar um token novo da Maria.
 
 Endpoint:
 
@@ -120,51 +86,19 @@ Payload:
 }
 ```
 
-Retorno esperado:
-
-```text
-200 OK com token, name, email e expiresIn.
-```
-
 Anotar:
 
 ```text
-TOKEN_MARIA = valor do campo token
+TOKEN_MARIA = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJtYXJpYUB0ZXN0LmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJNYXJpYSBTaWx2YSIsImV4cCI6MTc4MDUzODA2MCwiaXNzIjoiQWNhZGVtaWNFdmVudHNBUEkiLCJhdWQiOiJBY2FkZW1pY0V2ZW50c0NsaWVudGVzIn0.DV30rPCCvkS4A104cyOFgmoriSaoWewYe7ZgNUsGO2M
 ```
 
 ### 4. Autorizar no Swagger com o token da Maria
 
 Clique em `Authorize` e cole o token da Maria.
 
-```text
-TOKEN_MARIA
-```
-
-### 5. Conferir o usuário autenticado
-
-Endpoint:
-
-```text
-GET /api/me
-```
-
-Não precisa de payload.
-
-Retorno esperado:
-
-```json
-{
-  "id": "2",
-  "email": "maria@test.com",
-  "name": "Maria Silva"
-}
-```
-
-Se a Maria tiver outro `id`, tudo bem. O importante é aparecer o e-mail e o nome dela.
-
 ## PARTE 2: EVENTOS
 
-### 6. Criar evento
+### 5. Criar evento
 
 Precisa estar autorizado com `TOKEN_MARIA`.
 
@@ -186,21 +120,7 @@ Payload:
 }
 ```
 
-Retorno esperado:
-
-```text
-201 Created com id, status Draft, organizerId e organizerName Maria Silva.
-```
-
-Anotar:
-
-```text
-EVENT_ID = valor do campo id
-```
-
-### 7. Publicar o evento
-
-A rota `PUT` atualiza o evento completo. Para publicar, mantenha os dados do evento e altere `eventStatus` para `Published`.
+### 6. Publicar o evento
 
 Endpoint:
 
@@ -221,13 +141,7 @@ Payload:
 }
 ```
 
-Retorno esperado:
-
-```text
-200 OK com status Published.
-```
-
-### 8. Listar todos os eventos
+### 7. Listar todos os eventos
 
 Endpoint:
 
@@ -237,15 +151,8 @@ GET /api/events
 
 Não precisa de payload nem de token.
 
-Retorno esperado:
 
-```text
-200 OK com lista contendo o evento criado.
-```
-
-### 9. Filtrar eventos por status
-
-No Swagger, use o mesmo endpoint `GET /api/events` e preencha o campo `status` com `Published`.
+### 8. Filtrar eventos por status
 
 Endpoint:
 
@@ -255,13 +162,8 @@ GET /api/events?status=Published
 
 Não precisa de payload.
 
-Retorno esperado:
 
-```text
-200 OK com lista contendo o evento publicado.
-```
-
-### 10. Listar meus eventos
+### 9. Listar meus eventos
 
 Precisa estar autorizado com `TOKEN_MARIA`.
 
@@ -271,17 +173,10 @@ Endpoint:
 GET /api/events/mine
 ```
 
-Retorno esperado:
-
-```text
-200 OK com os eventos criados pela Maria.
-```
 
 ## PARTE 3: ATIVIDADES
 
-### 11. Criar primeira atividade, Cerimônia de Abertura
-
-Precisa estar autorizado com `TOKEN_MARIA`.
+### 10. Criar primeira atividade, Cerimônia de Abertura
 
 Endpoint:
 
@@ -303,22 +198,6 @@ Payload:
 }
 ```
 
-Retorno esperado:
-
-```text
-201 Created com os dados da atividade.
-```
-
-### 12. Criar segunda atividade, Workshop Técnico
-
-Precisa estar autorizado com `TOKEN_MARIA`.
-
-Endpoint:
-
-```text
-POST /api/activity
-```
-
 Payload:
 
 ```json
@@ -333,13 +212,7 @@ Payload:
 }
 ```
 
-Retorno esperado:
-
-```text
-201 Created com os dados da atividade.
-```
-
-### 13. Listar atividades do evento
+### 11. Listar atividades do evento
 
 Endpoint:
 
@@ -347,23 +220,9 @@ Endpoint:
 GET /api/activity/event/{EVENT_ID}
 ```
 
-Exemplo:
-
-```text
-GET /api/activity/event/1
-```
-
-Retorno esperado:
-
-```text
-200 OK com Cerimônia de Abertura e Workshop ASP.NET Core.
-```
-
 ## PARTE 4: INSCRIÇÕES
 
-### 14. Inscrever a Maria no evento
-
-Precisa estar autorizado com `TOKEN_MARIA`.
+### 12. Inscrever a Maria no evento
 
 Endpoint:
 
@@ -379,21 +238,7 @@ Payload:
 }
 ```
 
-Retorno esperado:
-
-```text
-201 Created com status Pending e userName Maria Silva.
-```
-
-### 15. Tentar inscrição duplicada
-
-Precisa continuar autorizado com `TOKEN_MARIA`.
-
-Endpoint:
-
-```text
-POST /api/registrations
-```
+### 13. Tentar inscrição duplicada
 
 Payload:
 
@@ -401,19 +246,11 @@ Payload:
 {
   "eventId": 1
 }
-```
-
-Retorno esperado:
-
-```text
-400 Bad Request com a mensagem The user is already registered for this event.
 ```
 
 ## PARTE 5: COMENTÁRIOS
 
-### 16. Maria adiciona um comentário
-
-Precisa estar autorizado com `TOKEN_MARIA`.
+### 14. Maria adiciona um comentário
 
 Endpoint:
 
@@ -430,13 +267,8 @@ Payload:
 }
 ```
 
-Retorno esperado:
 
-```text
-201 Created com userName Maria Silva e o conteúdo do comentário.
-```
-
-### 17. Listar comentários do evento
+### 15. Listar comentários do evento
 
 Endpoint:
 
@@ -444,25 +276,15 @@ Endpoint:
 GET /api/comments?eventId=1
 ```
 
-Não precisa de token.
-
-Retorno esperado:
-
-```text
-200 OK com o comentário da Maria.
-```
-
 ## PARTE 6: REAÇÕES
 
-### 18. Trocar para o token do João
-
-Clique em `Authorize`, remova o token da Maria e cole o token do João.
+### 16. Trocar para o token do João
 
 ```text
 TOKEN_JOAO
 ```
 
-### 19. João adiciona uma reação
+### 17. João adiciona uma reação
 
 Precisa estar autorizado com `TOKEN_JOAO`.
 
@@ -481,49 +303,11 @@ Payload:
 }
 ```
 
-Retorno esperado:
 
-```text
-201 Created com userName João Souza e type WillParticipate.
-```
-
-### 20. Listar reações do evento
+### 18. Listar reações do evento
 
 Endpoint:
 
 ```text
 GET /api/reactions?eventId=1
-```
-
-Não precisa de token.
-
-Retorno esperado:
-
-```text
-200 OK com a reação do João.
-```
-
-## Ordem Resumida para a Apresentação
-
-```text
-1.  POST /api/auth/register  (João)
-2.  POST /api/auth/register  (Maria)
-3.  POST /api/auth/login     (Maria)
-4.  Authorize com TOKEN_MARIA
-5.  GET  /api/me
-6.  POST /api/events
-7.  PUT  /api/events/{EVENT_ID}
-8.  GET  /api/events
-9.  GET  /api/events?status=Published
-10. GET  /api/events/mine
-11. POST /api/activity
-12. POST /api/activity
-13. GET  /api/activity/event/{EVENT_ID}
-14. POST /api/registrations
-15. POST /api/registrations  (erro de inscrição duplicada)
-16. POST /api/comments       (Maria comenta)
-17. GET  /api/comments?eventId=1
-18. Authorize com TOKEN_JOAO
-19. POST /api/reactions      (João reage)
-20. GET  /api/reactions?eventId=1
 ```
