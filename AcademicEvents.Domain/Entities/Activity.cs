@@ -13,7 +13,7 @@ public class Activity
     public string Descricao {get; set;} = string.Empty;
     public TipoAtividade Tipo {get;set;}
     public DateTime DataInicio {get;set;}
-    public DateTime DataFIm {get;set;}
+    public DateTime DataFim {get;set;}
 
     public string Local {get;set;} = string.Empty;
 

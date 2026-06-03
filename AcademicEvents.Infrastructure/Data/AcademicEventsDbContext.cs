@@ -84,5 +84,11 @@ public class AcademicEventsDbContext : DbContext
         modelBuilder.Entity<Reaction>()
             .HasIndex(r => new { r.UsuarioId, r.EventoId })
             .IsUnique();
+
+        // relacionamento de Event com Activity
+        modelBuilder.Entity<Activity>()
+        .HasOne(a => a.Event)
+        .WithMany(e => e.Atividades)
+        .HasForeignKey(a => a.EventId);
     }
 }
