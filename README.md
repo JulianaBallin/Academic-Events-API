@@ -226,7 +226,7 @@ dotnet run
 
 Na inicialização, o `Program.cs` chama `EnsureCreated()` para criar as tabelas no PostgreSQL quando elas ainda não existem.
 
-Acesse o Swagger em: `http://localhost:5000/swagger`
+Acesse o Swagger em: `http://localhost:5136/swagger`
 
 **5. Rodar os testes automatizados**
 
