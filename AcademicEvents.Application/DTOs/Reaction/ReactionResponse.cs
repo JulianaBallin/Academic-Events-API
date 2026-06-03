@@ -9,6 +9,6 @@ public class ReactionResponse
     public int EventId { get; set; }
     public int UserId { get; set; }
     public string UserName { get; set; } = string.Empty;
-    public string Typo { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
 }
