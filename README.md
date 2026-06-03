@@ -367,10 +367,10 @@ The API has an exception handling middleware to standardize known business rule 
 
 ```json
 {
-  "Message": "Evento nao encontrado.",
-  "StatusCode": 404,
-  "Path": "/api/events/99",
-  "UtcTime": "2026-06-01T20:30:00Z"
+  "message": "Evento nao encontrado.",
+  "statusCode": 404,
+  "path": "/api/events/99",
+  "utcTime": "2026-06-01T20:30:00Z"
 }
 ```
 

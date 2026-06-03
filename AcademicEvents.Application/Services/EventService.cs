@@ -35,15 +35,21 @@ public class EventService : IEventService
         if (string.IsNullOrWhiteSpace(location))
             throw new InvalidOperationException("Location is required.");
 
+        if (request.StartDate is null)
+            throw new InvalidOperationException("Start date is required.");
+
+        if (request.EndDate is null)
+            throw new InvalidOperationException("End date is required.");
+
         if (request.EndDate <= request.StartDate)
-            throw new InvalidOperationException("End date should be after the start date.");
+            throw new InvalidOperationException("End date must be later than start date.");
 
         Event newEvent = new Event
         {
             Title = title,
             Description = description,
-            StartAt = request.StartDate,
-            EndedAt = request.EndDate,
+            StartAt = request.StartDate.Value,
+            EndedAt = request.EndDate.Value,
             Location = location,
             OrganizerId = organizerId
         };
@@ -103,6 +109,12 @@ public class EventService : IEventService
         if (eventEntity.OrganizerId != userId)
             throw new UnauthorizedException("Only the organizer can edit this event.");
 
+        if (request.StartDate is null)
+            throw new InvalidOperationException("Start date is required.");
+
+        if (request.EndDate is null)
+            throw new InvalidOperationException("End date is required.");
+
         if (request.EndDate <= request.StartDate)
             throw new InvalidOperationException("End date must be later than start date.");
 
@@ -120,8 +132,8 @@ public class EventService : IEventService
 
         eventEntity.Title = title;
         eventEntity.Description = description;
-        eventEntity.StartAt = request.StartDate;
-        eventEntity.EndedAt = request.EndDate;
+        eventEntity.StartAt = request.StartDate.Value;
+        eventEntity.EndedAt = request.EndDate.Value;
         eventEntity.Location = location;
         eventEntity.EventStatus = request.EventStatus;
 
