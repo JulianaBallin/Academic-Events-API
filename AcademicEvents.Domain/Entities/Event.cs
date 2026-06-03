@@ -22,4 +22,6 @@ public class Event
     public List<Registration> Inscricoes { get; set; } = new();
     public List<Comment> Comentarios { get; set; } = new();
     public List<Reaction> Reacoes { get; set; } = new();
+
+    public List<Activity> Atividades {get;set;} = new();
 }

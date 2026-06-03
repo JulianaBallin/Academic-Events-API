@@ -17,5 +17,6 @@ public static class ApplicationDependencyInjectionExtension
         services.AddScoped<ICommentService, CommentService>();
         services.AddScoped<IReactionService, ReactionService>();
         services.AddScoped<IRegistrationService, RegistrationService>();
+        services.AddScoped<IActivityService, ActivityService>();
     }
 }

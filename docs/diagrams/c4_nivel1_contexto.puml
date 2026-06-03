@@ -16,7 +16,7 @@ Person(organizador, "Organizador", "Usuário que cria e gerencia\neventos acadê
 System(api, "Academic Events API", "API REST em ASP.NET Core para\ngerenciar eventos acadêmicos,\ninscrições, comentários e reações.\nAutenticação via JWT Bearer Token.")
 
 ' sistema externo de persistência
-System_Ext(postgres, "PostgreSQL", "Banco de dados relacional.\nArmazena usuários, eventos,\ninscrições, comentários e reações.")
+System_Ext(postgres, "PostgreSQL", "Banco de dados relacional.\nArmazena usuários, eventos,\ninscrições, comentários, reações e atividades.")
 
 ' sistema externo de documentação (gerado automaticamente)
 System_Ext(swagger, "Swagger / OpenAPI", "Interface de documentação e teste\ndos endpoints da API. Gerada\nautomaticamente pelo ASP.NET Core.")

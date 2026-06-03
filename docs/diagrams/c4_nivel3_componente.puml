@@ -18,6 +18,8 @@ Component(userCtrl, "API - UsersController", "ASP.NET Core Controller", "GET /ap
 
 Component(eventCtrl, "API - EventsController", "ASP.NET Core Controller", "CRUD completo de eventos acadêmicos.\nFiltros por status (?status=) e\nevents/meus para o organizador.")
 
+Component(activityCtrl, "API - ActivityController", "ASP.NET Core Controller", "CRUD completo de atividades que compõem eventos acadêmicos.")
+
 Component(commentCtrl, "API - CommentsController", "ASP.NET Core Controller", "Gerencia comentários em eventos.")
 
 Component(reactionCtrl, "API - ReactionsController", "ASP.NET Core Controller", "Gerencia reações (curtidas) em eventos.")
@@ -28,6 +30,8 @@ Component(registrationCtrl, "API - RegistrationsController", "ASP.NET Core Contr
 Component(authSvc, "Application - AuthService", "C# Service", "Registro de usuário com hash BCrypt,\nlogin e geração do token JWT.")
 
 Component(eventSvc, "Application - EventService", "C# Service", "Regras de negócio de eventos:\ncriar, editar, cancelar, listar com filtros.")
+
+Component(activitySvc, "Application - ActivityService", "C# Service", "Regras de negócio de atividades:\ncriar, editar, remover, listar.")
 
 Component(commentSvc, "Application - CommentService", "C# Service", "Regras para adicionar e remover\ncomentários em eventos.")
 
@@ -45,6 +49,7 @@ Rel(eventCtrl, eventSvc, "Usa")
 Rel(commentCtrl, commentSvc, "Usa")
 Rel(reactionCtrl, reactionSvc, "Usa")
 Rel(registrationCtrl, regSvc, "Usa")
+Rel(activityCtrl, activitySvc, "Usa")
 
 ' services implementam as interfaces (inversão de dependência)
 Rel(authSvc, interfaces, "Implementa IAuthService")
@@ -52,6 +57,7 @@ Rel(eventSvc, interfaces, "Implementa IEventService")
 Rel(commentSvc, interfaces, "Implementa ICommentService")
 Rel(reactionSvc, interfaces, "Implementa IReactionService")
 Rel(regSvc, interfaces, "Implementa IRegistrationService")
+Rel(activitySvc, interfaces, "Implementa IActivityService")
 
 ' controllers usam os DTOs para entrada e saída
 Rel(authCtrl, dtos, "Recebe e retorna")
@@ -59,6 +65,7 @@ Rel(eventCtrl, dtos, "Recebe e retorna")
 Rel(commentCtrl, dtos, "Recebe e retorna")
 Rel(reactionCtrl, dtos, "Recebe e retorna")
 Rel(registrationCtrl, dtos, "Recebe e retorna")
+Rel(activityCtrl, dtos, "Recebe e retorna")
 
 ' middleware atua antes dos controllers
 Rel(jwtMid, userCtrl, "Protege a rota")
@@ -66,5 +73,6 @@ Rel(jwtMid, eventCtrl, "Protege rotas de escrita")
 Rel(jwtMid, commentCtrl, "Protege todas as rotas")
 Rel(jwtMid, reactionCtrl, "Protege todas as rotas")
 Rel(jwtMid, registrationCtrl, "Protege todas as rotas")
+Rel(jwtMid, activityCtrl, "Protege rotas de escrita")
 
 @enduml

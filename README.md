@@ -41,6 +41,7 @@ O projeto segue **arquitetura em camadas** separando a solution em cinco projeto
 | `Registration` | Inscrição de um usuário em um evento. Impede duplicatas. |
 | `Comment` | Comentário feito por um usuário em um evento. |
 | `Reaction` | Reação de um usuário a um evento (Curtir, Adorei, Interessante, Vou Participar). |
+| `Activity` | Atividades que fazem parte da programação de um evento. |
 
 ---
 
@@ -73,92 +74,129 @@ AcademicEvents.Infrastructure
 <h2 align="center">Estrutura do Projeto</h2>
 
 ```text
-AcademicEvents/
+├── AcademicEvents.API
+│   ├── AcademicEvents.API.csproj
+│   ├── AcademicEvents.API.http
+│   ├── appsettings.json
+│   ├── Controllers
+│   │   ├── ActivityController.cs
+│   │   ├── AuthController.cs
+│   │   ├── CommentsController.cs
+│   │   ├── EventsController.cs
+│   │   ├── ReactionsController.cs
+│   │   ├── RegistrationsController.cs
+│   │   └── UsersController.cs
+│   ├── Middlewares
+│   │   └── ExceptionHandlingMiddleware.cs
+│   ├── Program.cs
+│   └── Properties
+│       └── launchSettings.json
+├── AcademicEvents.Application
+│   ├── AcademicEvents.Application.csproj
+│   ├── ApplicationDependencyInjectionExtension.cs
+│   ├── DTOs
+│   │   ├── Activity
+│   │   │   ├── ActivityResponse.cs
+│   │   │   ├── CreateActivityRequest.cs
+│   │   │   └── UpdateActivityRequest.cs
+│   │   ├── Auth
+│   │   │   ├── AuthResponse.cs
+│   │   │   ├── LoginRequest.cs
+│   │   │   └── RegisterRequest.cs
+│   │   ├── Comment
+│   │   │   ├── CommentResponse.cs
+│   │   │   └── CreateCommentRequest.cs
+│   │   ├── Event
+│   │   │   ├── CreateEventRequest.cs
+│   │   │   ├── EventResponse.cs
+│   │   │   └── UpdateEventRequest.cs
+│   │   ├── Reaction
+│   │   │   ├── CreateReactionRequest.cs
+│   │   │   └── ReactionResponse.cs
+│   │   └── Registration
+│   │       ├── CreateRegistrationRequest.cs
+│   │       └── RegistrationResponse.cs
+│   ├── Interfaces
+│   │   ├── IActivityService.cs
+│   │   ├── IAuthService.cs
+│   │   ├── ICommentService.cs
+│   │   ├── IEventService.cs
+│   │   ├── IReactionService.cs
+│   │   └── IRegistrationService.cs
+│   └── Services
+│       ├── ActivityService.cs
+│       ├── AuthService.cs
+│       ├── CommentService.cs
+│       ├── EventService.cs
+│       ├── ReactionService.cs
+│       └── RegistrationService.cs
+├── AcademicEvents.Domain
+│   ├── AcademicEvents.Domain.csproj
+│   ├── Entities
+│   │   ├── Activity.cs
+│   │   ├── Comment.cs
+│   │   ├── Event.cs
+│   │   ├── Reaction.cs
+│   │   ├── Registration.cs
+│   │   └── User.cs
+│   ├── Enums
+│   │   ├── StatusEvento.cs
+│   │   ├── StatusInscricao.cs
+│   │   ├── TipoAtividade.cs
+│   │   └── TipoReacao.cs
+│   └── Interfaces
+│       ├── IActivityRepository.cs
+│       ├── ICommentRepository.cs
+│       ├── IEventRepository.cs
+│       ├── IReactionRepository.cs
+│       ├── IRegistrationRepository.cs
+│       └── IUserRepository.cs
+├── AcademicEvents.Exceptions
+│   ├── AcademicEvents.Exceptions.csproj
+│   ├── DuplicateEmailException.cs
+│   ├── ErrorResponse.cs
+│   ├── InscricaoDuplicadaException.cs
+│   ├── InvalidCredentialsException.cs
+│   ├── NotFoundException.cs
+│   └── UnauthorizedException.cs
+├── AcademicEvents.Infrastructure
+│   ├── AcademicEvents.Infrastructure.csproj
+│   ├── Data
+│   │   └── AcademicEventsDbContext.cs
+│   ├── InfrastructureDependencyInjectionExtension.cs
+│   └── Repositories
+│       ├── ActivityRepository.cs
+│       ├── CommentRepository.cs
+│       ├── EventRepository.cs
+│       ├── ReactionRepository.cs
+│       ├── RegistrationRepository.cs
+│       └── UserRepository.cs
 ├── AcademicEvents.sln
+├── AcademicEvents.Tests
+│   ├── AcademicEvents.Tests.csproj
+│   ├── AuthServiceTests.cs
+│   ├── CommentServiceTests.cs
+│   ├── EventServiceTests.cs
+│   ├── ReactionServiceTests.cs
+│   └── RegistrationServiceTests.cs
 ├── docker-compose.yml
-├── .gitignore
-├── AcademicEvents.API/
-│   ├── Controllers/
-│   │   ├── AuthController.cs
-│   │   ├── EventsController.cs
-│   │   ├── CommentsController.cs
-│   │   ├── ReactionsController.cs
-│   │   ├── RegistrationsController.cs
-│   │   └── UsersController.cs
-│   ├── appsettings.json
-│   └── Program.cs
-├── AcademicEvents.Application/
-│   ├── DTOs/
-│   │   ├── Auth/
-│   │   │   ├── LoginRequest.cs
-│   │   │   ├── RegisterRequest.cs
-│   │   │   └── AuthResponse.cs
-│   │   ├── Event/
-│   │   │   ├── CreateEventRequest.cs
-│   │   │   ├── UpdateEventRequest.cs
-│   │   │   └── EventResponse.cs
-│   │   ├── Comment/
-│   │   │   ├── CreateCommentRequest.cs
-│   │   │   └── CommentResponse.cs
-│   │   ├── Reaction/
-│   │   │   ├── CreateReactionRequest.cs
-│   │   │   └── ReactionResponse.cs
-│   │   └── Registration/
-│   │       ├── CreateRegistrationRequest.cs
-│   │       └── RegistrationResponse.cs
-│   ├── Interfaces/
-│   │   ├── IAuthService.cs
-│   │   ├── IEventService.cs
-│   │   ├── ICommentService.cs
-│   │   ├── IReactionService.cs
-│   │   └── IRegistrationService.cs
-│   ├── Services/
-│   │   ├── AuthService.cs
-│   │   ├── EventService.cs
-│   │   ├── CommentService.cs
-│   │   ├── ReactionService.cs
-│   │   └── RegistrationService.cs
-│   └── ApplicationDependencyInjectionExtension.cs
-├── AcademicEvents.Domain/
-│   ├── Entities/
-│   │   ├── User.cs
-│   │   ├── Event.cs
-│   │   ├── Comment.cs
-│   │   ├── Reaction.cs
-│   │   └── Registration.cs
-│   └── Enums/
-│       ├── StatusEvento.cs
-│       ├── StatusInscricao.cs
-│       └── TipoReacao.cs
-├── AcademicEvents.Infrastructure/
-│   ├── Data/
-│   │   └── AcademicEventsDbContext.cs
-│   ├── Repositories/
-│   │   ├── UserRepository.cs
-│   │   ├── EventRepository.cs
-│   │   ├── RegistrationRepository.cs
-│   │   ├── CommentRepository.cs
-│   │   └── ReactionRepository.cs
-│   └── InfrastructureDependencyInjectionExtension.cs
-├── AcademicEvents.Exceptions/
-│   ├── NotFoundException.cs
-│   ├── DuplicateEmailException.cs
-│   ├── UnauthorizedException.cs
-│   ├── InscricaoDuplicadaException.cs
-│   └── InvalidCredentialsException.cs
-├── AcademicEvents.Tests/
-│   ├── AuthServiceTests.cs
-│   ├── EventServiceTests.cs
-│   ├── RegistrationServiceTests.cs
-│   ├── CommentServiceTests.cs
-│   └── ReactionServiceTests.cs
-└── docs/
-    └── diagrams/
-        ├── logo.svg
-        ├── c4_nivel1_contexto.puml
-        ├── c4_nivel2_container.puml
-        ├── c4_nivel3_componente.puml
-        └── c4_nivel4_codigo.puml
+├── docs
+│   ├── apresentacao
+│   │   └── Curso C#_Grupo06_Academic Events API.pdf
+│   ├── demonstracao
+│   │   └── roteiro_payloads_demonstracao.md
+│   ├── diagrams
+│   │   ├── c4_nivel1_contexto.puml
+│   │   ├── c4_nivel2_container.puml
+│   │   ├── c4_nivel3_componente.puml
+│   │   ├── c4_nivel4_codigo.puml
+│   │   └── logo.svg
+│   └── relatorios
+│       ├── relatorio_academic_events_grupo6.pdf
+│       └── relatorio_academic_events_grupo6.tex
+├── endpoints.http
+└── README.md
+
 ```
 
 ---
@@ -226,7 +264,7 @@ dotnet run
 
 Na inicialização, o `Program.cs` chama `EnsureCreated()` para criar as tabelas no PostgreSQL quando elas ainda não existem.
 
-Acesse o Swagger em: `http://localhost:5000/swagger`
+Acesse o Swagger em: `http://localhost:5136/swagger`
 
 **5. Rodar os testes automatizados**
 
@@ -290,6 +328,16 @@ dotnet test AcademicEvents.sln
 | `GET` | `/api/reactions?eventoId={id}` | Público | Lista reações de um evento |
 | `POST` | `/api/reactions` | Protegido | Adiciona reação em um evento |
 | `DELETE` | `/api/reactions/{id}` | Protegido | Remove reação (só o autor) |
+
+**Atividades**
+
+| Método | Rota | Proteção | Descrição |
+|--------|------|----------|-----------|
+| `GET` | `/api/activity/{id}` | Público | Retorna uma atividade pelo id |
+| `GET` | `/api/activity/event/{eventId}` | Público | Retorna todas as atividades de um evento pelo EventId |
+| `POST` | `/api/activity` | Protegido | Cria uma nova atividade. Só o organizador do evento pode criar as atividades associadas. |
+| `PUT` | `/api/activity/{id}` | Protegido | Edita uma atividade. Só o organizador do evento pode editar atividades associadas. |
+| `DELETE` | `/api/activity/{id}` | Protegido | Remove uma atividade. Só o organizador do evento pode excluir atividades associadas.|
 
 ---
 
@@ -431,6 +479,7 @@ Sempre usar a branch `develop` para enviar as alterações.
 |------|--------|-----------------|
 | Juliana Ballin Lima | [JulianaBallin](https://github.com/JulianaBallin) | Desenvolvimento, documentação, testes, relatório técnico e revisão da apresentação |
 | Allef Oliveira Ramos | [allef-oliveira](https://github.com/allef-oliveira) | Testes, estudo de stacks e apoio técnico ao Grupo 6 |
+| Thailsson Clementino de Andrade | [clementino1971](https://github.com/clementino1971) | Implementação Entidade Activity e revisão da documentação. |
 
 </p>
 
