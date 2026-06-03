@@ -2,21 +2,18 @@ using AcademicEvents.Domain.Enums;
 
 namespace AcademicEvents.Domain.Entities;
 
-
 /// <summary>
-/// Atividade pertencente a um evento acadêmico.
+/// Activity belonging to an academic event.
 /// </summary>
 public class Activity
 {
-    public int Id {get; set;}
-    public string Titulo {get; set;} = string.Empty;
-    public string Descricao {get; set;} = string.Empty;
-    public TipoAtividade Tipo {get;set;}
-    public DateTime DataInicio {get;set;}
-    public DateTime DataFim {get;set;}
-
-    public string Local {get;set;} = string.Empty;
-
-    public int EventId;
-    public Event? Event{get;set;}
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public ActivityType Type { get; set; }
+    public DateTime StartAt { get; set; }
+    public DateTime EndedAt { get; set; }
+    public string Location { get; set; } = string.Empty;
+    public int EventId { get; set; }
+    public Event? Event { get; set; }
 }

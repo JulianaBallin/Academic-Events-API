@@ -3,13 +3,13 @@ using AcademicEvents.Application.DTOs.Activity;
 namespace AcademicEvents.Application.Interfaces;
 
 /// <summary>
-/// Contrato do service das atividades de eventos acadêmicos.
+/// Contract for the activity service.
 /// </summary>
-public interface IActivityService 
+public interface IActivityService
 {
-    Task<ActivityResponse> CreateAsync(CreateActivityRequest request, int   usuarioId);
+    Task<ActivityResponse> CreateAsync(CreateActivityRequest request, int userId);
     Task<ActivityResponse?> GetByIdAsync(int id);
     Task<List<ActivityResponse>> GetByEventIdAsync(int eventId);
-    Task<ActivityResponse> UpdateAsync(int activityId, UpdateActivityRequest request, int usuarioId);
-    Task DeleteAsync(int activityId, int usuarioId);
+    Task<ActivityResponse> UpdateAsync(int activityId, UpdateActivityRequest request, int userId);
+    Task DeleteAsync(int activityId, int userId);
 }

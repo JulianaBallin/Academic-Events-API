@@ -8,23 +8,22 @@ using System.Security.Claims;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de eventos acadêmicos.
+/// Endpoints for managing academic event activities.
 /// </summary>
 [ApiController]
 [Route("api/activity")]
 [Produces("application/json")]
 public class ActivityController : ControllerBase
 {
-    
     private readonly IActivityService _service;
-    
+
     public ActivityController(IActivityService service)
     {
         _service = service;
     }
 
     /// <summary>
-    /// Retorna uma atividade pelo id;
+    /// Returns an activity by id.
     /// </summary>
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
@@ -34,7 +33,7 @@ public class ActivityController : ControllerBase
     }
 
     /// <summary>
-    /// Cria uma nova atividade. Só o organizador do evento pode criar tarefas associadas. 
+    /// Creates a new activity. Only the event organizer can create activities for the event.
     /// </summary>
     [HttpPost]
     [Authorize]
@@ -44,30 +43,25 @@ public class ActivityController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Create(CreateActivityRequest request)
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        ActivityResponse activity = await _service.CreateAsync(request,usuarioId);
-
-        return CreatedAtAction(nameof(GetById),new { id = activity.Id }, activity);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        ActivityResponse activity = await _service.CreateAsync(request, userId);
+        return CreatedAtAction(nameof(GetById), new { id = activity.Id }, activity);
     }
 
-
     /// <summary>
-    /// Retorna todas as atividade de um evento pelo EventId;
+    /// Returns all activities for an event by EventId.
     /// </summary>
     [HttpGet("event/{eventId:int}")]
     [ProducesResponseType(typeof(List<ActivityResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetByEventId(int eventId)
     {
-        List<ActivityResponse> activities =
-            await _service.GetByEventIdAsync(eventId);
-
+        List<ActivityResponse> activities = await _service.GetByEventIdAsync(eventId);
         return Ok(activities);
     }
 
-
     /// <summary>
-    /// Edita uma atividade. Só o organizador do evento pode editar atividades associadas. 
+    /// Updates an activity. Only the event organizer can edit activities.
     /// </summary>
     [HttpPut("{id:int}")]
     [Authorize]
@@ -77,16 +71,13 @@ public class ActivityController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Update(int id, UpdateActivityRequest request)
     {
-        
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        ActivityResponse response =
-            await _service.UpdateAsync(id, request,usuarioId);
-
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        ActivityResponse response = await _service.UpdateAsync(id, request, userId);
         return Ok(response);
     }
 
     /// <summary>
-    /// Remove uma atividade. Só o organizador do evento pode excluir atividades associadas. 
+    /// Deletes an activity. Only the event organizer can remove activities.
     /// </summary>
     [HttpDelete("{id:int}")]
     [Authorize]
@@ -95,12 +86,9 @@ public class ActivityController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
-    {   
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        await _service.DeleteAsync(id,usuarioId);
-
+    {
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        await _service.DeleteAsync(id, userId);
         return NoContent();
     }
-
-
 }

@@ -18,7 +18,6 @@ public class ActivityRepository : IActivityRepository
     {
         _context.Activities.Add(activity);
         await _context.SaveChangesAsync();
-
         return activity;
     }
 
@@ -32,21 +31,19 @@ public class ActivityRepository : IActivityRepository
     {
         return await _context.Activities
             .Where(a => a.EventId == eventId)
-            .OrderBy(a => a.DataInicio)
+            .OrderBy(a => a.StartAt)
             .ToListAsync();
     }
 
     public async Task UpdateAsync(Activity activity)
     {
         _context.Activities.Update(activity);
-
         await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Activity activity)
     {
         _context.Activities.Remove(activity);
-
         await _context.SaveChangesAsync();
     }
 }

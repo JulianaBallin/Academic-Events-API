@@ -3,24 +3,16 @@ using AcademicEvents.Domain.Enums;
 namespace AcademicEvents.Application.DTOs.Activity;
 
 /// <summary>
-/// Dados de atividade retornados nos endpoints de leitura.
-/// Não expõe detalhes internos da entidade.
+/// Activity data returned by read endpoints.
 /// </summary>
 public class ActivityResponse
 {
     public int Id { get; set; }
-
-    public string Titulo { get; set; } = string.Empty;
-
-    public string Descricao { get; set; } = string.Empty;
-
-    public TipoAtividade Tipo { get; set; }
-
-    public DateTime DataInicio { get; set; }
-
-    public DateTime DataFim { get; set; }
-
-    public string Local { get; set; } = string.Empty;
-
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public ActivityType Type { get; set; }
+    public DateTime StartAt { get; set; }
+    public DateTime EndedAt { get; set; }
+    public string Location { get; set; } = string.Empty;
     public int EventId { get; set; }
 }
