@@ -29,12 +29,12 @@ public class ReactionsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(List<ReactionResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetByEvento([FromQuery] int eventoId)
+    public async Task<IActionResult> GetByEvent([FromQuery] int eventId)
     {
-        if (eventoId <= 0)
+        if (eventId <= 0)
             throw new InvalidOperationException("The event id must be greater than zero.");
 
-        return Ok(await _service.GetByEventAsync(eventoId));
+        return Ok(await _service.GetByEventAsync(eventId));
     }
 
     /// <summary>
