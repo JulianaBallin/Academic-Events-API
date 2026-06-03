@@ -32,6 +32,7 @@ public class ActivityRepository : IActivityRepository
     {
         return await _context.Activities
             .Where(a => a.EventId == eventId)
+            .OrderBy(a => a.DataInicio)
             .ToListAsync();
     }
 

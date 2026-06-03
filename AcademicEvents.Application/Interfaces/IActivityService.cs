@@ -9,4 +9,5 @@ public interface IActivityService
 {
     Task<ActivityResponse> CreateAsync(CreateActivityRequest request);
     Task<ActivityResponse?> GetByIdAsync(int id);
+    Task<List<ActivityResponse>> GetByEventIdAsync(int eventId);
 }

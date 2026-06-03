@@ -22,6 +22,9 @@ public class ActivityController : ControllerBase
         _service = service;
     }
 
+    /// <summary>
+    /// Retorna uma atividade pelo id;
+    /// </summary>
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -41,5 +44,20 @@ public class ActivityController : ControllerBase
         ActivityResponse activity = await _service.CreateAsync(request);
 
         return CreatedAtAction(nameof(GetById),new { id = activity.Id }, activity);
+    }
+
+
+    /// <summary>
+    /// Retorna todas as atividade de um evento pelo EventId;
+    /// </summary>
+    [HttpGet("event/{eventId:int}")]
+    [ProducesResponseType(typeof(List<ActivityResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetByEventId(int eventId)
+    {
+        List<ActivityResponse> activities =
+            await _service.GetByEventIdAsync(eventId);
+
+        return Ok(activities);
     }
 }

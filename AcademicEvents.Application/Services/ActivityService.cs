@@ -79,6 +79,20 @@ public class ActivityService : IActivityService
         return MapearParaResponse(activity);
     }
 
+    public async Task<List<ActivityResponse>> GetByEventIdAsync(int eventId)
+    {
+        Event? evento = await _eventRepository.GetByIdAsync(eventId);
+
+        if (evento is null)
+            throw new NotFoundException("Evento não encontrado.");
+        
+        List<Activity> activities = await _repository.GetByEventIdAsync(eventId);
+
+        return activities
+            .Select(MapearParaResponse)
+            .ToList();
+    }
+
     private static ActivityResponse MapearParaResponse(Activity atividade)
     {
         return new ActivityResponse
