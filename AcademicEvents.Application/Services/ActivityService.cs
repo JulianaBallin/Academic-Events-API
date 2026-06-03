@@ -21,7 +21,7 @@ public class ActivityService : IActivityService
         _eventRepository = eventRepository;
     }
 
-    public async Task<ActivityResponse> CreateAsync(CreateActivityRequest request)
+    public async Task<ActivityResponse> CreateAsync(CreateActivityRequest request, int usuarioId)
     {
 
         string titulo = (request.Titulo ?? string.Empty).Trim();
@@ -48,6 +48,9 @@ public class ActivityService : IActivityService
 
         if (evento is null)
             throw new NotFoundException("Evento não encontrado.");
+
+        if (evento.OrganizadorId != usuarioId)
+            throw new UnauthorizedException("Apenas o organizador do evento pode editar esta atividade.");
 
         if (request.DataInicio < evento.DataInicio)
             throw new InvalidOperationException(
@@ -91,6 +94,53 @@ public class ActivityService : IActivityService
         return activities
             .Select(MapearParaResponse)
             .ToList();
+    }
+
+    public async Task<ActivityResponse> UpdateAsync(int activityId,UpdateActivityRequest request, int usuarioId)
+    {
+        Activity? activity = await _repository.GetByIdAsync(activityId);
+
+        if (activity is null)
+            throw new NotFoundException("Atividade não encontrada.");
+
+        Event? evento = await _eventRepository.GetByIdAsync(activity.EventId);
+
+        if (evento is null)
+            throw new NotFoundException("Evento não encontrado.");
+
+        if (evento.OrganizadorId != usuarioId)
+            throw new UnauthorizedException("Apenas o organizador do evento pode editar esta atividade.");
+
+        string titulo = (request.Titulo ?? string.Empty).Trim();
+        string descricao = (request.Descricao ?? string.Empty).Trim();
+        string local = (request.Local ?? string.Empty).Trim();
+
+        if (string.IsNullOrWhiteSpace(titulo))
+            throw new InvalidOperationException(
+                "O título é obrigatório.");
+
+        if (string.IsNullOrWhiteSpace(descricao))
+            throw new InvalidOperationException(
+                "A descrição é obrigatória.");
+
+        if (string.IsNullOrWhiteSpace(local))
+            throw new InvalidOperationException(
+                "O local é obrigatório.");
+
+        if (request.DataFim <= request.DataInicio)
+            throw new InvalidOperationException(
+                "A data de fim deve ser posterior à data de início.");
+
+        activity.Titulo = titulo;
+        activity.Descricao = descricao;
+        activity.Tipo = request.Tipo;
+        activity.DataInicio = request.DataInicio;
+        activity.DataFim = request.DataFim;
+        activity.Local = local;
+
+        await _repository.UpdateAsync(activity);
+
+        return MapearParaResponse(activity);
     }
 
     private static ActivityResponse MapearParaResponse(Activity atividade)

@@ -3,6 +3,7 @@ using AcademicEvents.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AcademicEvents.Exceptions;
+using System.Security.Claims;
 
 namespace AcademicEvents.API.Controllers;
 
@@ -33,15 +34,18 @@ public class ActivityController : ControllerBase
     }
 
     /// <summary>
-    /// Cria um novo evento. O organizador é o usuário autenticado.
+    /// Cria uma nova atividade. Só o organizador do evento pode criar tarefas associadas. 
     /// </summary>
     [HttpPost]
     [Authorize]
-    [ProducesResponseType(typeof(ActivityResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ActivityResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Create(CreateActivityRequest request)
     {
-        ActivityResponse activity = await _service.CreateAsync(request);
+        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        ActivityResponse activity = await _service.CreateAsync(request,usuarioId);
 
         return CreatedAtAction(nameof(GetById),new { id = activity.Id }, activity);
     }
@@ -60,4 +64,27 @@ public class ActivityController : ControllerBase
 
         return Ok(activities);
     }
+
+
+    /// <summary>
+    /// Edita uma atividade. Só o organizador do evento pode editar atividades associadas. 
+    /// </summary>
+    [HttpPut("{id:int}")]
+    [Authorize]
+    [ProducesResponseType(typeof(ActivityResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> Update(int id, UpdateActivityRequest request)
+    {
+        
+        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        ActivityResponse response =
+            await _service.UpdateAsync(id, request,usuarioId);
+
+        return Ok(response);
+    }
+
+
+
 }
