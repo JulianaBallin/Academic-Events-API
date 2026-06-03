@@ -3,14 +3,14 @@ using AcademicEvents.Domain.Entities;
 namespace AcademicEvents.Domain.Interfaces;
 
 /// <summary>
-/// Contrato do repository de reações.
-/// A implementação fica na Infrastructure.
+/// Reaction repository contract.
+/// Implementation kept on Infrastructure.
 /// </summary>
 public interface IReactionRepository
 {
-    Task<Reaction> CreateAsync(Reaction reacao);
+    Task<Reaction> CreateAsync(Reaction reaction);
     Task<Reaction?> GetByIdAsync(int id);
-    Task<List<Reaction>> GetByEventoAsync(int eventoId);
-    Task<Reaction?> GetByUsuarioEEventoAsync(int usuarioId, int eventoId);
+    Task<List<Reaction>> GetByEventAsync(int eventId);
+    Task<Reaction?> GetByUserEventAsync(int userId, int eventId);
     Task DeleteAsync(int id);
 }

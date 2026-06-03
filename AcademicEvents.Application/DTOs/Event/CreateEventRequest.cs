@@ -3,26 +3,26 @@ using System.ComponentModel.DataAnnotations;
 namespace AcademicEvents.Application.DTOs.Event;
 
 /// <summary>
-/// Dados recebidos para criar um novo evento.
-/// A validação de DataFim maior que DataInicio fica no EventService.
+/// Event data returned by read endpoints.
+/// Does not expose internal entity details.
 /// </summary>
 public class CreateEventRequest
 {
-    [Required(ErrorMessage = "O título é obrigatório.")]
-    [StringLength(200, MinimumLength = 3, ErrorMessage = "O título deve ter entre 3 e 200 caracteres.")]
-    public string Titulo { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Title is required.")]
+    [StringLength(200, MinimumLength = 3, ErrorMessage = "Title must have between 3 e 200 characters.")]
+    public string Title { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "A descrição é obrigatória.")]
-    [StringLength(2000, MinimumLength = 10, ErrorMessage = "A descrição deve ter entre 10 e 2000 caracteres.")]
-    public string Descricao { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Description is required.")]
+    [StringLength(2000, MinimumLength = 10, ErrorMessage = "Description must have between 10 e 2000 characters.")]
+    public string Description { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "A data de início é obrigatória.")]
-    public DateTime DataInicio { get; set; }
+    [Required(ErrorMessage = "Start date is required.")]
+    public DateTime StartDate { get; set; }
 
-    [Required(ErrorMessage = "A data de fim é obrigatória.")]
-    public DateTime DataFim { get; set; }
+    [Required(ErrorMessage = "End date is required.")]
+    public DateTime EndDate { get; set; }
 
-    [Required(ErrorMessage = "O local é obrigatório.")]
-    [StringLength(300, MinimumLength = 3, ErrorMessage = "O local deve ter entre 3 e 300 caracteres.")]
-    public string Local { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Location is required.")]
+    [StringLength(300, MinimumLength = 3, ErrorMessage = "Location must have between 3 e 300 characters.")]
+    public string Location { get; set; } = string.Empty;
 }

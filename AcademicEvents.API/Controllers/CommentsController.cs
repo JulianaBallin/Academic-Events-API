@@ -8,37 +8,37 @@ using Microsoft.AspNetCore.Mvc;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de comentários em eventos.
-/// Leitura pública, escrita e remoção exigem autenticação.
+/// Controller for event comments.
+/// Reading is public, while creating and deleting comments require authentication.
 /// </summary>
 [ApiController]
 [Route("api/comments")]
 [Produces("application/json")]
 public class CommentsController : ControllerBase
 {
-    private readonly ICommentService _service;
+    private readonly ICommentService _commentService;
 
-    public CommentsController(ICommentService service)
+    public CommentsController(ICommentService commentService)
     {
-        _service = service;
+        _commentService = commentService;
     }
 
     /// <summary>
-    /// Lista todos os comentários de um evento.
+    /// Lists all comments for an event.
     /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(List<CommentResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetByEvento([FromQuery] int eventoId)
+    public async Task<IActionResult> GetByEvent([FromQuery] int eventId)
     {
-        if (eventoId <= 0)
-            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+        if (eventId <= 0)
+            throw new InvalidOperationException("The event id must be greater than zero.");
 
-        return Ok(await _service.GetByEventoAsync(eventoId));
+        return Ok(await _commentService.GetByEventAsync(eventId));
     }
 
     /// <summary>
-    /// Adiciona um comentário a um evento.
+    /// Adds a comment to an event.
     /// </summary>
     [HttpPost]
     [Authorize]
@@ -47,13 +47,14 @@ public class CommentsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(CreateCommentRequest request)
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        CommentResponse response = await _service.CreateAsync(request, usuarioId);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        CommentResponse response = await _commentService.CreateAsync(request, userId);
+
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
     /// <summary>
-    /// Remove um comentário. Só o autor pode deletar.
+    /// Deletes a comment. Only the author can delete it.
     /// </summary>
     [HttpDelete("{id:int}")]
     [Authorize]
@@ -62,8 +63,10 @@ public class CommentsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        await _service.DeleteAsync(id, usuarioId);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        await _commentService.DeleteAsync(id, userId);
+
         return NoContent();
     }
 }

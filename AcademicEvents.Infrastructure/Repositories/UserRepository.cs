@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AcademicEvents.Infrastructure.Repositories;
 
 /// <summary>
-/// Repository de usuários. Usa o DbContext para acessar o PostgreSQL.
+/// User repository. Uses the DbContext to access PostgreSQL.
 /// </summary>
 public class UserRepository : IUserRepository
 {
@@ -17,11 +17,11 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public async Task<User> CreateAsync(User usuario)
+    public async Task<User> CreateAsync(User user)
     {
-        _context.Users.Add(usuario);
+        _context.Users.Add(user);
         await _context.SaveChangesAsync();
-        return usuario;
+        return user;
     }
 
     public async Task<User?> GetByIdAsync(int id)
@@ -39,18 +39,18 @@ public class UserRepository : IUserRepository
         return await _context.Users.ToListAsync();
     }
 
-    public async Task<User?> UpdateAsync(User usuario)
+    public async Task<User?> UpdateAsync(User user)
     {
-        _context.Users.Update(usuario);
+        _context.Users.Update(user);
         await _context.SaveChangesAsync();
-        return usuario;
+        return user;
     }
 
     public async Task DeleteAsync(int id)
     {
-        User? usuario = await _context.Users.FindAsync(id);
-        if (usuario is null) return;
-        _context.Users.Remove(usuario);
+        User? user = await _context.Users.FindAsync(id);
+        if (user is null) return;
+        _context.Users.Remove(user);
         await _context.SaveChangesAsync();
     }
 }

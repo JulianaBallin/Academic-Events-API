@@ -1,8 +1,7 @@
 namespace AcademicEvents.Exceptions;
 
 /// <summary>
-/// Lançada quando se tenta cadastrar um email que já existe no banco.
-/// O controller deve capturar e retornar 400.
+/// Exception thrown when attempting to register an email address that already exists.
 /// </summary>
 public class DuplicateEmailException : Exception
 {

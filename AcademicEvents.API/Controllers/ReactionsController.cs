@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de reações a eventos.
-/// Cada usuário pode ter no máximo uma reação por evento.
+/// Controller for event reactions.
+/// Each user can have at most one reaction per event.
 /// </summary>
 [ApiController]
 [Route("api/reactions")]
@@ -24,7 +24,7 @@ public class ReactionsController : ControllerBase
     }
 
     /// <summary>
-    /// Lista todas as reações de um evento.
+    /// Lists all reactions for an event.
     /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(List<ReactionResponse>), StatusCodes.Status200OK)]
@@ -32,13 +32,13 @@ public class ReactionsController : ControllerBase
     public async Task<IActionResult> GetByEvento([FromQuery] int eventoId)
     {
         if (eventoId <= 0)
-            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+            throw new InvalidOperationException("The event id must be greater than zero.");
 
-        return Ok(await _service.GetByEventoAsync(eventoId));
+        return Ok(await _service.GetByEventAsync(eventoId));
     }
 
     /// <summary>
-    /// Adiciona uma reação a um evento. Só uma por usuário.
+    /// Adds a reaction to an event. Each user can react only once per event.
     /// </summary>
     [HttpPost]
     [Authorize]
@@ -47,13 +47,13 @@ public class ReactionsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(CreateReactionRequest request)
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        ReactionResponse response = await _service.CreateAsync(request, usuarioId);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        ReactionResponse response = await _service.CreateAsync(request, userId);
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
     /// <summary>
-    /// Remove uma reação. Só o autor pode deletar.
+    /// Deletes a reaction. Only the author can delete it.
     /// </summary>
     [HttpDelete("{id:int}")]
     [Authorize]
@@ -62,8 +62,8 @@ public class ReactionsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        await _service.DeleteAsync(id, usuarioId);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        await _service.DeleteAsync(id, userId);
         return NoContent();
     }
 }

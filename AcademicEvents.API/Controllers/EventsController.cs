@@ -8,61 +8,61 @@ using Microsoft.AspNetCore.Mvc;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de eventos acadêmicos.
-/// Rotas GET são públicas. POST, PUT e DELETE exigem autenticação.
+/// Controller for academic events.
+/// GET routes are public. POST, PUT, and DELETE require authentication.
 /// </summary>
 [ApiController]
 [Route("api/events")]
 [Produces("application/json")]
 public class EventsController : ControllerBase
 {
-    private readonly IEventService _service;
+    private readonly IEventService _evetService;
 
-    public EventsController(IEventService service)
+    public EventsController(IEventService evetService)
     {
-        _service = service;
+        _evetService = evetService;
     }
 
     /// <summary>
-    /// Lista todos os eventos. Filtre por status e organizador com query string.
+    /// Lists all events. Filter by status and organizer using query string parameters.
     /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(List<EventResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetAll([FromQuery] string? status, [FromQuery] int? organizadorId)
+    public async Task<IActionResult> GetAll([FromQuery] string? status, [FromQuery] int? organizerId)
     {
-        return Ok(await _service.GetAllAsync(status, organizadorId));
+        return Ok(await _evetService.GetAllAsync(status, organizerId));
     }
 
     /// <summary>
-    /// Retorna os eventos criados pelo usuário autenticado.
+    /// Returns the events created by the authenticated user.
     /// </summary>
-    [HttpGet("meus")]
+    [HttpGet("mine")]
     [Authorize]
     [ProducesResponseType(typeof(List<EventResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetMeus()
+    public async Task<IActionResult> GetCreatedEvents()
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        return Ok(await _service.GetByOrganizadorAsync(usuarioId));
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        return Ok(await _evetService.GetByOrganizerAsync(userId));
     }
 
     /// <summary>
-    /// Retorna um evento pelo id.
+    /// Returns an event by id.
     /// </summary>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(EventResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(int id)
     {
-        EventResponse? response = await _service.GetByIdAsync(id);
+        EventResponse? response = await _evetService.GetByIdAsync(id);
         if (response is null)
-            throw new NotFoundException("Evento não encontrado.");
+            throw new NotFoundException("Event not found.");
 
         return Ok(response);
     }
 
     /// <summary>
-    /// Cria um novo evento. O organizador é o usuário autenticado.
+    /// Creates a new event. The organizer is the authenticated user.
     /// </summary>
     [HttpPost]
     [Authorize]
@@ -70,14 +70,14 @@ public class EventsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(CreateEventRequest request)
     {
-        // pega o id do usuário logado do token JWT
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        EventResponse response = await _service.CreateAsync(request, usuarioId);
+        // get user id from JWT token
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        EventResponse response = await _evetService.CreateAsync(request, userId);
         return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
     }
 
     /// <summary>
-    /// Atualiza um evento. Só o organizador pode editar.
+    /// Updates an event. Only the organizer can edit it.
     /// </summary>
     [HttpPut("{id:int}")]
     [Authorize]
@@ -87,16 +87,16 @@ public class EventsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Update(int id, UpdateEventRequest request)
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        EventResponse? response = await _service.UpdateAsync(id, request, usuarioId);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        EventResponse? response = await _evetService.UpdateAsync(id, request, userId);
         if (response is null)
-            throw new NotFoundException("Evento não encontrado.");
+            throw new NotFoundException("Event not found.");
 
         return Ok(response);
     }
 
     /// <summary>
-    /// Remove um evento. Só o organizador pode deletar.
+    /// Deletes an event. Only the organizer can delete it.
     /// </summary>
     [HttpDelete("{id:int}")]
     [Authorize]
@@ -105,8 +105,8 @@ public class EventsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        await _service.DeleteAsync(id, usuarioId);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        await _evetService.DeleteAsync(id, userId);
         return NoContent();
     }
 }

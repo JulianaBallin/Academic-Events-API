@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de autenticação. Todos os endpoints aqui são públicos.
+/// Authentication controller. All endpoints in this controller are public.
 /// </summary>
 [ApiController]
 [Route("api/auth")]
@@ -21,7 +21,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Cria uma nova conta de usuário e retorna o token JWT.
+    /// Creates a new user account and returns a JWT token.
     /// </summary>
     [HttpPost("register")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
@@ -32,7 +32,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Autentica o usuário e retorna o token JWT.
+    /// Authenticates the user and returns a JWT token.
     /// </summary>
     [HttpPost("login")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]

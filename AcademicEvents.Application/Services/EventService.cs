@@ -8,8 +8,8 @@ using AcademicEvents.Exceptions;
 namespace AcademicEvents.Application.Services;
 
 /// <summary>
-/// Service de eventos acadêmicos.
-/// Cuida de criar, buscar, atualizar e remover eventos.
+/// Academic event service.
+/// Handles creating, searching, updating, and deleting events.
 /// </summary>
 public class EventService : IEventService
 {
@@ -20,140 +20,140 @@ public class EventService : IEventService
         _repository = repository;
     }
 
-    public async Task<EventResponse> CreateAsync(CreateEventRequest request, int organizadorId)
+    public async Task<EventResponse> CreateAsync(CreateEventRequest request, int organizerId)
     {
-        string titulo = (request.Titulo ?? string.Empty).Trim();
-        string descricao = (request.Descricao ?? string.Empty).Trim();
-        string local = (request.Local ?? string.Empty).Trim();
+        string title = (request.Title ?? string.Empty).Trim();
+        string description = (request.Description ?? string.Empty).Trim();
+        string location = (request.Location ?? string.Empty).Trim();
 
-        if (string.IsNullOrWhiteSpace(titulo))
-            throw new InvalidOperationException("O título é obrigatório.");
+        if (string.IsNullOrWhiteSpace(title))
+            throw new InvalidOperationException("Title is required.");
 
-        if (string.IsNullOrWhiteSpace(descricao))
-            throw new InvalidOperationException("A descrição é obrigatória.");
+        if (string.IsNullOrWhiteSpace(description))
+            throw new InvalidOperationException("Description is required.");
 
-        if (string.IsNullOrWhiteSpace(local))
-            throw new InvalidOperationException("O local é obrigatório.");
+        if (string.IsNullOrWhiteSpace(location))
+            throw new InvalidOperationException("Location is required.");
 
-        if (request.DataFim <= request.DataInicio)
-            throw new InvalidOperationException("A data de fim deve ser posterior à data de início.");
+        if (request.EndDate <= request.StartDate)
+            throw new InvalidOperationException("End date should be after the start date.");
 
-        Event evento = new Event
+        Event newEvent = new Event
         {
-            Titulo = titulo,
-            Descricao = descricao,
-            DataInicio = request.DataInicio,
-            DataFim = request.DataFim,
-            Local = local,
-            OrganizadorId = organizadorId
+            Title = title,
+            Description = description,
+            StartAt = request.StartDate,
+            EndedAt = request.EndDate,
+            Location = location,
+            OrganizerId = organizerId
         };
 
-        Event criado = await _repository.CreateAsync(evento);
-        return MapearParaResponse(criado);
+        Event eventEntity = await _repository.CreateAsync(newEvent);
+        return MapResponse(eventEntity);
     }
 
     public async Task<EventResponse?> GetByIdAsync(int id)
     {
-        Event? evento = await _repository.GetByIdAsync(id);
-        if (evento is null) return null;
-        return MapearParaResponse(evento);
+        Event? eventEntity = await _repository.GetByIdAsync(id);
+        if (eventEntity is null) return null;
+        return MapResponse(eventEntity);
     }
 
-    public async Task<List<EventResponse>> GetAllAsync(string? status, int? organizadorId)
+    public async Task<List<EventResponse>> GetAllAsync(string? status, int? organizerId)
     {
-        if (organizadorId is <= 0)
-            throw new InvalidOperationException("O id do organizador deve ser maior que zero.");
+        if (organizerId is <= 0)
+            throw new InvalidOperationException("Organizer id must be greater than zero.");
 
-        StatusEvento? statusEnum = null;
+        EventStatus? statusEnum = null;
 
-        // tenta converter o status recebido como string para o enum
+        // Attempts to convert the received status string to the enum.
         if (!string.IsNullOrWhiteSpace(status))
         {
-            string statusNormalizado = status.Trim();
+            string normalizedStatus = status.Trim();
 
-            if (!Enum.TryParse<StatusEvento>(statusNormalizado, ignoreCase: true, out StatusEvento statusConvertido))
-                throw new InvalidOperationException($"Status '{status}' inválido.");
+            if (!Enum.TryParse<EventStatus>(normalizedStatus, ignoreCase: true, out EventStatus parsedStatus))
+                throw new InvalidOperationException($"Invalid status '{status}'.");
 
-            if (!Enum.IsDefined(statusConvertido))
-                throw new InvalidOperationException($"Status '{status}' inválido.");
+            if (!Enum.IsDefined(parsedStatus))
+                throw new InvalidOperationException($"Invalid status '{status}'.");
 
-            statusEnum = statusConvertido;
+            statusEnum = parsedStatus;
         }
 
-        List<Event> filtrados = await _repository.GetFilteredAsync(statusEnum, organizadorId);
-        return filtrados.Select(MapearParaResponse).ToList();
+        List<Event> filteredEvent = await _repository.GetFilteredAsync(statusEnum, organizerId);
+        return filteredEvent.Select(MapResponse).ToList();
     }
 
-    public async Task<List<EventResponse>> GetByOrganizadorAsync(int organizadorId)
+    public async Task<List<EventResponse>> GetByOrganizerAsync(int organizerId)
     {
-        List<Event> eventos = await _repository.GetByOrganizadorAsync(organizadorId);
-        return eventos.Select(MapearParaResponse).ToList();
+        List<Event> eventsByOrganizer = await _repository.GetByOrganizerAsync(organizerId);
+        return eventsByOrganizer.Select(MapResponse).ToList();
     }
 
-    public async Task<EventResponse?> UpdateAsync(int id, UpdateEventRequest request, int usuarioId)
+    public async Task<EventResponse?> UpdateAsync(int id, UpdateEventRequest request, int userId)
     {
-        string titulo = (request.Titulo ?? string.Empty).Trim();
-        string descricao = (request.Descricao ?? string.Empty).Trim();
-        string local = (request.Local ?? string.Empty).Trim();
+        string title = (request.Title ?? string.Empty).Trim();
+        string description = (request.Description ?? string.Empty).Trim();
+        string location = (request.Location ?? string.Empty).Trim();
 
-        Event? evento = await _repository.GetByIdAsync(id);
-        if (evento is null) throw new NotFoundException("Evento não encontrado.");
+        Event? eventEntity = await _repository.GetByIdAsync(id);
+        if (eventEntity is null) throw new NotFoundException("Event not found.");
 
-        // só o organizador pode editar o próprio evento
-        if (evento.OrganizadorId != usuarioId)
-            throw new UnauthorizedException("Apenas o organizador pode editar este evento.");
+        // only the organizer may edit its own event
+        if (eventEntity.OrganizerId != userId)
+            throw new UnauthorizedException("Only the organizer can edit this event.");
 
-        if (request.DataFim <= request.DataInicio)
-            throw new InvalidOperationException("A data de fim deve ser posterior à data de início.");
+        if (request.EndDate <= request.StartDate)
+            throw new InvalidOperationException("End date must be later than start date.");
 
-        if (string.IsNullOrWhiteSpace(titulo))
-            throw new InvalidOperationException("O título é obrigatório.");
+        if (string.IsNullOrWhiteSpace(title))
+            throw new InvalidOperationException("Title is required.");
 
-        if (string.IsNullOrWhiteSpace(descricao))
-            throw new InvalidOperationException("A descrição é obrigatória.");
+        if (string.IsNullOrWhiteSpace(description))
+            throw new InvalidOperationException("Description is required.");
 
-        if (string.IsNullOrWhiteSpace(local))
-            throw new InvalidOperationException("O local é obrigatório.");
+        if (string.IsNullOrWhiteSpace(location))
+            throw new InvalidOperationException("Location is required.");
 
-        if (!Enum.IsDefined(request.Status))
-            throw new InvalidOperationException("Status inválido.");
+        if (!Enum.IsDefined(request.EventStatus))
+            throw new InvalidOperationException("Invalid status.");
 
-        evento.Titulo = titulo;
-        evento.Descricao = descricao;
-        evento.DataInicio = request.DataInicio;
-        evento.DataFim = request.DataFim;
-        evento.Local = local;
-        evento.Status = request.Status;
+        eventEntity.Title = title;
+        eventEntity.Description = description;
+        eventEntity.StartAt = request.StartDate;
+        eventEntity.EndedAt = request.EndDate;
+        eventEntity.Location = location;
+        eventEntity.EventStatus = request.EventStatus;
 
-        Event? atualizado = await _repository.UpdateAsync(evento);
-        return atualizado is null ? null : MapearParaResponse(atualizado);
+        Event? updatedEvent = await _repository.UpdateAsync(eventEntity);
+        return updatedEvent is null ? null : MapResponse(updatedEvent);
     }
 
-    public async Task DeleteAsync(int id, int usuarioId)
+    public async Task DeleteAsync(int id, int userId)
     {
-        Event? evento = await _repository.GetByIdAsync(id);
-        if (evento is null) throw new NotFoundException("Evento não encontrado.");
+        Event? eventEntity = await _repository.GetByIdAsync(id);
+        if (eventEntity is null) throw new NotFoundException("Event not found.");
 
-        if (evento.OrganizadorId != usuarioId)
-            throw new UnauthorizedException("Apenas o organizador pode remover este evento.");
+        if (eventEntity.OrganizerId != userId)
+            throw new UnauthorizedException("Only the organizer can delete this event.");
 
         await _repository.DeleteAsync(id);
     }
 
-    private static EventResponse MapearParaResponse(Event evento)
+    private static EventResponse MapResponse(Event eventEntity)
     {
         return new EventResponse
         {
-            Id = evento.Id,
-            Titulo = evento.Titulo,
-            Descricao = evento.Descricao,
-            DataInicio = evento.DataInicio,
-            DataFim = evento.DataFim,
-            Local = evento.Local,
-            Status = evento.Status.ToString(),
-            OrganizadorId = evento.OrganizadorId,
-            NomeOrganizador = evento.Organizador?.Nome ?? string.Empty,
-            CriadoEm = evento.CriadoEm
+            Id = eventEntity.Id,
+            Title = eventEntity.Title,
+            Description = eventEntity.Description,
+            StartDate = eventEntity.StartAt,
+            EndDate = eventEntity.EndedAt,
+            Location = eventEntity.Location,
+            Status = eventEntity.EventStatus.ToString(),
+            OrganizerId = eventEntity.OrganizerId,
+            OrganizerName = eventEntity.Organizer?.Name ?? string.Empty,
+            CreatedAt = eventEntity.CreatedAt
         };
     }
 }

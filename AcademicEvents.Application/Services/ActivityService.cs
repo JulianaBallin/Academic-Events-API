@@ -49,14 +49,14 @@ public class ActivityService : IActivityService
         if (evento is null)
             throw new NotFoundException("Evento não encontrado.");
 
-        if (evento.OrganizadorId != usuarioId)
+        if (evento.OrganizerId != usuarioId)
             throw new UnauthorizedException("Apenas o organizador do evento pode criar esta atividade.");
 
-        if (request.DataInicio < evento.DataInicio)
+        if (request.DataInicio < evento.StartAt)
             throw new InvalidOperationException(
                 "A atividade não pode iniciar antes do evento.");
 
-        if (request.DataFim > evento.DataFim)
+        if (request.DataFim > evento.EndedAt)
             throw new InvalidOperationException(
                 "A atividade não pode terminar após o evento.");    
 
@@ -108,7 +108,7 @@ public class ActivityService : IActivityService
         if (evento is null)
             throw new NotFoundException("Evento não encontrado.");
 
-        if (evento.OrganizadorId != usuarioId)
+        if (evento.OrganizerId != usuarioId)
             throw new UnauthorizedException("Apenas o organizador do evento pode editar esta atividade.");
 
         string titulo = (request.Titulo ?? string.Empty).Trim();
@@ -155,7 +155,7 @@ public class ActivityService : IActivityService
         if (evento is null)
             throw new NotFoundException("Evento não encontrado.");
 
-        if (evento.OrganizadorId != usuarioId)
+        if (evento.OrganizerId != usuarioId)
             throw new UnauthorizedException("Apenas o organizador do evento pode excluir esta atividade.");
 
         await _repository.DeleteAsync(activity);

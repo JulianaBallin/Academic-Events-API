@@ -9,15 +9,14 @@ using Moq;
 namespace AcademicEvents.Tests;
 
 /// <summary>
-/// Testes unitários das regras de reação em eventos.
-/// </summary>
+/// Unit tests for event reaction business rules./// </summary>
 public class ReactionServiceTests
 {
     private readonly Mock<IReactionRepository> _reactionRepositoryMock = new();
     private readonly Mock<IEventRepository> _eventRepositoryMock = new();
 
     [Fact]
-    public async Task CreateAsync_EventoNaoExiste_LancaNotFoundException()
+    public async Task CreateAsync_WhenEventDoesNotExist_ThrowsNotFoundException()
     {
         ReactionService service = new ReactionService(
             _reactionRepositoryMock.Object,
@@ -25,8 +24,8 @@ public class ReactionServiceTests
 
         CreateReactionRequest request = new CreateReactionRequest
         {
-            EventoId = 404,
-            Tipo = TipoReacao.Curtir
+            EventId = 404,
+            Type = ReactionType.Like
         };
 
         _eventRepositoryMock
@@ -34,22 +33,22 @@ public class ReactionServiceTests
             .ReturnsAsync((Event?)null);
 
         await Assert.ThrowsAsync<NotFoundException>(
-            () => service.CreateAsync(request, usuarioId: 1));
+            () => service.CreateAsync(request, userId: 1));
     }
 
     [Fact]
-    public async Task GetByEventoAsync_IdInvalido_LancaInvalidOperationException()
+    public async Task GetByEventAsync_WhenIdIsInvalid_ThrowsInvalidOperationException()
     {
         ReactionService service = new ReactionService(
             _reactionRepositoryMock.Object,
             _eventRepositoryMock.Object);
 
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => service.GetByEventoAsync(eventoId: 0));
+            () => service.GetByEventAsync(eventId: 0));
     }
 
     [Fact]
-    public async Task CreateAsync_ReacaoDuplicada_LancaInvalidOperationException()
+    public async Task CreateAsync_WhenReactionAlreadyExists_ThrowsInvalidOperationException()
     {
         ReactionService service = new ReactionService(
             _reactionRepositoryMock.Object,
@@ -57,24 +56,24 @@ public class ReactionServiceTests
 
         CreateReactionRequest request = new CreateReactionRequest
         {
-            EventoId = 7,
-            Tipo = TipoReacao.VouParticipar
+            EventId = 7,
+            Type = ReactionType.WillParticipate
         };
 
         _eventRepositoryMock
             .Setup(repository => repository.GetByIdAsync(7))
-            .ReturnsAsync(new Event { Id = 7, OrganizadorId = 2 });
+            .ReturnsAsync(new Event { Id = 7, OrganizerId = 2 });
 
         _reactionRepositoryMock
-            .Setup(repository => repository.GetByUsuarioEEventoAsync(1, 7))
-            .ReturnsAsync(new Reaction { Id = 3, UsuarioId = 1, EventoId = 7 });
+            .Setup(repository => repository.GetByUserEventAsync(1, 7))
+            .ReturnsAsync(new Reaction { Id = 3, UserId = 1, EventId = 7 });
 
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => service.CreateAsync(request, usuarioId: 1));
+            () => service.CreateAsync(request, userId: 1));
     }
 
     [Fact]
-    public async Task CreateAsync_TipoForaDoEnum_LancaInvalidOperationException()
+    public async Task CreateAsync_WhenReactionTypeIsOutOfEnum_ThrowsInvalidOperationException()
     {
         ReactionService service = new ReactionService(
             _reactionRepositoryMock.Object,
@@ -82,11 +81,11 @@ public class ReactionServiceTests
 
         CreateReactionRequest request = new CreateReactionRequest
         {
-            EventoId = 7,
-            Tipo = (TipoReacao)99
+            EventId = 7,
+            Type = (ReactionType)99
         };
 
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => service.CreateAsync(request, usuarioId: 1));
+            () => service.CreateAsync(request, userId: 1));
     }
 }

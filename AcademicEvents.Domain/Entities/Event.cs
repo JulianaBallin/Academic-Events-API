@@ -3,25 +3,24 @@ using AcademicEvents.Domain.Enums;
 namespace AcademicEvents.Domain.Entities;
 
 /// <summary>
-/// Evento acadêmico criado por um usuário organizador.
-/// Pode ser publicado, cancelado ou concluído.
+/// Academic event created by an organizer user
+/// Can be published, canceled or finished
 /// </summary>
 public class Event
 {
     public int Id { get; set; }
-    public string Titulo { get; set; } = string.Empty;
-    public string Descricao { get; set; } = string.Empty;
-    public DateTime DataInicio { get; set; }
-    public DateTime DataFim { get; set; }
-    public string Local { get; set; } = string.Empty;
-    public StatusEvento Status { get; set; } = StatusEvento.Rascunho;
-    public int OrganizadorId { get; set; }
-    public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public DateTime StartAt { get; set; }
+    public DateTime EndedAt { get; set; }
+    public string Location { get; set; } = string.Empty;
+    public EventStatus EventStatus { get; set; } = EventStatus.Draft;
+    public int OrganizerId { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public User? Organizador { get; set; }
-    public List<Registration> Inscricoes { get; set; } = new();
-    public List<Comment> Comentarios { get; set; } = new();
-    public List<Reaction> Reacoes { get; set; } = new();
-
-    public List<Activity> Atividades {get;set;} = new();
+    public User? Organizer { get; set; }
+    public List<Registration> Registrations { get; set; } = new();
+    public List<Comment> Comments { get; set; } = new();
+    public List<Reaction> Reactions { get; set; } = new();
+    public List<Activity> Activities { get; set; } = new();
 }

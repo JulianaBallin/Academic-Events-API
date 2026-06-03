@@ -3,11 +3,11 @@ using AcademicEvents.Application.DTOs.Reaction;
 namespace AcademicEvents.Application.Interfaces;
 
 /// <summary>
-/// Contrato do service de reações a eventos.
+/// Contract of event reaction service.
 /// </summary>
 public interface IReactionService
 {
-    Task<ReactionResponse> CreateAsync(CreateReactionRequest request, int usuarioId);
-    Task<List<ReactionResponse>> GetByEventoAsync(int eventoId);
-    Task DeleteAsync(int id, int usuarioId);
+    Task<ReactionResponse> CreateAsync(CreateReactionRequest request, int userId);
+    Task<List<ReactionResponse>> GetByEventAsync(int eventId);
+    Task DeleteAsync(int id, int userId);
 }

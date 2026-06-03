@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de dados do usuário autenticado.
-/// Lê as informações diretamente das claims do token JWT.
+/// Controller for authenticated user data.
+/// Reads user information directly from the JWT token claims.
 /// </summary>
 [ApiController]
 [Route("api")]
@@ -14,7 +14,7 @@ namespace AcademicEvents.API.Controllers;
 public class UsersController : ControllerBase
 {
     /// <summary>
-    /// Retorna os dados do usuário atual extraídos do token JWT.
+    /// Returns the current user's data extracted from the JWT token.
     /// </summary>
     [HttpGet("me")]
     [Authorize]
@@ -22,11 +22,11 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public IActionResult Me()
     {
-        // as claims do JWT ficam disponíveis no User do ControllerBase
+        // JWT claims are available through the User property from ControllerBase.
         string id = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         string email = User.FindFirst(ClaimTypes.Email)!.Value;
-        string nome = User.FindFirst(ClaimTypes.Name)!.Value;
+        string name = User.FindFirst(ClaimTypes.Name)!.Value;
 
-        return Ok(new { Id = id, Email = email, Nome = nome });
+        return Ok(new { Id = id, Email = email, Name = name });
     }
 }

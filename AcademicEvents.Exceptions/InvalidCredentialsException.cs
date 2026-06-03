@@ -1,8 +1,8 @@
 namespace AcademicEvents.Exceptions;
 
 /// <summary>
-/// Lançada quando email ou senha estão incorretos no login.
-/// Retorna 401. Não especifica qual dos dois está errado por segurança.
+/// Exception thrown when login credentials are invalid.
+/// Does not specify whether the email or password is incorrect for security reasons.
 /// </summary>
 public class InvalidCredentialsException : Exception
 {
