@@ -1,6 +1,6 @@
-# Roteiro de Demonstracao - Payloads para Popular o Banco
+# Roteiro de Demonstração - Payloads para Popular o Banco
 
-Este roteiro foi pensado para usar no Swagger durante a apresentacao ao vivo.
+Este roteiro é uma cola para usar no Swagger durante a demonstração prática da API.
 
 URL base esperada:
 
@@ -16,7 +16,7 @@ http://localhost:5002/swagger
 
 ---
 
-## Antes de Comecar
+## Antes de Começar
 
 Subir o banco:
 
@@ -41,7 +41,7 @@ dotnet run --urls http://localhost:5002
 
 ---
 
-## Variaveis para Anotar Durante a Demo
+## Variáveis para Anotar Durante a Demonstração
 
 Preencha estes valores conforme as respostas do Swagger:
 
@@ -55,7 +55,7 @@ REACTION_ID      =
 REGISTRATION_ID  =
 ```
 
-Se o banco ja tiver sido usado antes e retornar erro de email duplicado, troque os emails ou limpe o volume com:
+Se o banco já tiver sido usado antes e retornar erro de e-mail duplicado, troque os e-mails ou limpe o volume com:
 
 ```bash
 docker compose down -v
@@ -64,9 +64,9 @@ docker compose up -d
 
 ---
 
-## PARTE 1 - USUARIOS
+## PARTE 1 - USUÁRIOS
 
-### 1. Cadastrar a Maria (usuario principal)
+### 1. Cadastrar a Maria, usuária principal
 
 Endpoint:
 
@@ -90,14 +90,20 @@ O que anotar:
 TOKEN_MARIA = valor do campo "Token"
 ```
 
-Evidencia para print:
+Resposta esperada:
 
-- Resposta 200 com token JWT
-- Campos `Name`, `Email` e `ExpiresIn`
+```json
+{
+  "Token": "eyJhbGci...",
+  "Name": "Maria Silva",
+  "Email": "maria@test.com",
+  "ExpiresIn": "2026-06-04T..."
+}
+```
 
 ---
 
-### 2. Cadastrar o Joao (segundo usuario para testar restricao de permissao)
+### 2. Cadastrar o João, segundo usuário para testar restrição de permissão
 
 Endpoint:
 
@@ -109,7 +115,7 @@ Payload:
 
 ```json
 {
-  "Name": "Joao Souza",
+  "Name": "João Souza",
   "Email": "joao@test.com",
   "Password": "Password123!"
 }
@@ -121,11 +127,22 @@ O que anotar:
 TOKEN_JOAO = valor do campo "Token"
 ```
 
+Resposta esperada:
+
+```json
+{
+  "Token": "eyJhbGci...",
+  "Name": "João Souza",
+  "Email": "joao@test.com",
+  "ExpiresIn": "2026-06-04T..."
+}
+```
+
 ---
 
-### 3. Fazer Login com a Maria
+### 3. Fazer login com a Maria
 
-Repita o login para obter um token fresco, caso o cadastro tenha sido feito antes:
+Repita o login para obter um token novo, caso o cadastro tenha sido feito antes:
 
 Endpoint:
 
@@ -155,7 +172,7 @@ Resposta esperada:
 
 ---
 
-### 4. Autorizar no Swagger com o Token da Maria
+### 4. Autorizar no Swagger com o token da Maria
 
 Clique em `Authorize` e cole apenas o token, sem a palavra `Bearer`:
 
@@ -163,11 +180,11 @@ Clique em `Authorize` e cole apenas o token, sem a palavra `Bearer`:
 TOKEN_MARIA
 ```
 
-Em clientes HTTP externos o formato e `Authorization: Bearer TOKEN`.
+Em clientes HTTP externos, o formato é `Authorization: Bearer TOKEN`.
 
 ---
 
-### 5. Conferir o Usuario Autenticado
+### 5. Conferir o usuário autenticado
 
 Endpoint:
 
@@ -175,7 +192,7 @@ Endpoint:
 GET /api/me
 ```
 
-Nao precisa de payload.
+Não precisa de payload.
 
 Resposta esperada:
 
@@ -187,15 +204,11 @@ Resposta esperada:
 }
 ```
 
-Evidencia para print:
-
-- Resposta 200 de endpoint protegido
-
 ---
 
 ## PARTE 2 - EVENTOS
 
-### 6. Criar Evento
+### 6. Criar evento
 
 Endpoint:
 
@@ -208,7 +221,7 @@ Payload:
 ```json
 {
   "Title": "Workshop de C# em Manaus",
-  "Description": "Workshop pratico sobre ASP.NET Core, Entity Framework Core e construcao de APIs REST.",
+  "Description": "Workshop prático sobre ASP.NET Core, Entity Framework Core e construção de APIs REST.",
   "StartDate": "2026-06-10T09:00:00Z",
   "EndDate": "2026-06-10T18:00:00Z",
   "Location": "Bloco A - Sala 201"
@@ -233,17 +246,11 @@ Resposta esperada:
 }
 ```
 
-Evidencia para print:
-
-- Resposta 201
-- Campo `Status` com valor `Draft`
-- Campo `OrganizerName` preenchido
-
 ---
 
-### 7. Publicar o Evento
+### 7. Publicar o evento
 
-Passo importante para o filtro `?status=Published` mostrar o evento.
+Este passo é importante para o filtro `?status=Published` encontrar o evento.
 
 Endpoint:
 
@@ -256,10 +263,10 @@ Payload:
 ```json
 {
   "Title": "Workshop de C# em Manaus - Atualizado",
-  "Description": "Workshop pratico sobre ASP.NET Core, Entity Framework Core, autenticacao JWT e construcao de APIs REST.",
+  "Description": "Workshop prático sobre ASP.NET Core, Entity Framework Core, autenticação JWT e construção de APIs REST.",
   "StartDate": "2026-06-10T09:00:00Z",
   "EndDate": "2026-06-10T18:00:00Z",
-  "Location": "Bloco B - Auditorio",
+  "Location": "Bloco B - Auditório",
   "EventStatus": "Published"
 }
 ```
@@ -276,14 +283,9 @@ Resposta esperada:
 }
 ```
 
-Evidencia para print:
-
-- Resposta 200
-- `Status` igual a `Published`
-
 ---
 
-### 8. Listar Todos os Eventos
+### 8. Listar todos os eventos
 
 Endpoint:
 
@@ -291,15 +293,25 @@ Endpoint:
 GET /api/events
 ```
 
-Nao precisa de payload nem de token.
+Não precisa de payload nem de token.
 
-Evidencia para print:
+Resposta esperada:
 
-- Lista contendo o evento criado
+```json
+[
+  {
+    "Id": 1,
+    "Title": "Workshop de C# em Manaus - Atualizado",
+    "Status": "Published",
+    "OrganizerId": 1,
+    "OrganizerName": "Maria Silva"
+  }
+]
+```
 
 ---
 
-### 9. Filtrar Eventos por Status
+### 9. Filtrar eventos por status
 
 Endpoint:
 
@@ -307,15 +319,24 @@ Endpoint:
 GET /api/events?status=Published
 ```
 
-Nao precisa de payload.
+Não precisa de payload.
 
-Evidencia para print:
+Resposta esperada:
 
-- Lista contendo apenas o evento publicado
+```json
+[
+  {
+    "Id": 1,
+    "Title": "Workshop de C# em Manaus - Atualizado",
+    "Status": "Published",
+    "OrganizerName": "Maria Silva"
+  }
+]
+```
 
 ---
 
-### 10. Listar Meus Eventos
+### 10. Listar meus eventos
 
 Endpoint:
 
@@ -325,15 +346,25 @@ GET /api/events/meus
 
 Precisa estar autorizado com `TOKEN_MARIA`.
 
-Evidencia para print:
+Resposta esperada:
 
-- Lista de eventos criados pela Maria
+```json
+[
+  {
+    "Id": 1,
+    "Title": "Workshop de C# em Manaus - Atualizado",
+    "Status": "Published",
+    "OrganizerId": 1,
+    "OrganizerName": "Maria Silva"
+  }
+]
+```
 
 ---
 
 ## PARTE 3 - ATIVIDADES
 
-### 11. Criar Primeira Atividade (Cerimonia de Abertura)
+### 11. Criar primeira atividade, Cerimônia de Abertura
 
 Endpoint:
 
@@ -346,12 +377,12 @@ Payload:
 ```json
 {
   "EventId": 1,
-  "Title": "Cerimonia de Abertura",
+  "Title": "Cerimônia de Abertura",
   "Description": "Abertura oficial do Workshop de C#.",
   "Type": "Opening",
   "StartAt": "2026-06-10T09:00:00Z",
   "EndedAt": "2026-06-10T09:30:00Z",
-  "Location": "Auditorio Principal"
+  "Location": "Auditório Principal"
 }
 ```
 
@@ -367,17 +398,17 @@ Resposta esperada:
 {
   "Id": 1,
   "EventId": 1,
-  "Title": "Cerimonia de Abertura",
+  "Title": "Cerimônia de Abertura",
   "Type": "Opening",
   "StartAt": "2026-06-10T09:00:00Z",
   "EndedAt": "2026-06-10T09:30:00Z",
-  "Location": "Auditorio Principal"
+  "Location": "Auditório Principal"
 }
 ```
 
 ---
 
-### 12. Criar Segunda Atividade (Workshop Tecnico)
+### 12. Criar segunda atividade, Workshop Técnico
 
 Endpoint:
 
@@ -391,17 +422,31 @@ Payload:
 {
   "EventId": 1,
   "Title": "Workshop ASP.NET Core",
-  "Description": "Introducao pratica ao ASP.NET Core.",
+  "Description": "Introdução prática ao ASP.NET Core.",
   "Type": "Workshop",
   "StartAt": "2026-06-10T10:00:00Z",
   "EndedAt": "2026-06-10T12:00:00Z",
-  "Location": "Laboratorio 01"
+  "Location": "Laboratório 01"
+}
+```
+
+Resposta esperada:
+
+```json
+{
+  "Id": 2,
+  "EventId": 1,
+  "Title": "Workshop ASP.NET Core",
+  "Type": "Workshop",
+  "StartAt": "2026-06-10T10:00:00Z",
+  "EndedAt": "2026-06-10T12:00:00Z",
+  "Location": "Laboratório 01"
 }
 ```
 
 ---
 
-### 13. Listar Atividades do Evento
+### 13. Listar atividades do evento
 
 Endpoint:
 
@@ -422,11 +467,11 @@ Resposta esperada:
   {
     "Id": 1,
     "EventId": 1,
-    "Title": "Cerimonia de Abertura",
+    "Title": "Cerimônia de Abertura",
     "Type": "Opening",
     "StartAt": "2026-06-10T09:00:00Z",
     "EndedAt": "2026-06-10T09:30:00Z",
-    "Location": "Auditorio Principal"
+    "Location": "Auditório Principal"
   },
   {
     "Id": 2,
@@ -435,20 +480,16 @@ Resposta esperada:
     "Type": "Workshop",
     "StartAt": "2026-06-10T10:00:00Z",
     "EndedAt": "2026-06-10T12:00:00Z",
-    "Location": "Laboratorio 01"
+    "Location": "Laboratório 01"
   }
 ]
 ```
 
-Evidencia para print:
-
-- Lista com as duas atividades ordenadas por horario de inicio
-
 ---
 
-## PARTE 4 - INSCRICOES
+## PARTE 4 - INSCRIÇÕES
 
-### 14. Inscrever a Maria no Evento
+### 14. Inscrever a Maria no evento
 
 Precisa estar autorizado com `TOKEN_MARIA`.
 
@@ -466,7 +507,7 @@ Payload:
 }
 ```
 
-Se o evento criado tiver outro id, trocar `1` pelo valor de `EVENT_ID`.
+Se o evento criado tiver outro id, troque `1` pelo valor de `EVENT_ID`.
 
 O que anotar:
 
@@ -488,13 +529,9 @@ Resposta esperada:
 }
 ```
 
-Evidencia para print:
-
-- Resposta 201 com inscricao criada
-
 ---
 
-### 15. Tentar Inscricao Duplicada
+### 15. Tentar inscrição duplicada
 
 Endpoint:
 
@@ -510,22 +547,17 @@ Payload:
 }
 ```
 
-Resposta esperada (erro 400):
+Resposta esperada, erro 400:
 
 ```text
-Voce ja esta inscrito neste evento.
+Você já está inscrito neste evento.
 ```
-
-Evidencia para print:
-
-- Resposta 400
-- Mensagem de inscricao duplicada
 
 ---
 
-## PARTE 5 - COMENTARIOS
+## PARTE 5 - COMENTÁRIOS
 
-### 16. Adicionar Comentario (como Maria)
+### 16. Adicionar comentário como Maria
 
 Precisa estar autorizado com `TOKEN_MARIA`.
 
@@ -540,7 +572,7 @@ Payload:
 ```json
 {
   "EventId": 1,
-  "Content": "Otimo evento, vai ajudar muito na pratica com APIs em C#."
+  "Content": "Ótimo evento, vai ajudar muito na prática com APIs em C#."
 }
 ```
 
@@ -558,20 +590,16 @@ Resposta esperada:
   "EventId": 1,
   "UserId": 1,
   "UserName": "Maria Silva",
-  "Content": "Otimo evento, vai ajudar muito na pratica com APIs em C#.",
+  "Content": "Ótimo evento, vai ajudar muito na prática com APIs em C#.",
   "CreatedAt": "2026-06-03T..."
 }
 ```
 
-Evidencia para print:
-
-- Resposta 201 com campo `UserName` preenchido
-
 ---
 
-### 17. Trocar para o Token do Joao
+### 17. Trocar para o token do João
 
-Clique em `Authorize` e substitua o token da Maria pelo token do Joao:
+Clique em `Authorize` e substitua o token da Maria pelo token do João:
 
 ```text
 TOKEN_JOAO
@@ -579,7 +607,7 @@ TOKEN_JOAO
 
 ---
 
-### 18. Joao Tenta Deletar o Comentario da Maria (erro 403)
+### 18. João tenta deletar o comentário da Maria, erro 403
 
 Precisa estar autorizado com `TOKEN_JOAO`.
 
@@ -589,24 +617,19 @@ Endpoint:
 DELETE /api/comments/{COMMENT_ID}
 ```
 
-Nao precisa de payload.
+Não precisa de payload.
 
-Resposta esperada (erro 403):
+Resposta esperada, erro 403:
 
 ```text
-Apenas o autor pode remover este comentario.
+Apenas o autor pode remover este comentário.
 ```
-
-Evidencia para print:
-
-- Resposta 403
-- Mensagem de permissao negada
 
 ---
 
-### 19. Voltar para o Token da Maria e Listar Comentarios
+### 19. Voltar para o token da Maria e listar comentários
 
-Clique em `Authorize` e volte a usar `TOKEN_MARIA`, depois acesse o endpoint publico:
+Clique em `Authorize` e volte a usar `TOKEN_MARIA`, depois acesse o endpoint público:
 
 Endpoint:
 
@@ -614,17 +637,26 @@ Endpoint:
 GET /api/comments?eventId=1
 ```
 
-Nao precisa de token.
+Não precisa de token.
 
-Evidencia para print:
+Resposta esperada:
 
-- Comentario da Maria visivel publicamente
+```json
+[
+  {
+    "Id": 1,
+    "EventId": 1,
+    "UserName": "Maria Silva",
+    "Content": "Ótimo evento, vai ajudar muito na prática com APIs em C#."
+  }
+]
+```
 
 ---
 
-## PARTE 6 - REACOES
+## PARTE 6 - REAÇÕES
 
-### 20. Adicionar Reacao (como Maria)
+### 20. Adicionar reação como Maria
 
 Precisa estar autorizado com `TOKEN_MARIA`.
 
@@ -662,13 +694,9 @@ Resposta esperada:
 }
 ```
 
-Evidencia para print:
-
-- Resposta 201 com `Type` igual a `WillParticipate`
-
 ---
 
-### 21. Listar Reacoes do Evento
+### 21. Listar reações do evento
 
 Endpoint:
 
@@ -676,20 +704,29 @@ Endpoint:
 GET /api/reactions?eventId=1
 ```
 
-Nao precisa de token.
+Não precisa de token.
 
-Evidencia para print:
+Resposta esperada:
 
-- Reacao da Maria visivel publicamente
+```json
+[
+  {
+    "Id": 1,
+    "EventId": 1,
+    "UserName": "Maria Silva",
+    "Type": "WillParticipate"
+  }
+]
+```
 
 ---
 
-## Ordem Resumida para a Apresentacao
+## Ordem Resumida para a Apresentação
 
 ```text
---- USUARIOS ---
+--- USUÁRIOS ---
 1.  POST /api/auth/register  (Maria)
-2.  POST /api/auth/register  (Joao)
+2.  POST /api/auth/register  (João)
 3.  POST /api/auth/login     (Maria)
 4.  Authorize com TOKEN_MARIA
 5.  GET  /api/me
@@ -702,24 +739,23 @@ Evidencia para print:
 10. GET  /api/events/meus
 
 --- ATIVIDADES ---
-11. POST /api/activity  (Cerimonia de Abertura)
+11. POST /api/activity  (Cerimônia de Abertura)
 12. POST /api/activity  (Workshop ASP.NET Core)
 13. GET  /api/activity/event/{EVENT_ID}
 
---- INSCRICOES ---
+--- INSCRIÇÕES ---
 14. POST /api/registrations
-15. POST /api/registrations  (erro 400 - duplicada)
+15. POST /api/registrations  (erro 400, duplicada)
 
---- COMENTARIOS ---
+--- COMENTÁRIOS ---
 16. POST /api/comments
 17. Authorize com TOKEN_JOAO
 18. DELETE /api/comments/{COMMENT_ID}  (erro 403)
 19. GET  /api/comments?eventId=1
 
---- REACOES ---
-20. Authorize com TOKEN_MARIA
-21. POST /api/reactions
-22. GET  /api/reactions?eventId=1
+--- REAÇÕES ---
+20. POST /api/reactions
+21. GET  /api/reactions?eventId=1
 ```
 
 ---
@@ -756,7 +792,7 @@ Use:
 http://localhost:5002/swagger
 ```
 
-### Token nao funciona no Swagger
+### Token não funciona no Swagger
 
 Pare a API com `Ctrl+C`, rode novamente e gere um token novo.
 
