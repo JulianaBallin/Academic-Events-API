@@ -3,19 +3,19 @@ using AcademicEvents.Domain.Enums;
 namespace AcademicEvents.Application.DTOs.Event;
 
 /// <summary>
-/// Dados do evento retornados nos endpoints de leitura.
-/// Não expõe detalhes internos da entidade.
+/// Event data returned by read endpoints.
+/// Does not expose internal entity details.
 /// </summary>
 public class EventResponse
 {
     public int Id { get; set; }
-    public string Titulo { get; set; } = string.Empty;
-    public string Descricao { get; set; } = string.Empty;
-    public DateTime DataInicio { get; set; }
-    public DateTime DataFim { get; set; }
-    public string Local { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public string Location { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
-    public int OrganizadorId { get; set; }
-    public string NomeOrganizador { get; set; } = string.Empty;
-    public DateTime CriadoEm { get; set; }
+    public int OrganizerId { get; set; }
+    public string OrganizerName { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
 }

@@ -8,7 +8,7 @@ using Moq;
 namespace AcademicEvents.Tests;
 
 /// <summary>
-/// Testes unitários das regras de comentário em eventos.
+/// Unit tests for event comment rules.
 /// </summary>
 public class CommentServiceTests
 {
@@ -16,7 +16,7 @@ public class CommentServiceTests
     private readonly Mock<IEventRepository> _eventRepositoryMock = new();
 
     [Fact]
-    public async Task CreateAsync_EventoNaoExiste_LancaNotFoundException()
+    public async Task CreateAsync_WhenEventDoesNotExist_ThrowsNotFoundException()
     {
         CommentService service = new CommentService(
             _commentRepositoryMock.Object,
@@ -24,8 +24,8 @@ public class CommentServiceTests
 
         CreateCommentRequest request = new CreateCommentRequest
         {
-            EventoId = 123,
-            Conteudo = "Comentário válido."
+            EventId = 123,
+            Content = "Comentário válido."
         };
 
         _eventRepositoryMock
@@ -33,11 +33,11 @@ public class CommentServiceTests
             .ReturnsAsync((Event?)null);
 
         await Assert.ThrowsAsync<NotFoundException>(
-            () => service.CreateAsync(request, usuarioId: 1));
+            () => service.CreateAsync(request, userId: 1));
     }
 
     [Fact]
-    public async Task CreateAsync_ConteudoEmBranco_LancaInvalidOperationException()
+    public async Task CreateAsync_WhenContentIsBlank_ThrowsInvalidOperationException()
     {
         CommentService service = new CommentService(
             _commentRepositoryMock.Object,
@@ -45,12 +45,12 @@ public class CommentServiceTests
 
         CreateCommentRequest request = new CreateCommentRequest
         {
-            EventoId = 1,
-            Conteudo = "   "
+            EventId = 1,
+            Content = "   "
         };
 
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => service.CreateAsync(request, usuarioId: 1));
+            () => service.CreateAsync(request, userId: 1));
 
         _eventRepositoryMock.Verify(
             repository => repository.GetByIdAsync(It.IsAny<int>()),
@@ -58,7 +58,7 @@ public class CommentServiceTests
     }
 
     [Fact]
-    public async Task CreateAsync_ConteudoComEspacos_SalvaConteudoAparado()
+    public async Task CreateAsync_WhenContentHasSpaces_SavesTrimmedContent()
     {
         CommentService service = new CommentService(
             _commentRepositoryMock.Object,
@@ -66,8 +66,8 @@ public class CommentServiceTests
 
         CreateCommentRequest request = new CreateCommentRequest
         {
-            EventoId = 1,
-            Conteudo = "  Comentário válido.  "
+            EventId = 1,
+            Content = "  Comentário válido.  "
         };
 
         _eventRepositoryMock
@@ -75,21 +75,21 @@ public class CommentServiceTests
             .ReturnsAsync(new Event { Id = 1 });
 
         _commentRepositoryMock
-            .Setup(repository => repository.CreateAsync(It.Is<Comment>(comentario =>
-                comentario.Conteudo == "Comentário válido.")))
-            .ReturnsAsync((Comment comentario) =>
+            .Setup(repository => repository.CreateAsync(It.Is<Comment>(comment =>
+                comment.Content == "Comentário válido.")))
+            .ReturnsAsync((Comment comment) =>
             {
-                comentario.Id = 2;
-                return comentario;
+                comment.Id = 2;
+                return comment;
             });
 
-        CommentResponse response = await service.CreateAsync(request, usuarioId: 1);
+        CommentResponse response = await service.CreateAsync(request, userId: 1);
 
-        Assert.Equal("Comentário válido.", response.Conteudo);
+        Assert.Equal("Comentário válido.", response.Content);
     }
 
     [Fact]
-    public async Task DeleteAsync_UsuarioNaoAutor_LancaUnauthorizedException()
+    public async Task DeleteAsync_WhenUserIsNotAuthor_ThrowsUnauthorizedException()
     {
         CommentService service = new CommentService(
             _commentRepositoryMock.Object,
@@ -97,9 +97,9 @@ public class CommentServiceTests
 
         _commentRepositoryMock
             .Setup(repository => repository.GetByIdAsync(8))
-            .ReturnsAsync(new Comment { Id = 8, UsuarioId = 2, EventoId = 1 });
+            .ReturnsAsync(new Comment { Id = 8, UserId = 2, EventId = 1 });
 
         await Assert.ThrowsAsync<UnauthorizedException>(
-            () => service.DeleteAsync(id: 8, usuarioId: 1));
+            () => service.DeleteAsync(id: 8, userId: 1));
     }
 }

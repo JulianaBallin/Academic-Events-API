@@ -3,14 +3,14 @@ using AcademicEvents.Application.DTOs.Event;
 namespace AcademicEvents.Application.Interfaces;
 
 /// <summary>
-/// Contrato do service de eventos acadêmicos.
+/// Contract of academic events service.
 /// </summary>
 public interface IEventService
 {
-    Task<EventResponse> CreateAsync(CreateEventRequest request, int organizadorId);
+    Task<EventResponse> CreateAsync(CreateEventRequest request, int organizerId);
     Task<EventResponse?> GetByIdAsync(int id);
-    Task<List<EventResponse>> GetAllAsync(string? status, int? organizadorId);
-    Task<List<EventResponse>> GetByOrganizadorAsync(int organizadorId);
-    Task<EventResponse?> UpdateAsync(int id, UpdateEventRequest request, int usuarioId);
-    Task DeleteAsync(int id, int usuarioId);
+    Task<List<EventResponse>> GetAllAsync(string? status, int? organizerId);
+    Task<List<EventResponse>> GetByOrganizerAsync(int organizerId);
+    Task<EventResponse?> UpdateAsync(int id, UpdateEventRequest request, int userId);
+    Task DeleteAsync(int id, int userId);
 }

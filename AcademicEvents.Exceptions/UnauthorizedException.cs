@@ -1,9 +1,8 @@
 namespace AcademicEvents.Exceptions;
 
 /// <summary>
-/// Lançada quando o usuário autenticado tenta fazer uma ação
-/// que não é permitida para ele, como editar o evento de outra pessoa.
-/// O controller deve capturar e retornar 403.
+/// Exception thrown when a user attempts an unauthorized action.
+/// Example: edit a Event created by other User.
 /// </summary>
 public class UnauthorizedException : Exception
 {

@@ -3,17 +3,17 @@ using AcademicEvents.Domain.Enums;
 namespace AcademicEvents.Domain.Entities;
 
 /// <summary>
-/// Reação de um usuário a um evento.
-/// Cada usuário pode reagir uma vez por evento com um tipo diferente.
+/// Reaction made by a User to an Event.
+/// Each User may react with one kind of reaction once by event. 
 /// </summary>
 public class Reaction
 {
     public int Id { get; set; }
-    public int UsuarioId { get; set; }
-    public int EventoId { get; set; }
-    public TipoReacao Tipo { get; set; }
-    public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
+    public int UserId { get; set; }
+    public int EventId { get; set; }
+    public ReactionType Type { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public User? Usuario { get; set; }
-    public Event? Evento { get; set; }
+    public User? User { get; set; }
+    public Event? Event { get; set; }
 }

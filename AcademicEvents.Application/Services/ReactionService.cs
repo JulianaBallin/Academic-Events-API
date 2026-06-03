@@ -7,8 +7,8 @@ using AcademicEvents.Exceptions;
 namespace AcademicEvents.Application.Services;
 
 /// <summary>
-/// Service de reações a eventos.
-/// Um usuário pode ter apenas uma reação por evento.
+/// Service for event reactions.
+/// A user can have only one reaction per event.
 /// </summary>
 public class ReactionService : IReactionService
 {
@@ -21,64 +21,64 @@ public class ReactionService : IReactionService
         _eventRepository = eventRepository;
     }
 
-    public async Task<ReactionResponse> CreateAsync(CreateReactionRequest request, int usuarioId)
+    public async Task<ReactionResponse> CreateAsync(CreateReactionRequest request, int userId)
     {
-        if (request.EventoId <= 0)
-            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+        if (request.EventId <= 0)
+            throw new InvalidOperationException("Event id must be greater than zero.");
 
-        if (!Enum.IsDefined(request.Tipo))
-            throw new InvalidOperationException("Tipo de reação inválido.");
+        if (!Enum.IsDefined(request.Type))
+            throw new InvalidOperationException("Invalid reaction type.");
 
-        Event? evento = await _eventRepository.GetByIdAsync(request.EventoId);
-        if (evento is null)
-            throw new NotFoundException("Evento não encontrado.");
+        Event? eventEntity = await _eventRepository.GetByIdAsync(request.EventId);
+        if (eventEntity is null)
+            throw new NotFoundException("Event not found.");
 
-        // verifica se o usuário já reagiu a este evento
-        Reaction? existente = await _repository.GetByUsuarioEEventoAsync(usuarioId, request.EventoId);
-        if (existente is not null)
-            throw new InvalidOperationException("Você já reagiu a este evento. Delete a reação anterior para mudar.");
+        // Checks whether the user has already reacted to this event.
+        Reaction? existentReaction = await _repository.GetByUserEventAsync(userId, request.EventId);
+        if (existentReaction is not null)
+            throw new InvalidOperationException("You have already reacted to this event. Delete the previous reaction to change it.");
 
-        Reaction reacao = new Reaction
+        Reaction reaction = new Reaction
         {
-            EventoId = request.EventoId,
-            UsuarioId = usuarioId,
-            Tipo = request.Tipo
+            EventId = request.EventId,
+            UserId = userId,
+            Type = request.Type
         };
 
-        Reaction criada = await _repository.CreateAsync(reacao);
-        return MapearParaResponse(criada);
+        Reaction createdReaction = await _repository.CreateAsync(reaction);
+        return MapResponse(createdReaction);
     }
 
-    public async Task<List<ReactionResponse>> GetByEventoAsync(int eventoId)
+    public async Task<List<ReactionResponse>> GetByEventAsync(int eventId)
     {
-        if (eventoId <= 0)
-            throw new InvalidOperationException("O id do evento deve ser maior que zero.");
+        if (eventId <= 0)
+            throw new InvalidOperationException("Event id must be greater than zero.");
 
-        List<Reaction> reacoes = await _repository.GetByEventoAsync(eventoId);
-        return reacoes.Select(MapearParaResponse).ToList();
+        List<Reaction> reactions = await _repository.GetByEventAsync(eventId);
+        return reactions.Select(MapResponse).ToList();
     }
 
-    public async Task DeleteAsync(int id, int usuarioId)
+    public async Task DeleteAsync(int id, int userId)
     {
-        Reaction? reacao = await _repository.GetByIdAsync(id);
-        if (reacao is null) throw new NotFoundException("Reação não encontrada.");
+        Reaction? reaction = await _repository.GetByIdAsync(id);
+        if (reaction is null) throw new NotFoundException("Reaction not found .");
 
-        if (reacao.UsuarioId != usuarioId)
-            throw new UnauthorizedException("Apenas o autor pode remover esta reação.");
+        if (reaction.UserId != userId)
+            throw new UnauthorizedException("Only author can delete this reaction.");
 
         await _repository.DeleteAsync(id);
     }
 
-    private static ReactionResponse MapearParaResponse(Reaction reacao)
+    private static ReactionResponse MapResponse(Reaction reaction)
     {
         return new ReactionResponse
         {
-            Id = reacao.Id,
-            EventoId = reacao.EventoId,
-            UsuarioId = reacao.UsuarioId,
-            NomeUsuario = reacao.Usuario?.Nome ?? string.Empty,
-            Tipo = reacao.Tipo.ToString(),
-            CriadoEm = reacao.CriadoEm
+            Id = reaction.Id,
+            EventId = reaction.EventId,
+            UserId = reaction.UserId,
+            UserName = reaction.User?.Name ?? string.Empty,
+            Typo = reaction.Type.ToString(),
+            CreatedAt = reaction.CreatedAt
         };
     }
 }

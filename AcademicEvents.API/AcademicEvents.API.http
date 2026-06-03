@@ -1,38 +1,38 @@
-@AcademicEvents.API_HostAddress = http://localhost:5000
-@token = cole_o_token_aqui
+@host = http://localhost:5000
+@token = paste_the_token_here
 
-### Cadastrar usuário
-POST {{AcademicEvents.API_HostAddress}}/api/auth/register
+### Register user
+POST {{host}}/api/auth/register
 Content-Type: application/json
 
 {
-  "nome": "Maria Silva",
-  "email": "maria@teste.com",
-  "senha": "Senha123!"
+  "name": "Maria Silva",
+  "email": "maria@test.com",
+  "password": "Password123!"
 }
 
 ### Login
-POST {{AcademicEvents.API_HostAddress}}/api/auth/login
+POST {{host}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "maria@teste.com",
-  "senha": "Senha123!"
+  "email": "maria@test.com",
+  "password": "Password123!"
 }
 
-### Listar eventos
-GET {{AcademicEvents.API_HostAddress}}/api/events
+### List events
+GET {{host}}/api/events
 Accept: application/json
 
-### Criar evento
-POST {{AcademicEvents.API_HostAddress}}/api/events
+### Create event
+POST {{host}}/api/events
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "titulo": "Workshop de C# em Manaus",
-  "descricao": "Workshop prático sobre ASP.NET Core",
-  "dataInicio": "2026-06-10T09:00:00",
-  "dataFim": "2026-06-10T18:00:00",
-  "local": "Bloco A - Sala 201"
+  "title": "C# Workshop in Manaus",
+  "description": "Hands-on workshop about ASP.NET Core",
+  "startDate": "2026-06-10T09:00:00",
+  "endDate": "2026-06-10T18:00:00",
+  "location": "Block A - Room 201"
 }

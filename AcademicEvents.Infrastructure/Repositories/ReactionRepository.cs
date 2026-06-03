@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AcademicEvents.Infrastructure.Repositories;
 
 /// <summary>
-/// Repository de reações. Usa o DbContext para acessar o PostgreSQL.
+/// Reaction repository. Uses the DbContext to access PostgreSQL.
 /// </summary>
 public class ReactionRepository : IReactionRepository
 {
@@ -17,41 +17,41 @@ public class ReactionRepository : IReactionRepository
         _context = context;
     }
 
-    public async Task<Reaction> CreateAsync(Reaction reacao)
+    public async Task<Reaction> CreateAsync(Reaction reaction)
     {
-        _context.Reactions.Add(reacao);
+        _context.Reactions.Add(reaction);
         await _context.SaveChangesAsync();
-        await _context.Entry(reacao).Reference(r => r.Usuario).LoadAsync();
-        return reacao;
+        await _context.Entry(reaction).Reference(r => r.User).LoadAsync();
+        return reaction;
     }
 
     public async Task<Reaction?> GetByIdAsync(int id)
     {
         return await _context.Reactions
-            .Include(r => r.Usuario)
+            .Include(r => r.User)
             .FirstOrDefaultAsync(r => r.Id == id);
     }
 
-    public async Task<List<Reaction>> GetByEventoAsync(int eventoId)
+    public async Task<List<Reaction>> GetByEventAsync(int eventId)
     {
         return await _context.Reactions
-            .Include(r => r.Usuario)
-            .Where(r => r.EventoId == eventoId)
-            .OrderByDescending(r => r.CriadoEm)
+            .Include(r => r.User)
+            .Where(r => r.EventId == eventId)
+            .OrderByDescending(r => r.CreatedAt)
             .ToListAsync();
     }
 
-    public async Task<Reaction?> GetByUsuarioEEventoAsync(int usuarioId, int eventoId)
+    public async Task<Reaction?> GetByUserEventAsync(int userId, int eventId)
     {
         return await _context.Reactions
-            .FirstOrDefaultAsync(r => r.UsuarioId == usuarioId && r.EventoId == eventoId);
+            .FirstOrDefaultAsync(r => r.UserId == userId && r.EventId == eventId);
     }
 
     public async Task DeleteAsync(int id)
     {
-        Reaction? reacao = await _context.Reactions.FindAsync(id);
-        if (reacao is null) return;
-        _context.Reactions.Remove(reacao);
+        Reaction? reaction = await _context.Reactions.FindAsync(id);
+        if (reaction is null) return;
+        _context.Reactions.Remove(reaction);
         await _context.SaveChangesAsync();
     }
 }

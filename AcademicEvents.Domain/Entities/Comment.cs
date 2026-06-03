@@ -1,16 +1,16 @@
 namespace AcademicEvents.Domain.Entities;
 
 /// <summary>
-/// Comentário feito por um usuário em um evento.
+/// Comment made bt user abount an event.
 /// </summary>
 public class Comment
 {
     public int Id { get; set; }
-    public int UsuarioId { get; set; }
-    public int EventoId { get; set; }
-    public string Conteudo { get; set; } = string.Empty;
-    public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
+    public int UserId { get; set; }
+    public int EventId { get; set; }
+    public string Content { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public User? Usuario { get; set; }
-    public Event? Evento { get; set; }
+    public User? User { get; set; }
+    public Event? Event { get; set; }
 }

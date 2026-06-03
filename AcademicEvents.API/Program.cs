@@ -23,7 +23,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.InvalidModelStateResponseFactory = context =>
     {
-        List<string> mensagens = context.ModelState.Values
+        List<string> messages = context.ModelState.Values
             .SelectMany(value => value.Errors)
             .Select(error => error.ErrorMessage)
             .Where(message => !string.IsNullOrWhiteSpace(message))
@@ -31,12 +31,12 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
         ErrorResponse response = new ErrorResponse
         {
-            Mensagem = mensagens.Count == 0
-                ? "Dados inválidos na requisição."
-                : string.Join(" ", mensagens),
+            Message = messages.Count == 0
+                ? "Invalid data on request."
+                : string.Join(" ", messages),
             StatusCode = StatusCodes.Status400BadRequest,
-            Caminho = context.HttpContext.Request.Path,
-            DataHoraUtc = DateTime.UtcNow
+            Path = context.HttpContext.Request.Path,
+            UtcTime = DateTime.UtcNow
         };
 
         return new BadRequestObjectResult(response);
@@ -44,15 +44,15 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 builder.Services.AddEndpointsApiExplorer();
 
-// Infrastructure registra o DbContext e os repositories
+// Infrastructure registers the DbContext and repositories.
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// Application registra os services (AuthService, EventService, etc.)
+// Application registers the services (AuthService, EventService, etc.).
 builder.Services.AddApplication();
 
-// configura JWT Bearer Token
+// Configures JWT Bearer Token.
 string jwtKey = builder.Configuration["Jwt:Key"]
-    ?? throw new InvalidOperationException("Jwt:Key não configurada.");
+    ?? throw new InvalidOperationException("Jwt:Key is not configured.");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -74,7 +74,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             {
                 string authorization = context.Request.Headers.Authorization.ToString();
 
-                // Aceita o token puro para evitar erro comum ao testar pelo Swagger.
+                // Accepts the raw token to avoid common errors when testing with Swagger.
                 if (!string.IsNullOrWhiteSpace(authorization)
                     && !authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
                     && authorization.Split('.').Length == 3)
@@ -87,7 +87,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// configura o Swagger para aceitar o token Bearer no botão Authorize
+// Configures Swagger to accept Bearer tokens through the Authorize button.
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Academic Events API", Version = "v1" });
@@ -103,7 +103,7 @@ builder.Services.AddSwaggerGen(options =>
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT",
-        Description = "Cole apenas o token JWT retornado no login ou cadastro."
+        Description = "Paste only the JWT token returned by login or registration."
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -120,7 +120,7 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// cria o banco se não existir (útil no desenvolvimento)
+// Creates the database if it does not exist. Useful during development.
 using (IServiceScope scope = app.Services.CreateScope())
 {
     AcademicEventsDbContext context = scope.ServiceProvider

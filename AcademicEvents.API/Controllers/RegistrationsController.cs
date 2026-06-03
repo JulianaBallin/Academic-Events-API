@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AcademicEvents.API.Controllers;
 
 /// <summary>
-/// Controller de inscrições em eventos.
-/// Todos os endpoints são protegidos por autenticação JWT.
+/// Controller for event registrations.
+/// All endpoints are protected by JWT authentication.
 /// </summary>
 [ApiController]
 [Route("api/registrations")]
@@ -25,7 +25,7 @@ public class RegistrationsController : ControllerBase
     }
 
     /// <summary>
-    /// Inscreve o usuário autenticado em um evento.
+    /// Registers the authenticated user for an event.
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(RegistrationResponse), StatusCodes.Status201Created)]
@@ -33,24 +33,24 @@ public class RegistrationsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create(CreateRegistrationRequest request)
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        RegistrationResponse response = await _service.CreateAsync(request, usuarioId);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        RegistrationResponse response = await _service.CreateAsync(request, userId);
         return StatusCode(StatusCodes.Status201Created, response);
     }
 
     /// <summary>
-    /// Lista as inscrições do usuário autenticado.
+    /// Lists the registrations of the authenticated user.
     /// </summary>
-    [HttpGet("me")]
+    [HttpGet("mine")]
     [ProducesResponseType(typeof(List<RegistrationResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetMinhas()
+    public async Task<IActionResult> GetMine()
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        return Ok(await _service.GetByUsuarioAsync(usuarioId));
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        return Ok(await _service.GetByUserAsync(userId));
     }
 
     /// <summary>
-    /// Cancela uma inscrição. Só o próprio usuário pode cancelar.
+    /// Cancels a registration. Only the registered user can cancel it.
     /// </summary>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -58,8 +58,8 @@ public class RegistrationsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Delete(int id)
     {
-        int usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        await _service.DeleteAsync(id, usuarioId);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        await _service.DeleteAsync(id, userId);
         return NoContent();
     }
 }

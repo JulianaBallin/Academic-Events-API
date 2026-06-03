@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AcademicEvents.Infrastructure.Repositories;
 
 /// <summary>
-/// Repository de comentários. Usa o DbContext para acessar o PostgreSQL.
+/// Comment repository. Uses the DbContext to access PostgreSQL.
 /// </summary>
 public class CommentRepository : ICommentRepository
 {
@@ -17,35 +17,35 @@ public class CommentRepository : ICommentRepository
         _context = context;
     }
 
-    public async Task<Comment> CreateAsync(Comment comentario)
+    public async Task<Comment> CreateAsync(Comment comment)
     {
-        _context.Comments.Add(comentario);
+        _context.Comments.Add(comment);
         await _context.SaveChangesAsync();
-        await _context.Entry(comentario).Reference(c => c.Usuario).LoadAsync();
-        return comentario;
+        await _context.Entry(comment).Reference(c => c.User).LoadAsync();
+        return comment;
     }
 
     public async Task<Comment?> GetByIdAsync(int id)
     {
         return await _context.Comments
-            .Include(c => c.Usuario)
+            .Include(c => c.User)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
 
-    public async Task<List<Comment>> GetByEventoAsync(int eventoId)
+    public async Task<List<Comment>> GetByEventAsync(int eventId)
     {
         return await _context.Comments
-            .Include(c => c.Usuario)
-            .Where(c => c.EventoId == eventoId)
-            .OrderByDescending(c => c.CriadoEm)
+            .Include(c => c.User)
+            .Where(c => c.EventId == eventId)
+            .OrderByDescending(c => c.CreatedAt)
             .ToListAsync();
     }
 
     public async Task DeleteAsync(int id)
     {
-        Comment? comentario = await _context.Comments.FindAsync(id);
-        if (comentario is null) return;
-        _context.Comments.Remove(comentario);
+        Comment? comment = await _context.Comments.FindAsync(id);
+        if (comment is null) return;
+        _context.Comments.Remove(comment);
         await _context.SaveChangesAsync();
     }
 }

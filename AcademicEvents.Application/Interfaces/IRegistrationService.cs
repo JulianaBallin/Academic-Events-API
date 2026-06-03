@@ -3,11 +3,11 @@ using AcademicEvents.Application.DTOs.Registration;
 namespace AcademicEvents.Application.Interfaces;
 
 /// <summary>
-/// Contrato do service de inscrições em eventos.
+/// Contract for the event registration service.
 /// </summary>
 public interface IRegistrationService
 {
-    Task<RegistrationResponse> CreateAsync(CreateRegistrationRequest request, int usuarioId);
-    Task<List<RegistrationResponse>> GetByUsuarioAsync(int usuarioId);
-    Task DeleteAsync(int id, int usuarioId);
+    Task<RegistrationResponse> CreateAsync(CreateRegistrationRequest request, int userId);
+    Task<List<RegistrationResponse>> GetByUserAsync(int userId);
+    Task DeleteAsync(int id, int userId);
 }

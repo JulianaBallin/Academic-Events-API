@@ -3,8 +3,8 @@ using AcademicEvents.Exceptions;
 namespace AcademicEvents.API.Middlewares;
 
 /// <summary>
-/// Middleware responsável por transformar exceções conhecidas em respostas HTTP padronizadas.
-/// Mantém os controllers mais enxutos e facilita a demonstração dos códigos de erro no Swagger.
+/// Converts known exceptions into standardized HTTP responses.
+/// Keeps controllers cleaner and improves error response documentation in Swagger.
 /// </summary>
 public class ExceptionHandlingMiddleware
 {
@@ -28,12 +28,13 @@ public class ExceptionHandlingMiddleware
             if (context.Response.HasStarted)
                 throw;
 
-            int statusCode = ObterStatusCode(ex);
+            int statusCode = GetStatusCode(ex);
 
+            
             if (statusCode == StatusCodes.Status500InternalServerError)
-                _logger.LogError(ex, "Erro inesperado ao processar a requisição.");
+                _logger.LogError(ex, "Unexpected error while processing the request.");
             else
-                _logger.LogWarning(ex, "Requisição finalizada com erro conhecido.");
+                _logger.LogWarning(ex, "Request completed with a known error.");
 
             context.Response.Clear();
             context.Response.StatusCode = statusCode;
@@ -41,24 +42,24 @@ public class ExceptionHandlingMiddleware
 
             ErrorResponse response = new ErrorResponse
             {
-                Mensagem = statusCode == StatusCodes.Status500InternalServerError
-                    ? "Ocorreu um erro interno ao processar a requisição."
+                Message = statusCode == StatusCodes.Status500InternalServerError
+                    ? "An unexpected error occurred while processing the request."
                     : ex.Message,
                 StatusCode = statusCode,
-                Caminho = context.Request.Path,
-                DataHoraUtc = DateTime.UtcNow
+                Path = context.Request.Path,
+                UtcTime = DateTime.UtcNow
             };
 
             await context.Response.WriteAsJsonAsync(response);
         }
     }
 
-    private static int ObterStatusCode(Exception exception)
+    private static int GetStatusCode(Exception exception)
     {
         return exception switch
         {
             DuplicateEmailException => StatusCodes.Status400BadRequest,
-            InscricaoDuplicadaException => StatusCodes.Status400BadRequest,
+            DuplicateRegistrationException => StatusCodes.Status400BadRequest,
             InvalidCredentialsException => StatusCodes.Status401Unauthorized,
             NotFoundException => StatusCodes.Status404NotFound,
             AcademicEvents.Exceptions.UnauthorizedException => StatusCodes.Status403Forbidden,
