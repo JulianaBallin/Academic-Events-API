@@ -181,9 +181,7 @@ AcademicEvents.Infrastructure
 │   └── RegistrationServiceTests.cs
 ├── docker-compose.yml
 ├── docs
-│   ├── apresentacao
-│   │   └── Curso C#_Grupo06_Academic Events API.pdf
-│   ├── demonstracao
+│   ├── demo
 │   │   └── roteiro_payloads_demonstracao.md
 │   ├── diagrams
 │   │   ├── c4_nivel1_contexto.puml
@@ -191,7 +189,9 @@ AcademicEvents.Infrastructure
 │   │   ├── c4_nivel3_componente.puml
 │   │   ├── c4_nivel4_codigo.puml
 │   │   └── logo.svg
-│   └── relatorios
+│   ├── presentation
+│   │   └── Curso C#_Grupo06_Academic Events API.pdf
+│   └── reports
 │       ├── relatorio_academic_events_grupo6.pdf
 │       └── relatorio_academic_events_grupo6.tex
 ├── endpoints.http

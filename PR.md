@@ -120,9 +120,9 @@ The API implements a REST platform for managing academic events with JWT authent
 - `workflow.md`: development flow and manual tests
 - `endpoints.http`: HTTP request collection
 - `docs/diagrams/`: C4 diagrams in PlantUML
-- `docs/relatorios/relatorio_academic_events_grupo6.pdf`: technical report
-- `docs/demonstracao/roteiro_payloads_demonstracao.md`: payloads for demonstration
-- `docs/apresentacao/Curso C#_Grupo06_Academic Events API.pdf`: final presentation PDF
+- `docs/reports/relatorio_academic_events_grupo6.pdf`: technical report
+- `docs/demo/roteiro_payloads_demonstracao.md`: payloads for demonstration
+- `docs/presentation/Curso C#_Grupo06_Academic Events API.pdf`: final presentation PDF
 
 ## How to test locally
 
