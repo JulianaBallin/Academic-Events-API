@@ -9,11 +9,11 @@ namespace AcademicEvents.Application.DTOs.Event;
 public class CreateEventRequest
 {
     [Required(ErrorMessage = "Title is required.")]
-    [StringLength(200, MinimumLength = 3, ErrorMessage = "Title must have between 3 e 200 characters.")]
+    [StringLength(200, MinimumLength = 3, ErrorMessage = "Title must have between 3 and 200 characters.")]
     public string Title { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Description is required.")]
-    [StringLength(2000, MinimumLength = 10, ErrorMessage = "Description must have between 10 e 2000 characters.")]
+    [StringLength(2000, MinimumLength = 10, ErrorMessage = "Description must have between 10 and 2000 characters.")]
     public string Description { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Start date is required.")]
@@ -23,6 +23,6 @@ public class CreateEventRequest
     public DateTime? EndDate { get; set; }
 
     [Required(ErrorMessage = "Location is required.")]
-    [StringLength(300, MinimumLength = 3, ErrorMessage = "Location must have between 3 e 300 characters.")]
+    [StringLength(300, MinimumLength = 3, ErrorMessage = "Location must have between 3 and 300 characters.")]
     public string Location { get; set; } = string.Empty;
 }

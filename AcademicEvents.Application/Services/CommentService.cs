@@ -31,7 +31,7 @@ public class CommentService : ICommentService
 
         Event? ev = await _eventRepository.GetByIdAsync(request.EventId);
         if (ev is null)
-            throw new NotFoundException("Evento nao encontrado.");
+            throw new NotFoundException("Event not found.");
 
         Comment comment = new Comment
         {
@@ -56,10 +56,10 @@ public class CommentService : ICommentService
     public async Task DeleteAsync(int id, int userId)
     {
         Comment? comment = await _repository.GetByIdAsync(id);
-        if (comment is null) throw new NotFoundException("Comentario nao encontrado.");
+        if (comment is null) throw new NotFoundException("Comment not found.");
 
         if (comment.UserId != userId)
-            throw new UnauthorizedException("Apenas o autor pode remover este comentario.");
+            throw new UnauthorizedException("Only the author can delete this comment.");
 
         await _repository.DeleteAsync(id);
     }

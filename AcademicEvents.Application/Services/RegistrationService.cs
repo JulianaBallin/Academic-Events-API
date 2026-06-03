@@ -23,11 +23,11 @@ public class RegistrationService : IRegistrationService
     public async Task<RegistrationResponse> CreateAsync(CreateRegistrationRequest request, int userId)
     {
         if (request.EventId <= 0)
-            throw new InvalidOperationException("Event id must be greater then zero.");
+            throw new InvalidOperationException("Event id must be greater than zero.");
 
         Event? eventRepository = await _eventRepository.GetByIdAsync(request.EventId);
         if (eventRepository is null)
-            throw new NotFoundException("Event not fount.");
+            throw new NotFoundException("Event not found.");
 
         // Checks event on service layer, before the database
         Registration? searchEventResponse = await _repository.GetByUserEventAsync(userId, request.EventId);
@@ -53,11 +53,11 @@ public class RegistrationService : IRegistrationService
     public async Task DeleteAsync(int id, int userId)
     {
         Registration? registration = await _repository.GetByIdAsync(id);
-        if (registration is null) throw new NotFoundException("Subscription not found.");
+        if (registration is null) throw new NotFoundException("Registration not found.");
 
         // Only subscribed user may cancel its event subscription 
         if (registration.UserId != userId)
-            throw new UnauthorizedException("Can`t unsubscribe another user from a event.");
+            throw new UnauthorizedException("Cannot cancel another user's registration.");
 
         await _repository.DeleteAsync(id);
     }

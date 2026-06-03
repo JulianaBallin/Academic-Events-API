@@ -34,13 +34,13 @@ public class AuthService : IAuthService
         string password = request.Password ?? string.Empty;
 
         if (string.IsNullOrWhiteSpace(normalizedName))
-            throw new InvalidOperationException("The name is required..");
+            throw new InvalidOperationException("Name is required.");
 
         if (string.IsNullOrWhiteSpace(normalizedEmail))
-            throw new InvalidOperationException("The email is required.");
+            throw new InvalidOperationException("Email is required.");
 
         if (string.IsNullOrWhiteSpace(password))
-            throw new InvalidOperationException("The password is required.");
+            throw new InvalidOperationException("Password is required.");
 
         if (await _repository.GetByEmailAsync(normalizedEmail) is not null)
             throw new DuplicateEmailException("A user with this email address already exists.");

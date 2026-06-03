@@ -8,7 +8,7 @@ namespace AcademicEvents.Application.DTOs.Registration;
 /// </summary>
 public class CreateRegistrationRequest
 {
-    [Required(ErrorMessage = "Event id is  required.")]
+    [Required(ErrorMessage = "Event id is required.")]
     [Range(1, int.MaxValue, ErrorMessage = "Event id must be greater than zero.")]
     public int EventId { get; init; }
 }

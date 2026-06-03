@@ -8,29 +8,29 @@ namespace AcademicEvents.Application.DTOs.Activity;
 /// </summary>
 public class CreateActivityRequest
 {
-    [Required(ErrorMessage = "O id do evento é obrigatório.")]
-    [Range(1, int.MaxValue, ErrorMessage = "O id do evento deve ser maior que zero.")]
+    [Required(ErrorMessage = "Event id is required.")]
+    [Range(1, int.MaxValue, ErrorMessage = "Event id must be greater than zero.")]
     public int EventId { get; set; }
 
-    [Required(ErrorMessage = "O título é obrigatório.")]
-    [StringLength(200, MinimumLength = 3, ErrorMessage = "O título deve ter entre 3 e 200 caracteres.")]
+    [Required(ErrorMessage = "Title is required.")]
+    [StringLength(200, MinimumLength = 3, ErrorMessage = "Title must have between 3 and 200 characters.")]
     public string Title { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "A descrição é obrigatória.")]
-    [StringLength(2000, MinimumLength = 10, ErrorMessage = "A descrição deve ter entre 10 e 2000 caracteres.")]
+    [Required(ErrorMessage = "Description is required.")]
+    [StringLength(2000, MinimumLength = 10, ErrorMessage = "Description must have between 10 and 2000 characters.")]
     public string Description { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "O tipo de atividade é obrigatório.")]
-    [EnumDataType(typeof(ActivityType), ErrorMessage = "Tipo de atividade inválido.")]
+    [Required(ErrorMessage = "Activity type is required.")]
+    [EnumDataType(typeof(ActivityType), ErrorMessage = "Invalid activity type.")]
     public ActivityType Type { get; set; }
 
-    [Required(ErrorMessage = "A data de início é obrigatória.")]
+    [Required(ErrorMessage = "Start date is required.")]
     public DateTime? StartAt { get; set; }
 
-    [Required(ErrorMessage = "A data de fim é obrigatória.")]
+    [Required(ErrorMessage = "End date is required.")]
     public DateTime? EndedAt { get; set; }
 
-    [Required(ErrorMessage = "O local é obrigatório.")]
-    [StringLength(300, MinimumLength = 3, ErrorMessage = "O local deve ter entre 3 e 300 caracteres.")]
+    [Required(ErrorMessage = "Location is required.")]
+    [StringLength(300, MinimumLength = 3, ErrorMessage = "Location must have between 3 and 300 characters.")]
     public string Location { get; set; } = string.Empty;
 }

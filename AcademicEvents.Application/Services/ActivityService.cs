@@ -27,39 +27,39 @@ public class ActivityService : IActivityService
         string location = (request.Location ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(title))
-            throw new InvalidOperationException("O título é obrigatório.");
+            throw new InvalidOperationException("Title is required.");
 
         if (string.IsNullOrWhiteSpace(description))
-            throw new InvalidOperationException("A descrição é obrigatória.");
+            throw new InvalidOperationException("Description is required.");
 
         if (string.IsNullOrWhiteSpace(location))
-            throw new InvalidOperationException("O local é obrigatório.");
+            throw new InvalidOperationException("Location is required.");
 
         if (request.StartAt is null)
-            throw new InvalidOperationException("A data de início é obrigatória.");
+            throw new InvalidOperationException("Start date is required.");
 
         if (request.EndedAt is null)
-            throw new InvalidOperationException("A data de fim é obrigatória.");
+            throw new InvalidOperationException("End date is required.");
 
         if (request.EndedAt <= request.StartAt)
-            throw new InvalidOperationException("A data de fim deve ser posterior à data de início.");
+            throw new InvalidOperationException("End date must be later than start date.");
 
         if (!Enum.IsDefined(request.Type))
-            throw new InvalidOperationException("Tipo de atividade inválido.");
+            throw new InvalidOperationException("Invalid activity type.");
 
         Event? ev = await _eventRepository.GetByIdAsync(request.EventId);
 
         if (ev is null)
-            throw new NotFoundException("Evento não encontrado.");
+            throw new NotFoundException("Event not found.");
 
         if (ev.OrganizerId != userId)
-            throw new UnauthorizedException("Apenas o organizador do evento pode criar esta atividade.");
+            throw new UnauthorizedException("Only the event organizer can create this activity.");
 
         if (request.StartAt < ev.StartAt)
-            throw new InvalidOperationException("A atividade não pode iniciar antes do evento.");
+            throw new InvalidOperationException("The activity cannot start before the event.");
 
         if (request.EndedAt > ev.EndedAt)
-            throw new InvalidOperationException("A atividade não pode terminar após o evento.");
+            throw new InvalidOperationException("The activity cannot end after the event.");
 
         var activity = new Activity
         {
@@ -88,7 +88,7 @@ public class ActivityService : IActivityService
         Event? ev = await _eventRepository.GetByIdAsync(eventId);
 
         if (ev is null)
-            throw new NotFoundException("Evento não encontrado.");
+            throw new NotFoundException("Event not found.");
 
         List<Activity> activities = await _repository.GetByEventIdAsync(eventId);
 
@@ -102,37 +102,37 @@ public class ActivityService : IActivityService
         Activity? activity = await _repository.GetByIdAsync(activityId);
 
         if (activity is null)
-            throw new NotFoundException("Atividade não encontrada.");
+            throw new NotFoundException("Activity not found.");
 
         Event? ev = await _eventRepository.GetByIdAsync(activity.EventId);
 
         if (ev is null)
-            throw new NotFoundException("Evento não encontrado.");
+            throw new NotFoundException("Event not found.");
 
         if (ev.OrganizerId != userId)
-            throw new UnauthorizedException("Apenas o organizador do evento pode editar esta atividade.");
+            throw new UnauthorizedException("Only the event organizer can edit this activity.");
 
         string title = (request.Title ?? string.Empty).Trim();
         string description = (request.Description ?? string.Empty).Trim();
         string location = (request.Location ?? string.Empty).Trim();
 
         if (string.IsNullOrWhiteSpace(title))
-            throw new InvalidOperationException("O título é obrigatório.");
+            throw new InvalidOperationException("Title is required.");
 
         if (string.IsNullOrWhiteSpace(description))
-            throw new InvalidOperationException("A descrição é obrigatória.");
+            throw new InvalidOperationException("Description is required.");
 
         if (string.IsNullOrWhiteSpace(location))
-            throw new InvalidOperationException("O local é obrigatório.");
+            throw new InvalidOperationException("Location is required.");
 
         if (request.StartAt is null)
-            throw new InvalidOperationException("A data de início é obrigatória.");
+            throw new InvalidOperationException("Start date is required.");
 
         if (request.EndedAt is null)
-            throw new InvalidOperationException("A data de fim é obrigatória.");
+            throw new InvalidOperationException("End date is required.");
 
         if (request.EndedAt <= request.StartAt)
-            throw new InvalidOperationException("A data de fim deve ser posterior à data de início.");
+            throw new InvalidOperationException("End date must be later than start date.");
 
         activity.Title = title;
         activity.Description = description;
@@ -151,15 +151,15 @@ public class ActivityService : IActivityService
         Activity? activity = await _repository.GetByIdAsync(activityId);
 
         if (activity is null)
-            throw new NotFoundException("Atividade não encontrada.");
+            throw new NotFoundException("Activity not found.");
 
         Event? ev = await _eventRepository.GetByIdAsync(activity.EventId);
 
         if (ev is null)
-            throw new NotFoundException("Evento não encontrado.");
+            throw new NotFoundException("Event not found.");
 
         if (ev.OrganizerId != userId)
-            throw new UnauthorizedException("Apenas o organizador do evento pode excluir esta atividade.");
+            throw new UnauthorizedException("Only the event organizer can delete this activity.");
 
         await _repository.DeleteAsync(activity);
     }

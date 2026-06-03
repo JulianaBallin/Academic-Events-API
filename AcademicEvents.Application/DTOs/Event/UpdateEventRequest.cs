@@ -24,10 +24,10 @@ public class UpdateEventRequest
     public DateTime? EndDate { get; set; }
 
     [Required(ErrorMessage = "Location is required.")]
-    [StringLength(300, MinimumLength = 3, ErrorMessage = "Location mist have between 3 and 300 characters.")]
+    [StringLength(300, MinimumLength = 3, ErrorMessage = "Location must have between 3 and 300 characters.")]
     public string Location { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "O status is required.")]
+    [Required(ErrorMessage = "Status is required.")]
     [EnumDataType(typeof(EventStatus), ErrorMessage = "Invalid status")]
     public EventStatus EventStatus { get; set; }
 }

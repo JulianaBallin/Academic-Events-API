@@ -61,10 +61,10 @@ public class ReactionService : IReactionService
     public async Task DeleteAsync(int id, int userId)
     {
         Reaction? reaction = await _repository.GetByIdAsync(id);
-        if (reaction is null) throw new NotFoundException("Reaction not found .");
+        if (reaction is null) throw new NotFoundException("Reaction not found.");
 
         if (reaction.UserId != userId)
-            throw new UnauthorizedException("Only author can delete this reaction.");
+            throw new UnauthorizedException("Only the author can delete this reaction.");
 
         await _repository.DeleteAsync(id);
     }
